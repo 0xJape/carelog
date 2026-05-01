@@ -93,3 +93,5 @@ export function deleteSessionTokenCookie(event: RequestEvent) {
 		path: '/'
 	});
 }
+
+// Force Vercel redeploy - 2026-05-01
