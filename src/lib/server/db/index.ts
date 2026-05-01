@@ -12,10 +12,11 @@ if (!connectionString) {
 // Configure postgres client with SSL for Supabase
 // Vercel serverless functions need connection pooling
 export const client = postgres(connectionString, {
-	ssl: 'require',
+	ssl: { rejectUnauthorized: false }, // More permissive SSL for Supabase
 	max: 1, // Limit connections for serverless
 	idle_timeout: 20,
-	connect_timeout: 10
+	connect_timeout: 10,
+	prepare: false // Disable prepared statements for better compatibility
 });
 
 export const db = drizzle(client, { schema });
