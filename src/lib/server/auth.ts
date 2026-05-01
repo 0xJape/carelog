@@ -79,11 +79,15 @@ export async function invalidateSession(sessionId: string) {
 }
 
 export function setSessionTokenCookie(event: RequestEvent, token: string, expiresAt: Date) {
+	// In production (Vercel), the request will be HTTPS
+	// In development, it might be HTTP
+	const isProduction = event.url.protocol === 'https:' || process.env.NODE_ENV === 'production';
+	
 	event.cookies.set(sessionCookieName, token, {
 		expires: expiresAt,
 		path: '/',
 		httpOnly: true,
-		secure: true,
+		secure: isProduction,
 		sameSite: 'lax'
 	});
 }
