@@ -79,16 +79,22 @@ export async function invalidateSession(sessionId: string) {
 }
 
 export function setSessionTokenCookie(event: RequestEvent, token: string, expiresAt: Date) {
-	// In production (Vercel), the request will be HTTPS
-	// In development, it might be HTTP
-	const isProduction = event.url.protocol === 'https:' || process.env.NODE_ENV === 'production';
-	
+	// Always use secure: true in production (Vercel always uses HTTPS)
+	// SvelteKit on Vercel will have the correct protocol
 	event.cookies.set(sessionCookieName, token, {
 		expires: expiresAt,
 		path: '/',
 		httpOnly: true,
-		secure: isProduction,
+		secure: true,
 		sameSite: 'lax'
+	});
+
+	// Debug log for production
+	console.log('Cookie set:', {
+		name: sessionCookieName,
+		expiresAt,
+		protocol: event.url.protocol,
+		host: event.url.host
 	});
 }
 
