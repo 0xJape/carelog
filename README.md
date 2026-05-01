@@ -2,6 +2,8 @@
 
 A simple and efficient School Clinic Management System that uses QR code technology to provide quick healthcare access at educational institutions. CareLog is designed specifically for emergency situations where time, accuracy, and immediate access to student information are crucial.
 
+<!-- Updated: 2026-05-01 - Using Supabase Transaction Pooler for Vercel deployment -->
+
 ## 🚀 Features
 
 - **QR Code Student Identification** - Instant access to student medical records
