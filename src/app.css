@@ -1,0 +1,236 @@
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* Alternative data-attribute based dark mode variant */
+@custom-variant dark-data (&:is([data-theme="dark"] *));
+
+@theme {
+	/* Radius system */
+	--radius: 0.625rem;
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+
+	/* Medical theme colors for healthcare application */
+	--color-medical-primary: oklch(0.647 0.138 252.4);
+	--color-medical-primary-foreground: oklch(0.984 0.003 252.4);
+	--color-medical-success: oklch(0.647 0.134 142.2);
+	--color-medical-warning: oklch(0.768 0.204 83.9);
+	--color-medical-error: oklch(0.629 0.257 25.4);
+	--color-medical-info: oklch(0.647 0.138 252.4);
+
+	/* Light theme colors */
+	--color-background: oklch(1 0 0);
+	--color-foreground: oklch(0.145 0 0);
+	--color-card: oklch(1 0 0);
+	--color-card-foreground: oklch(0.145 0 0);
+	--color-popover: oklch(1 0 0);
+	--color-popover-foreground: oklch(0.145 0 0);
+	--color-primary: oklch(0.205 0 0);
+	--color-primary-foreground: oklch(0.985 0 0);
+	--color-secondary: oklch(0.97 0 0);
+	--color-secondary-foreground: oklch(0.205 0 0);
+	--color-muted: oklch(0.97 0 0);
+	--color-muted-foreground: oklch(0.556 0 0);
+	--color-accent: oklch(0.97 0 0);
+	--color-accent-foreground: oklch(0.205 0 0);
+	--color-destructive: oklch(0.577 0.245 27.325);
+	--color-destructive-foreground: oklch(0.985 0 0);
+	--color-border: oklch(0.922 0 0);
+	--color-input: oklch(0.922 0 0);
+	--color-ring: oklch(0.708 0 0);
+
+	/* Chart colors */
+	--color-chart-1: oklch(0.646 0.222 41.116);
+	--color-chart-2: oklch(0.6 0.118 184.704);
+	--color-chart-3: oklch(0.398 0.07 227.392);
+	--color-chart-4: oklch(0.828 0.189 84.429);
+	--color-chart-5: oklch(0.769 0.188 70.08);
+
+	/* Sidebar colors */
+	--color-sidebar: oklch(0.985 0 0);
+	--color-sidebar-foreground: oklch(0.145 0 0);
+	--color-sidebar-primary: oklch(0.205 0 0);
+	--color-sidebar-primary-foreground: oklch(0.985 0 0);
+	--color-sidebar-accent: oklch(0.97 0 0);
+	--color-sidebar-accent-foreground: oklch(0.205 0 0);
+	--color-sidebar-border: oklch(0.922 0 0);
+	--color-sidebar-ring: oklch(0.708 0 0);
+}
+
+/* Dark theme overrides */
+.dark {
+	--color-background: oklch(0.145 0 0);
+	--color-foreground: oklch(0.985 0 0);
+	--color-card: oklch(0.205 0 0);
+	--color-card-foreground: oklch(0.985 0 0);
+	--color-popover: oklch(0.205 0 0);
+	--color-popover-foreground: oklch(0.985 0 0);
+	--color-primary: oklch(0.922 0 0);
+	--color-primary-foreground: oklch(0.205 0 0);
+	--color-secondary: oklch(0.269 0 0);
+	--color-secondary-foreground: oklch(0.985 0 0);
+	--color-muted: oklch(0.269 0 0);
+	--color-muted-foreground: oklch(0.708 0 0);
+	--color-accent: oklch(0.269 0 0);
+	--color-accent-foreground: oklch(0.985 0 0);
+	--color-destructive: oklch(0.704 0.191 22.216);
+	--color-destructive-foreground: oklch(0.985 0 0);
+	--color-border: oklch(1 0 0 / 10%);
+	--color-input: oklch(1 0 0 / 15%);
+	--color-ring: oklch(0.556 0 0);
+
+	/* Dark chart colors */
+	--color-chart-1: oklch(0.488 0.243 264.376);
+	--color-chart-2: oklch(0.696 0.17 162.48);
+	--color-chart-3: oklch(0.769 0.188 70.08);
+	--color-chart-4: oklch(0.627 0.265 303.9);
+	--color-chart-5: oklch(0.645 0.246 16.439);
+
+	/* Dark sidebar colors */
+	--color-sidebar: oklch(0.205 0 0);
+	--color-sidebar-foreground: oklch(0.985 0 0);
+	--color-sidebar-primary: oklch(0.488 0.243 264.376);
+	--color-sidebar-primary-foreground: oklch(0.985 0 0);
+	--color-sidebar-accent: oklch(0.269 0 0);
+	--color-sidebar-accent-foreground: oklch(0.985 0 0);
+	--color-sidebar-border: oklch(1 0 0 / 10%);
+	--color-sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+	*:focus-visible {
+		@apply outline-2 outline-offset-2 outline-ring;
+	}
+	body {
+		@apply bg-background text-foreground;
+		font-family:
+			system-ui,
+			-apple-system,
+			'Segoe UI',
+			Roboto,
+			'Helvetica Neue',
+			Arial,
+			sans-serif;
+		font-feature-settings:
+			'rlig' 1,
+			'calt' 1;
+		text-rendering: optimizeLegibility;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+	button {
+		@apply cursor-pointer;
+	}
+}
+
+@layer components {
+	/* Medical card component */
+	.medical-card {
+		@apply rounded-lg border border-border bg-card p-6 shadow-sm transition-all duration-200;
+	}
+
+	.medical-card:hover {
+		@apply border-border/60 shadow-md;
+	}
+
+	/* Medical buttons */
+	.medical-button-primary {
+		@apply rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
+	}
+
+	/* Medical typography */
+	.medical-typography-heading {
+		@apply font-semibold tracking-tight;
+		font-family:
+			system-ui,
+			-apple-system,
+			'Segoe UI',
+			Roboto,
+			'Helvetica Neue',
+			Arial,
+			sans-serif;
+	}
+
+	.medical-typography-body {
+		@apply leading-relaxed;
+		font-family:
+			system-ui,
+			-apple-system,
+			'Segoe UI',
+			Roboto,
+			'Helvetica Neue',
+			Arial,
+			sans-serif;
+	}
+}
+
+/* Smooth transitions for cards */
+.property-card {
+	transition: box-shadow 0.2s ease-in-out;
+}
+
+.property-card:hover {
+	box-shadow:
+		0 10px 25px -5px rgba(0, 0, 0, 0.1),
+		0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+@layer utilities {
+	.no-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
+	.no-scrollbar {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+
+	/* Animation utilities */
+	.animate-shimmer {
+		animation: shimmer 2s ease-in-out infinite;
+		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+		background-size: 200% 100%;
+	}
+}
+
+/* Shimmer animation for loading images */
+@keyframes shimmer {
+	0% {
+		background-position: -200% 0;
+	}
+	100% {
+		background-position: 200% 0;
+	}
+}
+
+.animate-shimmer {
+	animation: shimmer 2s ease-in-out infinite;
+}
+
+/* Enhanced mini-listing-card animations */
+@keyframes cardHover {
+	0% {
+		transform: translateY(0);
+	}
+	100% {
+		transform: translateY(-4px);
+	}
+}
+
+@keyframes fadeInUp {
+	0% {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}

@@ -1,0 +1,162 @@
+{
+  "timestamp": "2026-04-30T16:50:36.892Z",
+  "recipient": "jalelprince17@tnhs.com",
+  "subject": "Important notification regarding Jalel Prince Gayo",
+  "hasApiKey": true,
+  "senderEmail": "tupinhs_clinic@hotmail.com"
+}
+ERROR: {
+  "timestamp": "2026-04-30T16:50:36.909Z",
+  "errorType": "TypeError",
+  "errorMessage": "SMTP2GOApi is not a function",
+  "errorString": "TypeError: SMTP2GOApi is not a function",
+  "errorStack": "TypeError: SMTP2GOApi is not a function\n    at getSmtp2goClient (C:/Website_Projects/medisync-main/src/lib/server/mail.ts:23:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async sendMailMessage (C:/Website_Projects/medisync-main/src/lib/server/mail.ts:46:28)\n    at async sendEmail (C:/Website_Projects/medisync-main/src/routes/(app)/students/[id]/+page.server.ts:396:4)\n    at async fn (C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/runtime/server/page/actions.js:288:19)\n    at async handle_action_json_request (C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/runtime/server/page/actions.js:76:16)\n    at async resolve (C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/runtime/server/respond.js:524:18)\n    at async fn (file:///C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/exports/hooks/sequence.js:102:13)\n    at async handleTheme (C:/Website_Projects/medisync-main/src/hooks.server.ts:53:9)\n    at async fn (file:///C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/exports/hooks/sequence.js:102:13)"
+}
+{
+  "timestamp": "2026-04-30T16:53:51.694Z",
+  "recipient": "jalelprince17@tnhs.com",
+  "subject": "Important notification regarding Jalel Prince Gayo",
+  "hasApiKey": true,
+  "senderEmail": "tupinhs_clinic@hotmail.com"
+}
+ERROR: {
+  "timestamp": "2026-04-30T16:53:51.713Z",
+  "errorType": "TypeError",
+  "errorMessage": "SMTP2GOApi is not a function",
+  "errorString": "TypeError: SMTP2GOApi is not a function",
+  "errorStack": "TypeError: SMTP2GOApi is not a function\n    at getSmtp2goClient (C:/Website_Projects/medisync-main/src/lib/server/mail.ts:25:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async sendMailMessage (C:/Website_Projects/medisync-main/src/lib/server/mail.ts:48:28)\n    at async sendEmail (C:/Website_Projects/medisync-main/src/routes/(app)/students/[id]/+page.server.ts:396:4)\n    at async fn (C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/runtime/server/page/actions.js:288:19)\n    at async handle_action_json_request (C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/runtime/server/page/actions.js:76:16)\n    at async resolve (C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/runtime/server/respond.js:524:18)\n    at async fn (file:///C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/exports/hooks/sequence.js:102:13)\n    at async handleTheme (C:/Website_Projects/medisync-main/src/hooks.server.ts:53:9)\n    at async fn (file:///C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/exports/hooks/sequence.js:102:13)"
+}
+{
+  "timestamp": "2026-04-30T16:54:57.252Z",
+  "recipient": "jalelprince17@tnhs.com",
+  "subject": "Important notification regarding Jalel Prince Gayo",
+  "hasApiKey": true,
+  "senderEmail": "tupinhs_clinic@hotmail.com"
+}
+ERROR: {
+  "timestamp": "2026-04-30T16:54:57.259Z",
+  "errorType": "ReferenceError",
+  "errorMessage": "require is not defined",
+  "errorString": "ReferenceError: require is not defined",
+  "errorStack": "ReferenceError: require is not defined\n    at getSmtp2goClient (C:/Website_Projects/medisync-main/src/lib/server/mail.ts:23:22)\n    at sendMailMessage (C:/Website_Projects/medisync-main/src/lib/server/mail.ts:47:34)\n    at sendEmail (C:/Website_Projects/medisync-main/src/routes/(app)/students/[id]/+page.server.ts:396:51)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async fn (C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/runtime/server/page/actions.js:288:19)\n    at async handle_action_json_request (C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/runtime/server/page/actions.js:76:16)\n    at async resolve (C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/runtime/server/respond.js:524:18)\n    at async fn (file:///C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/exports/hooks/sequence.js:102:13)\n    at async handleTheme (C:/Website_Projects/medisync-main/src/hooks.server.ts:53:9)\n    at async fn (file:///C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/exports/hooks/sequence.js:102:13)"
+}
+{
+  "timestamp": "2026-04-30T16:55:50.494Z",
+  "recipient": "jalelprince17@tnhs.com",
+  "subject": "Important notification regarding Jalel Prince Gayo",
+  "hasApiKey": true,
+  "senderEmail": "tupinhs_clinic@hotmail.com"
+}
+ERROR: {
+  "timestamp": "2026-04-30T16:55:50.505Z",
+  "errorType": "ReferenceError",
+  "errorMessage": "require is not defined",
+  "errorString": "ReferenceError: require is not defined",
+  "errorStack": "ReferenceError: require is not defined\n    at getSmtp2goClient (C:/Website_Projects/medisync-main/src/lib/server/mail.ts:23:22)\n    at sendMailMessage (C:/Website_Projects/medisync-main/src/lib/server/mail.ts:47:34)\n    at sendEmail (C:/Website_Projects/medisync-main/src/routes/(app)/students/[id]/+page.server.ts:396:51)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async fn (C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/runtime/server/page/actions.js:288:19)\n    at async handle_action_json_request (C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/runtime/server/page/actions.js:76:16)\n    at async resolve (C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/runtime/server/respond.js:524:18)\n    at async fn (file:///C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/exports/hooks/sequence.js:102:13)\n    at async handleTheme (C:/Website_Projects/medisync-main/src/hooks.server.ts:53:9)\n    at async fn (file:///C:/Website_Projects/medisync-main/node_modules/.pnpm/@sveltejs+kit@2.58.0_@svelt_0c89c4592862c3a4238d403f5af0e314/node_modules/@sveltejs/kit/src/exports/hooks/sequence.js:102:13)"
+}
+{
+  "timestamp": "2026-05-01T01:11:16.655Z",
+  "recipient": "jalelprince.gayo@msugensan.edu.ph",
+  "subject": "Important notification regarding Kyle Stephen Silaya",
+  "hasApiKey": true,
+  "senderEmail": "tupinhs_clinic@hotmail.com"
+}
+ERROR: {
+  "timestamp": "2026-05-01T01:11:22.449Z",
+  "errorType": "Error",
+  "errorMessage": "Invalid login: 535 Incorrect authentication data",
+  "errorString": "Error: Invalid login: 535 Incorrect authentication data",
+  "errorStack": "Error: Invalid login: 535 Incorrect authentication data\n    at SMTPConnection._formatError (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:887:19)\n    at SMTPConnection._actionAUTHComplete (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1695:34)\n    at SMTPConnection.<anonymous> (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:626:26)\n    at SMTPConnection._processResponse (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1072:20)\n    at SMTPConnection._onData (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:847:14)\n    at SMTPConnection._onSocketData (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:217:44)\n    at TLSSocket.emit (node:events:509:28)\n    at addChunk (node:internal/streams/readable:563:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)\n    at Readable.push (node:internal/streams/readable:394:5)"
+}
+{
+  "timestamp": "2026-05-01T01:12:34.171Z",
+  "recipient": "jalelprince.gayo@msugensan.edu.ph",
+  "subject": "Important notification regarding Kyle Stephen Silaya",
+  "hasApiKey": true,
+  "senderEmail": "tupinhs_clinic@hotmail.com"
+}
+ERROR: {
+  "timestamp": "2026-05-01T01:12:35.847Z",
+  "errorType": "Error",
+  "errorMessage": "Invalid login: 535 Incorrect authentication data",
+  "errorString": "Error: Invalid login: 535 Incorrect authentication data",
+  "errorStack": "Error: Invalid login: 535 Incorrect authentication data\n    at SMTPConnection._formatError (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:887:19)\n    at SMTPConnection._actionAUTHComplete (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1695:34)\n    at SMTPConnection.<anonymous> (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:626:26)\n    at SMTPConnection._processResponse (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1072:20)\n    at SMTPConnection._onData (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:847:14)\n    at SMTPConnection._onSocketData (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:217:44)\n    at TLSSocket.emit (node:events:509:28)\n    at addChunk (node:internal/streams/readable:563:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)\n    at Readable.push (node:internal/streams/readable:394:5)"
+}
+{
+  "timestamp": "2026-05-01T01:15:24.819Z",
+  "recipient": "jalelprince.gayo@msugensan.edu.ph",
+  "subject": "Important notification regarding Kyle Stephen Silaya",
+  "hasApiKey": true,
+  "senderEmail": "tupinhs_clinic@hotmail.com"
+}
+ERROR: {
+  "timestamp": "2026-05-01T01:15:28.161Z",
+  "errorType": "Error",
+  "errorMessage": "Invalid login: 535 Incorrect authentication data",
+  "errorString": "Error: Invalid login: 535 Incorrect authentication data",
+  "errorStack": "Error: Invalid login: 535 Incorrect authentication data\n    at SMTPConnection._formatError (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:887:19)\n    at SMTPConnection._actionAUTHComplete (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1695:34)\n    at SMTPConnection.<anonymous> (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:626:26)\n    at SMTPConnection._processResponse (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1072:20)\n    at SMTPConnection._onData (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:847:14)\n    at SMTPConnection._onSocketData (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:217:44)\n    at TLSSocket.emit (node:events:509:28)\n    at addChunk (node:internal/streams/readable:563:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)\n    at Readable.push (node:internal/streams/readable:394:5)"
+}
+{
+  "timestamp": "2026-05-01T01:15:56.199Z",
+  "recipient": "jalelprince.gayo@msugensan.edu.ph",
+  "subject": "Important notification regarding Kyle Stephen Silaya",
+  "hasApiKey": true,
+  "senderEmail": "tupinhs_clinic@hotmail.com"
+}
+ERROR: {
+  "timestamp": "2026-05-01T01:15:58.741Z",
+  "errorType": "Error",
+  "errorMessage": "Invalid login: 535 Incorrect authentication data",
+  "errorString": "Error: Invalid login: 535 Incorrect authentication data",
+  "errorStack": "Error: Invalid login: 535 Incorrect authentication data\n    at SMTPConnection._formatError (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:887:19)\n    at SMTPConnection._actionAUTHComplete (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1695:34)\n    at SMTPConnection.<anonymous> (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:626:26)\n    at SMTPConnection._processResponse (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1072:20)\n    at SMTPConnection._onData (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:847:14)\n    at SMTPConnection._onSocketData (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:217:44)\n    at TLSSocket.emit (node:events:509:28)\n    at addChunk (node:internal/streams/readable:563:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)\n    at Readable.push (node:internal/streams/readable:394:5)"
+}
+{
+  "timestamp": "2026-05-01T01:27:53.152Z",
+  "recipient": "jalelprince.gayo@msugensan.edu.ph",
+  "subject": "Important notification regarding Kyle Stephen Silaya",
+  "hasApiKey": true,
+  "senderEmail": "tupinhs_clinic@hotmail.com"
+}
+ERROR: {
+  "timestamp": "2026-05-01T01:27:58.355Z",
+  "errorType": "Error",
+  "errorMessage": "Invalid login: 535 Incorrect authentication data",
+  "errorString": "Error: Invalid login: 535 Incorrect authentication data",
+  "errorStack": "Error: Invalid login: 535 Incorrect authentication data\n    at SMTPConnection._formatError (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:887:19)\n    at SMTPConnection._actionAUTHComplete (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1695:34)\n    at SMTPConnection.<anonymous> (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:626:26)\n    at SMTPConnection._processResponse (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1072:20)\n    at SMTPConnection._onData (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:847:14)\n    at SMTPConnection._onSocketData (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:217:44)\n    at TLSSocket.emit (node:events:509:28)\n    at addChunk (node:internal/streams/readable:563:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)\n    at Readable.push (node:internal/streams/readable:394:5)"
+}
+{
+  "timestamp": "2026-05-01T01:33:43.155Z",
+  "recipient": "jalelprince.gayo@msugensan.edu.ph",
+  "subject": "Important notification regarding Kyle Stephen Silaya",
+  "hasApiKey": true,
+  "senderEmail": "tupinhs_clinic@hotmail.com"
+}
+ERROR: {
+  "timestamp": "2026-05-01T01:33:47.318Z",
+  "errorType": "Error",
+  "errorMessage": "Invalid login: 535 Incorrect authentication data",
+  "errorString": "Error: Invalid login: 535 Incorrect authentication data",
+  "errorStack": "Error: Invalid login: 535 Incorrect authentication data\n    at SMTPConnection._formatError (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:887:19)\n    at SMTPConnection._actionAUTHComplete (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1695:34)\n    at SMTPConnection.<anonymous> (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:626:26)\n    at SMTPConnection._processResponse (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1072:20)\n    at SMTPConnection._onData (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:847:14)\n    at SMTPConnection._onSocketData (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:217:44)\n    at TLSSocket.emit (node:events:509:28)\n    at addChunk (node:internal/streams/readable:563:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)\n    at Readable.push (node:internal/streams/readable:394:5)"
+}
+{
+  "timestamp": "2026-05-01T01:36:33.716Z",
+  "recipient": "jalelprince.gayo@msugensan.edu.ph",
+  "subject": "Important notification regarding Kyle Stephen Silaya",
+  "hasApiKey": true,
+  "senderEmail": "tupinhs_clinic@hotmail.com"
+}
+ERROR: {
+  "timestamp": "2026-05-01T01:36:37.275Z",
+  "errorType": "Error",
+  "errorMessage": "Invalid login: 535 Incorrect authentication data",
+  "errorString": "Error: Invalid login: 535 Incorrect authentication data",
+  "errorStack": "Error: Invalid login: 535 Incorrect authentication data\n    at SMTPConnection._formatError (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:887:19)\n    at SMTPConnection._actionAUTHComplete (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1695:34)\n    at SMTPConnection.<anonymous> (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:626:26)\n    at SMTPConnection._processResponse (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:1072:20)\n    at SMTPConnection._onData (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:847:14)\n    at SMTPConnection._onSocketData (C:\\Website_Projects\\medisync-main\\node_modules\\.pnpm\\nodemailer@8.0.7\\node_modules\\nodemailer\\lib\\smtp-connection\\index.js:217:44)\n    at TLSSocket.emit (node:events:509:28)\n    at addChunk (node:internal/streams/readable:563:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)\n    at Readable.push (node:internal/streams/readable:394:5)"
+}
+{
+  "timestamp": "2026-05-01T01:48:55.216Z",
+  "recipient": "jalelprince.gayo@msugensan.edu.ph",
+  "subject": "Important notification regarding Kyle Stephen Silaya",
+  "hasApiKey": true,
+  "senderEmail": "tupinhs_clinic@hotmail.com"
+}
+SUCCESS: Email sent
