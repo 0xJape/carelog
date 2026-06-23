@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { Calendar, House, LogOut, Settings, Users, UsersRound } from '@lucide/svelte';
+	import { Calendar, House, LogOut, Settings, Users, UsersRound, Package } from '@lucide/svelte';
 
 	interface Props {
 		onNavClick?: () => void;
@@ -12,7 +12,7 @@
 	const mainMenuItems = [
 		{
 			title: 'Dashboard',
-			href: '/',
+			href: '/dashboard',
 			icon: House
 		},
 		{
@@ -24,6 +24,11 @@
 			title: 'Visits',
 			href: '/visits',
 			icon: Calendar
+		},
+		{
+			title: 'Inventory',
+			href: '/inventory',
+			icon: Package
 		},
 		{
 			title: 'Staffs',
@@ -38,9 +43,6 @@
 	];
 
 	function isActiveRoute(href: string, currentPath: string): boolean {
-		if (href === '/') {
-			return currentPath === '/';
-		}
 		return currentPath.startsWith(href);
 	}
 

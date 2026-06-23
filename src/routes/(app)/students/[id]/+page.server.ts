@@ -1,6 +1,5 @@
 import { db } from '$lib/server/db/index.js';
 import { clinicVisits, emergencyContacts, students, users } from '$lib/server/db/schema.js';
-import { sendMailMessage } from '$lib/server/mail.js';
 import { error, fail, isHttpError } from '@sveltejs/kit';
 import { desc, eq } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
@@ -355,6 +354,7 @@ School Health Office
 			`.trim();
 
 			// Send the email
+			const { sendMailMessage } = await import('$lib/server/mail.js');
 			await sendMailMessage(contact.email, emailContent, mailData.subject);
 
 			return {
@@ -540,6 +540,7 @@ School Health Office
 			}
 
 			// Send the email
+			const { sendMailMessage } = await import('$lib/server/mail.js');
 			await sendMailMessage(emailData.recipientEmail, emailContent, emailData.subject);
 
 			return {
@@ -668,6 +669,7 @@ This medical referral was sent from CareLog School Health Management System.
 			`.trim();
 
 			// Send the email with referral content
+			const { sendMailMessage } = await import('$lib/server/mail.js');
 			await sendMailMessage(emailData.recipientEmail, emailContent, emailData.subject);
 
 			return {

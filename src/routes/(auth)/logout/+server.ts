@@ -8,10 +8,11 @@ export const GET: RequestHandler = async (event) => {
 
 	if (sessionToken) {
 		const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(sessionToken)));
-		await invalidateSession(sessionId);
+		// Fire-and-forget session deletion — don't block redirect on DB call
+		invalidateSession(sessionId).catch(() => {});
 	}
 
 	deleteSessionTokenCookie(event);
 
-	throw redirect(302, '/login');
+	throw redirect(302, '/');
 };

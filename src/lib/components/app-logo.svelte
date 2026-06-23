@@ -7,7 +7,7 @@
 </script>
 
 <!-- Logo section -->
-<a class="flex items-center gap-3" href="/">
+<a class="flex items-center gap-3" href="/dashboard">
 	<div class="flex size-10 items-center justify-center">
 		<img src="/logo.png" alt="CareLog logo" class="size-10 rounded-md shadow-md" />
 	</div>

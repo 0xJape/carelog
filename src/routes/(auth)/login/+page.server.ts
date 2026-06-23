@@ -8,7 +8,7 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (locals.user) {
-		return redirect(302, '/');
+		return redirect(302, '/dashboard');
 	}
 
 	return {};
@@ -59,9 +59,9 @@ export const actions: Actions = {
 			console.log('Session created:', session.id);
 
 			setSessionTokenCookie(event, sessionToken, session.expiresAt);
-			console.log('Cookie set, redirecting to /');
+			console.log('Cookie set, redirecting to /dashboard');
 
-			return redirect(303, '/');
+			return redirect(303, '/dashboard');
 		} catch (err) {
 			if (isRedirect(err)) {
 				console.log('Redirect caught, rethrowing');

@@ -102,14 +102,14 @@
 				Go Back
 			</button>
 
-			<!-- Home button -->
-			<a
-				href="/"
-				class="medical-button-primary inline-flex items-center justify-center gap-2 text-sm"
-			>
-				<Home size={16} />
-				Return to Dashboard
-			</a>
+	<!-- Home button -->
+		<a
+			href="/dashboard"
+			class="medical-button-primary inline-flex items-center justify-center gap-2 text-sm"
+		>
+			<Home size={16} />
+			Return to Dashboard
+		</a>
 
 			<!-- Retry button -->
 			<button

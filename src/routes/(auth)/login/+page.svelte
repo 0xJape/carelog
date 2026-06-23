@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import AppLogo from '$lib/components/app-logo.svelte';
 	import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
@@ -13,7 +14,7 @@
 	} from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { AlertCircle, Eye, EyeOff, Loader2, ShieldCheck } from '@lucide/svelte';
+	import { AlertCircle, ArrowLeft, Eye, EyeOff, Loader2, ShieldCheck } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 
 	let email = $state('');
@@ -63,6 +64,14 @@
 <div
 	class="relative min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
 >
+	<!-- Back to landing -->
+	<div class="absolute top-4 left-4 z-10">
+		<a href="/" class="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200">
+			<ArrowLeft class="h-4 w-4" />
+			Back
+		</a>
+	</div>
+
 	<!-- Theme Switcher -->
 	<div class="absolute top-4 right-4 z-10">
 		<ThemeSwitcher />

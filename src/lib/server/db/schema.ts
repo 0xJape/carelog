@@ -251,6 +251,125 @@ export const auditLogs = pgTable('audit_logs', {
 	createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow()
 });
 
+// Medicines table
+export const medicines = pgTable('medicines', {
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	name: text('name').notNull().unique(),
+	genericName: text('generic_name'),
+	description: text('description'),
+	dosage: text('dosage'), // e.g., "500mg", "10ml"
+	form: text('form'), // tablet, capsule, syrup, injection, etc.
+	manufacturer: text('manufacturer'),
+	supplier: text('supplier'),
+	unitPrice: text('unit_price'), // stored as string for precision
+	minStockLevel: integer('min_stock_level').notNull().default(10),
+	maxStockLevel: integer('max_stock_level').notNull().default(100),
+	location: text('location'), // storage location in clinic
+	notes: text('notes'),
+	isActive: boolean('is_active').notNull().default(true),
+	createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+	updatedAt: timestamp('updated_at', { mode: 'date' }).notNull().defaultNow()
+});
+
+// Inventory batches (track by batch number and expiration date)
+export const medicineBatches = pgTable('medicine_batches', {
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	medicineId: text('medicine_id')
+		.references(() => medicines.id, { onDelete: 'cascade' })
+		.notNull(),
+	batchNumber: text('batch_number').notNull(),
+	quantity: integer('quantity').notNull().default(0),
+	expirationDate: timestamp('expiration_date', { mode: 'date' }).notNull(),
+	dateReceived: timestamp('date_received', { mode: 'date' }).notNull().defaultNow(),
+	location: text('location'), // can override medicine's default location
+	notes: text('notes'),
+	isActive: boolean('is_active').notNull().default(true),
+	createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+	updatedAt: timestamp('updated_at', { mode: 'date' }).notNull().defaultNow()
+});
+
+// Inventory transactions (log all stock movements)
+export const inventoryTransactions = pgTable('inventory_transactions', {
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	medicineId: text('medicine_id')
+		.references(() => medicines.id, { onDelete: 'cascade' })
+		.notNull(),
+	batchId: text('batch_id').references(() => medicineBatches.id, { onDelete: 'set null' }),
+	transactionType: text('transaction_type').notNull(), // 'stock_in', 'stock_out', 'adjustment', 'expired', 'damaged'
+	quantity: integer('quantity').notNull(),
+	reason: text('reason'), // reason for transaction
+	performedBy: text('performed_by')
+		.references(() => users.id)
+		.notNull(),
+	referenceId: text('reference_id'), // link to visit, purchase order, etc.
+	notes: text('notes'),
+	createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow()
+});
+
+// Inventory alerts
+export const inventoryAlerts = pgTable('inventory_alerts', {
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	medicineId: text('medicine_id')
+		.references(() => medicines.id, { onDelete: 'cascade' })
+		.notNull(),
+	alertType: text('alert_type').notNull(), // 'low_stock', 'expiring_soon', 'expired', 'overstock'
+	severity: text('severity').$type<Severity>().notNull().default('medium'), // low, medium, high, critical
+	message: text('message').notNull(),
+	isResolved: boolean('is_resolved').notNull().default(false),
+	resolvedAt: timestamp('resolved_at', { mode: 'date' }),
+	resolvedBy: text('resolved_by').references(() => users.id),
+	createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow()
+});
+
+// Define relationships
+export const medicinesRelations = relations(medicines, ({ many }) => ({
+	batches: many(medicineBatches),
+	transactions: many(inventoryTransactions),
+	alerts: many(inventoryAlerts)
+}));
+
+export const medicineBatchesRelations = relations(medicineBatches, ({ one, many }) => ({
+	medicine: one(medicines, {
+		fields: [medicineBatches.medicineId],
+		references: [medicines.id]
+	}),
+	transactions: many(inventoryTransactions)
+}));
+
+export const inventoryTransactionsRelations = relations(inventoryTransactions, ({ one }) => ({
+	medicine: one(medicines, {
+		fields: [inventoryTransactions.medicineId],
+		references: [medicines.id]
+	}),
+	batch: one(medicineBatches, {
+		fields: [inventoryTransactions.batchId],
+		references: [medicineBatches.id]
+	}),
+	user: one(users, {
+		fields: [inventoryTransactions.performedBy],
+		references: [users.id]
+	})
+}));
+
+export const inventoryAlertsRelations = relations(inventoryAlerts, ({ one }) => ({
+	medicine: one(medicines, {
+		fields: [inventoryAlerts.medicineId],
+		references: [medicines.id]
+	}),
+	resolvedByUser: one(users, {
+		fields: [inventoryAlerts.resolvedBy],
+		references: [users.id]
+	})
+}));
+
 // Define relationships
 export const studentsRelations = relations(students, ({ one, many }) => ({
 	doctor: one(users, {
