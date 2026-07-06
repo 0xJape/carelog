@@ -89,6 +89,13 @@ export async function sendNotification(payload: NotifyPayload): Promise<void> {
 				.trim()
 				.slice(0, 160);                     // SMS max length
 
+		// Sanitize message — normalize whitespace
+		const safeMessage = payload.message
+			.replace(/\r?\n/g, ' ')
+			.replace(/\t/g, ' ')
+			.replace(/\s{2,}/g, ' ')
+			.trim();
+
 		// Sanitize htmlMessage — remove literal newlines/tabs that break JSON
 		const safeHtml = payload.htmlMessage
 			?.replace(/\r?\n/g, ' ')
@@ -102,6 +109,7 @@ export async function sendNotification(payload: NotifyPayload): Promise<void> {
 			body: JSON.stringify({
 				...payload,
 				phone: payload.phone ? normalizePhone(payload.phone) : undefined,
+				message: safeMessage,
 				smsMessage: smsContent,
 				htmlMessage: safeHtml,
 				sentAt: new Date().toISOString(),
