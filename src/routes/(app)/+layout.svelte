@@ -50,7 +50,7 @@
 	<MobileNavigation isOpen={isMobileMenuOpen} onClose={closeMobileMenu} {data} />
 
 	<!-- Enhanced responsive layout container -->
-	<div class="flex h-full grow flex-col md:flex-1 {isSidebarCollapsed ? '' : 'md:ml-64 lg:ml-80'}">
+	<div class="flex h-full grow flex-col md:flex-1 {isSidebarCollapsed ? '' : 'md:ml-64'}">
 		<!-- Mobile menu button for when sidebar is collapsed -->
 		<div class="flex items-center justify-between p-4 md:hidden">
 			<MobileMenuButton isOpen={isMobileMenuOpen} onToggle={toggleMobileMenu} />

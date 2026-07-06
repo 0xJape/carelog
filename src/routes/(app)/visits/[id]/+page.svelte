@@ -1,9 +1,26 @@
 <script lang="ts">
 	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
+	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import { Separator } from '$lib/components/ui/separator';
-	import { AlertTriangle, ArrowLeft, User } from '@lucide/svelte';
+	import {
+		Activity,
+		AlertTriangle,
+		ArrowLeft,
+		CalendarDays,
+		Clock,
+		Droplet,
+		Gauge,
+		HeartPulse,
+		Pill,
+		Ruler,
+		Stethoscope,
+		Thermometer,
+		Timer,
+		User,
+		Wind
+	} from '@lucide/svelte';
 	import type { PageData } from './$types';
 
 	interface Props {
@@ -148,9 +165,9 @@
 	<title>Visit Details</title>
 </svelte:head>
 
-<div class="container mx-auto max-w-7xl px-4 py-8">
+<div class="mx-auto w-full max-w-7xl px-4 py-8">
 	<!-- Page Header -->
-	<div class="mb-8 flex items-center justify-between">
+	<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 		<div class="flex items-center gap-4">
 			<Button
 				variant="outline"
@@ -163,13 +180,23 @@
 				<span class="sr-only">Back</span>
 			</Button>
 			<div>
-				<h1 class="text-3xl font-bold text-gray-900 dark:text-white">Clinic Visit Details</h1>
-				<p class="mt-2 text-gray-600 dark:text-gray-400">Visit #{visit.visitNumber}</p>
+				<div class="flex items-center gap-2">
+					<h1 class="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+						Visit Details
+					</h1>
+					<span class="rounded-md bg-muted px-2 py-0.5 text-sm font-medium text-muted-foreground">
+						#{visit.visitNumber}
+					</span>
+				</div>
+				<p class="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+					<CalendarDays class="size-3.5" />
+					{formattedDate} · {formattedTime}
+				</p>
 			</div>
 		</div>
 
 		<!-- Status and Emergency Badges -->
-		<!-- <div class="flex items-center gap-3">
+		<div class="flex flex-wrap items-center gap-2">
 			{#if visit.isEmergency}
 				<Badge variant="destructive" class="flex items-center gap-1">
 					<AlertTriangle class="size-3" />
@@ -182,177 +209,246 @@
 			<Badge variant={getSeverityVariant(visit.severity)} class="capitalize">
 				{visit.severity} Priority
 			</Badge>
-		</div> -->
+		</div>
+	</div>
+
+	<!-- Quick stats bar -->
+	<div class="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+		<div class="rounded-xl border border-border bg-card p-4">
+			<div class="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+				<Clock class="size-3.5" /> Check-in
+			</div>
+			<p class="mt-1 text-lg font-semibold text-foreground">{formattedTime}</p>
+		</div>
+		<div class="rounded-xl border border-border bg-card p-4">
+			<div class="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+				<Clock class="size-3.5" /> Check-out
+			</div>
+			<p class="mt-1 text-lg font-semibold text-foreground">{checkOutFormatted ?? '—'}</p>
+		</div>
+		<div class="rounded-xl border border-border bg-card p-4">
+			<div class="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+				<Timer class="size-3.5" /> Duration
+			</div>
+			<p class="mt-1 text-lg font-semibold text-foreground">{visitDuration} min</p>
+		</div>
+		<div class="rounded-xl border border-border bg-card p-4">
+			<div class="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+				<Stethoscope class="size-3.5" /> Attended by
+			</div>
+			<p class="mt-1 truncate text-lg font-semibold text-foreground">
+				{visit.attendedBy.firstName}
+				{visit.attendedBy.lastName}
+			</p>
+		</div>
 	</div>
 
 	<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
 		<!-- Main Visit Information Card -->
-		<div class="lg:col-span-2">
-			<Card class="p-6">
-				<div class="space-y-6">
-					<!-- Visit Header -->
-					<div>
-						<h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Visit</h3>
-
-						<!-- Reason -->
-						<div class="mb-4">
-							<div class="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">Reason:</div>
-							<div class="text-gray-900 dark:text-white">
-								{visit.chiefComplaint || 'No reason specified'}
-							</div>
-						</div>
-
-						<!-- Details from Notes -->
-						{#if visit.notes}
-							<div class="mb-4">
-								<div class="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">
-									Details:
-								</div>
-								<div class="leading-relaxed whitespace-pre-wrap text-gray-900 dark:text-white">
-									{visit.notes}
-								</div>
-							</div>
-						{/if}
-
-						<!-- Symptoms -->
-						{#if visit.symptoms}
-							<div class="mb-4">
-								<div class="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">
-									Details:
-								</div>
-								<div class="whitespace-pre-wrap text-gray-900 dark:text-white">
-									{visit.symptoms}
-								</div>
-							</div>
-						{/if}
-
-						<!-- Diagnosis -->
-						{#if visit.diagnosis}
-							<div class="mb-4">
-								<div class="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">
-									Diagnosis:
-								</div>
-								<div class="text-gray-900 dark:text-white">
-									{visit.diagnosis}
-								</div>
-							</div>
-						{/if}
-
-						<!-- Treatment -->
-						{#if visit.treatment}
-							<div class="mb-4">
-								<div class="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">
-									Treatment:
-								</div>
-								<div class="whitespace-pre-wrap text-gray-900 dark:text-white">
-									{visit.treatment}
-								</div>
-							</div>
-						{/if}
-
-						<!-- Medications Given -->
-						{#if visit.medicationGiven || medications.length > 0}
-							<div class="mb-4">
-								<div class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-									Medications Given
-								</div>
-								{#if visit.medicationGiven}
-									<ul class="list-inside list-disc space-y-1">
-										{#each visit.medicationGiven.split(/[\n,]+/) as medication}
-											<li class="text-sm text-gray-900 dark:text-white">{medication.trim()}</li>
-										{/each}
-									</ul>
-								{:else if medications.length > 0}
-									<ul class="list-inside list-disc space-y-1">
-										{#each medications as medication}
-											<li class="text-sm text-gray-900 capitalize dark:text-white">{medication}</li>
-										{/each}
-									</ul>
+		<div class="space-y-6 lg:col-span-2">
+			<!-- Vital Signs -->
+			{#if vitalSigns && Object.values(vitalSigns).some((v) => v)}
+				<Card>
+					<CardHeader>
+						<CardTitle class="flex items-center gap-2 text-base">
+							<Activity class="size-5 text-primary" />
+							Vital Signs
+						</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+							{#each [
+								{ label: 'Temperature', value: vitalSigns.temperature, icon: Thermometer },
+								{ label: 'Blood Pressure', value: vitalSigns.bloodPressure, icon: Gauge },
+								{ label: 'Pulse', value: vitalSigns.pulse, icon: HeartPulse },
+								{ label: 'Respiratory Rate', value: vitalSigns.respiratoryRate, icon: Wind },
+								{ label: 'O₂ Saturation', value: vitalSigns.oxygenSaturation, icon: Droplet },
+								{ label: 'Blood Sugar', value: vitalSigns.bloodSugar, icon: Droplet },
+								{ label: 'Height', value: vitalSigns.height, icon: Ruler },
+								{ label: 'Weight', value: vitalSigns.weight, icon: Ruler },
+								{ label: 'BMI', value: vitalSigns.bmi, icon: Gauge }
+							] as vital}
+								{#if vital.value}
+									{@const VIcon = vital.icon}
+									<div class="rounded-lg border border-border bg-muted/30 p-3">
+										<div class="flex items-center gap-1.5 text-xs text-muted-foreground">
+											<VIcon class="size-3.5" />
+											{vital.label}
+										</div>
+										<p class="mt-1 text-base font-semibold text-foreground">{vital.value}</p>
+									</div>
 								{/if}
-							</div>
-						{/if}
+							{/each}
+						</div>
+					</CardContent>
+				</Card>
+			{/if}
 
-						<!-- Instructions -->
-						{#if visit.instructions}
-							<div class="mb-4">
-								<div class="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">
-									Instructions:
-								</div>
-								<div class="whitespace-pre-wrap text-gray-900 dark:text-white">
-									{visit.instructions}
-								</div>
-							</div>
-						{/if}
-
-						<!-- Nurse Information -->
-						<div class="border-t border-gray-200 pt-4 dark:border-gray-700">
-							<div class="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">
-								{visit.attendedBy.role === 'nurse' ? 'Nurse' : 'Attended by'}:
-							</div>
-							<div class="text-gray-900 dark:text-white">
-								{visit.attendedBy.firstName}
-								{visit.attendedBy.lastName}
-							</div>
+			<!-- Visit Notes / Clinical Details -->
+			<Card>
+				<CardHeader>
+					<CardTitle class="flex items-center gap-2 text-base">
+						<Stethoscope class="size-5 text-primary" />
+						Clinical Details
+					</CardTitle>
+				</CardHeader>
+				<CardContent class="space-y-5">
+					<!-- Reason -->
+					<div>
+						<div class="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+							Chief Complaint
+						</div>
+						<div class="text-sm text-foreground">
+							{visit.chiefComplaint || 'No reason specified'}
 						</div>
 					</div>
-				</div>
+
+					{#if visit.notes}
+						<div>
+							<div class="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+								Notes
+							</div>
+							<div class="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+								{visit.notes}
+							</div>
+						</div>
+					{/if}
+
+					{#if visit.symptoms}
+						<div>
+							<div class="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+								Symptoms
+							</div>
+							<div class="whitespace-pre-wrap text-sm text-foreground">
+								{visit.symptoms}
+							</div>
+						</div>
+					{/if}
+
+					{#if visit.diagnosis}
+						<div>
+							<div class="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+								Diagnosis
+							</div>
+							<div class="text-sm text-foreground">{visit.diagnosis}</div>
+						</div>
+					{/if}
+
+					{#if visit.treatment}
+						<div>
+							<div class="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+								Treatment
+							</div>
+							<div class="whitespace-pre-wrap text-sm text-foreground">{visit.treatment}</div>
+						</div>
+					{/if}
+
+					<!-- Medications Given -->
+					{#if visit.medicationGiven || medications.length > 0}
+						<div>
+							<div class="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+								<Pill class="size-3.5" /> Medications Given
+							</div>
+							<div class="flex flex-wrap gap-2">
+								{#if visit.medicationGiven}
+									{#each visit.medicationGiven.split(/[\n,]+/) as medication}
+										{#if medication.trim()}
+											<span
+												class="rounded-md bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary"
+											>
+												{medication.trim()}
+											</span>
+										{/if}
+									{/each}
+								{:else}
+									{#each medications as medication}
+										<span
+											class="rounded-md bg-primary/10 px-2.5 py-1 text-xs font-medium capitalize text-primary"
+										>
+											{medication}
+										</span>
+									{/each}
+								{/if}
+							</div>
+						</div>
+					{/if}
+
+					{#if visit.instructions}
+						<div>
+							<div class="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+								Instructions
+							</div>
+							<div class="whitespace-pre-wrap text-sm text-foreground">{visit.instructions}</div>
+						</div>
+					{/if}
+
+					<!-- Nurse Information -->
+					<Separator />
+					<div class="flex items-center gap-2 text-sm">
+						<Stethoscope class="size-4 text-muted-foreground" />
+						<span class="text-muted-foreground">
+							{visit.attendedBy.role === 'nurse' ? 'Nurse' : 'Attended by'}:
+						</span>
+						<span class="font-medium text-foreground">
+							{visit.attendedBy.firstName}
+							{visit.attendedBy.lastName}
+						</span>
+					</div>
+				</CardContent>
 			</Card>
 		</div>
 
 		<!-- Patient Information Sidebar -->
 		<div class="lg:col-span-1">
-			<div class="space-y-6">
+			<div class="space-y-6 lg:sticky lg:top-6">
 				<!-- Patient Info Card -->
-				<Card class="border-rose-200 bg-rose-50 dark:border-rose-800 dark:bg-rose-950/20">
+				<Card>
 					<CardHeader>
-						<CardTitle class="flex items-center gap-2 text-rose-900 dark:text-rose-100">
-							<User class="size-5" />
+						<CardTitle class="flex items-center gap-2 text-base">
+							<User class="size-5 text-primary" />
 							Patient Information
 						</CardTitle>
 					</CardHeader>
 					<CardContent class="space-y-4">
 						<!-- Patient Avatar and Name -->
-						<div class="flex items-center space-x-3">
-							<Avatar class="h-16 w-16">
+						<a
+							href={`/students/${visit.student.studentId}`}
+							class="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-accent"
+						>
+							<Avatar class="h-14 w-14">
 								{#if visit.student.profileUrl}
 									<AvatarImage
 										src={visit.student.profileUrl}
 										alt={`${visit.student.firstName} ${visit.student.lastName}`}
 									/>
 								{/if}
-								<AvatarFallback
-									class="bg-rose-200 text-rose-800 dark:bg-rose-800 dark:text-rose-200"
-								>
+								<AvatarFallback class="bg-primary/10 font-semibold text-primary">
 									{visit.student.firstName.charAt(0)}{visit.student.lastName.charAt(0)}
 								</AvatarFallback>
 							</Avatar>
-							<div>
-								<div class="font-semibold text-rose-900 dark:text-rose-100">
+							<div class="min-w-0">
+								<div class="truncate font-semibold text-foreground">
 									{visit.student.firstName}
 									{visit.student.lastName}
 								</div>
-								<div class="text-sm text-rose-700 dark:text-rose-300">
-									ID: {visit.student.studentId}
-								</div>
-								<div class="text-sm text-rose-700 dark:text-rose-300">
-									Age: {studentAge} years old
-								</div>
+								<div class="text-sm text-muted-foreground">ID: {visit.student.studentId}</div>
+								<div class="text-sm text-muted-foreground">{studentAge} years old</div>
 							</div>
-						</div>
+						</a>
 
-						<Separator class="border-rose-200 dark:border-rose-800" />
+						<Separator />
 
 						<!-- Student Details -->
-						<div class="space-y-3">
-							<div class="flex justify-between">
-								<span class="text-sm text-rose-700 dark:text-rose-300">Grade:</span>
-								<span class="text-sm font-medium text-rose-900 dark:text-rose-100">
+						<div class="space-y-2.5">
+							<div class="flex justify-between text-sm">
+								<span class="text-muted-foreground">Grade</span>
+								<span class="font-medium text-foreground">
 									{visit.student.grade}{visit.student.section ? ` ${visit.student.section}` : ''}
 								</span>
 							</div>
-							<div class="flex justify-between">
-								<span class="text-sm text-rose-700 dark:text-rose-300">Date of Birth:</span>
-								<span class="text-sm font-medium text-rose-900 dark:text-rose-100">
+							<div class="flex justify-between text-sm">
+								<span class="text-muted-foreground">Date of Birth</span>
+								<span class="font-medium text-foreground">
 									{new Date(visit.student.dateOfBirth).toLocaleDateString('en-US', {
 										month: 'short',
 										day: 'numeric',
@@ -361,40 +457,16 @@
 								</span>
 							</div>
 						</div>
-
-						<Separator class="border-rose-200 dark:border-rose-800" />
-
-						<!-- Visit Timing -->
-						<div class="space-y-3">
-							<div class="flex justify-between">
-								<span class="text-sm text-rose-700 dark:text-rose-300">Visit Date:</span>
-								<span class="text-sm font-medium text-rose-900 dark:text-rose-100">
-									{formattedDate}
-								</span>
-							</div>
-							<div class="flex justify-between">
-								<span class="text-sm text-rose-700 dark:text-rose-300">Check-in:</span>
-								<span class="text-sm font-medium text-rose-900 dark:text-rose-100">
-									{formattedTime}
-								</span>
-							</div>
-							{#if checkOutFormatted}
-								<div class="flex justify-between">
-									<span class="text-sm text-rose-700 dark:text-rose-300">Check-out:</span>
-									<span class="text-sm font-medium text-rose-900 dark:text-rose-100">
-										{checkOutFormatted}
-									</span>
-								</div>
-							{/if}
-						</div>
 					</CardContent>
 				</Card>
 
 				<!-- Medical History -->
 				{#if visit.student.chronicHealthConditions?.length > 0 || visit.student.currentMedications?.length > 0 || visit.student.healthHistory}
-					<Card class="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/20">
+					<Card
+						class="border-amber-300/60 bg-amber-50/60 dark:border-amber-500/30 dark:bg-amber-950/20"
+					>
 						<CardHeader>
-							<CardTitle class="flex items-center gap-2 text-amber-900 dark:text-amber-100">
+							<CardTitle class="flex items-center gap-2 text-base text-amber-900 dark:text-amber-200">
 								<AlertTriangle class="size-5" />
 								Medical History
 							</CardTitle>
@@ -402,40 +474,44 @@
 						<CardContent class="space-y-4">
 							{#if visit.student.chronicHealthConditions?.length > 0}
 								<div>
-									<div class="mb-2 text-sm font-medium text-amber-700 dark:text-amber-300">
+									<div class="mb-2 text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">
 										Health Conditions
 									</div>
-									<ul class="space-y-1">
+									<div class="flex flex-wrap gap-1.5">
 										{#each visit.student.chronicHealthConditions as condition}
-											<li class="text-sm text-amber-900 capitalize dark:text-amber-100">
-												• {condition}
-											</li>
+											<span
+												class="rounded-md bg-amber-200/70 px-2 py-0.5 text-xs font-medium capitalize text-amber-900 dark:bg-amber-900/40 dark:text-amber-100"
+											>
+												{condition}
+											</span>
 										{/each}
-									</ul>
+									</div>
 								</div>
 							{/if}
 
 							{#if visit.student.currentMedications?.length > 0}
 								<div>
-									<div class="mb-2 text-sm font-medium text-amber-700 dark:text-amber-300">
+									<div class="mb-2 text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">
 										Current Medications
 									</div>
-									<ul class="space-y-1">
+									<div class="flex flex-wrap gap-1.5">
 										{#each visit.student.currentMedications as medication}
-											<li class="text-sm text-amber-900 capitalize dark:text-amber-100">
-												• {medication}
-											</li>
+											<span
+												class="rounded-md bg-amber-200/70 px-2 py-0.5 text-xs font-medium capitalize text-amber-900 dark:bg-amber-900/40 dark:text-amber-100"
+											>
+												{medication}
+											</span>
 										{/each}
-									</ul>
+									</div>
 								</div>
 							{/if}
 
 							{#if visit.student.healthHistory}
 								<div>
-									<div class="mb-2 text-sm font-medium text-amber-700 dark:text-amber-300">
+									<div class="mb-2 text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">
 										Health History
 									</div>
-									<div class="text-sm whitespace-pre-wrap text-amber-900 dark:text-amber-100">
+									<div class="whitespace-pre-wrap text-sm text-amber-900 dark:text-amber-100">
 										{visit.student.healthHistory}
 									</div>
 								</div>

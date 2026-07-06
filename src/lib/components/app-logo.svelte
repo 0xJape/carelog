@@ -7,14 +7,18 @@
 </script>
 
 <!-- Logo section -->
-<a class="flex items-center gap-3" href="/dashboard">
+<a class="group flex items-center gap-3" href="/dashboard">
 	<div class="flex size-10 items-center justify-center">
-		<img src="/logo.png" alt="CareLog logo" class="size-10 rounded-md shadow-md" />
+		<img
+			src="/logo.png"
+			alt="CareLog logo"
+			class="size-10 rounded-lg shadow-sm ring-1 ring-border transition-transform duration-200 group-hover:scale-105"
+		/>
 	</div>
-	<div>
-		<h1 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">CareLog</h1>
+	<div class="leading-tight">
+		<h1 class="text-lg font-bold tracking-tight text-foreground">CareLog</h1>
 		{#if showSubtitle}
-			<p class="text-sm text-gray-500 dark:text-gray-400">Clinic Management</p>
+			<p class="text-xs text-muted-foreground">Clinic Management</p>
 		{/if}
 	</div>
 </a>

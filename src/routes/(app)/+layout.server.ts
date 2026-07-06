@@ -4,6 +4,7 @@ export const ssr = false;
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	return {
-		theme: locals.theme || 'light'
+		theme: locals.theme || 'light',
+		user: locals.user
 	};
 };

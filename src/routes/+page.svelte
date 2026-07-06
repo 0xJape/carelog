@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { gsap } from 'gsap';
+	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import {
@@ -131,6 +134,115 @@
 		'Automated email and notification system',
 		'Fully responsive design across all devices'
 	];
+
+	onMount(() => {
+		// Respect users who prefer reduced motion
+		const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		if (prefersReduced) return;
+
+		gsap.registerPlugin(ScrollTrigger);
+
+		const ctx = gsap.context(() => {
+			// Hero entrance — staggered reveal on load
+			gsap.from('[data-anim="hero"]', {
+				y: 32,
+				opacity: 0,
+				duration: 0.9,
+				ease: 'power3.out',
+				stagger: 0.12
+			});
+
+			// Floating glow behind hero
+			gsap.to('[data-anim="hero-glow"]', {
+				y: 24,
+				scale: 1.08,
+				duration: 6,
+				ease: 'sine.inOut',
+				yoyo: true,
+				repeat: -1
+			});
+
+			// Dashboard mockup — rise + subtle 3D tilt as it enters
+			gsap.from('[data-anim="mockup"]', {
+				y: 60,
+				opacity: 0,
+				rotateX: 8,
+				transformOrigin: 'center bottom',
+				duration: 1,
+				ease: 'power3.out',
+				scrollTrigger: {
+					trigger: '[data-anim="mockup"]',
+					start: 'top 85%'
+				}
+			});
+
+			// Generic section headers fade up
+			gsap.utils.toArray<HTMLElement>('[data-anim="section-head"]').forEach((el) => {
+				gsap.from(el, {
+					y: 28,
+					opacity: 0,
+					duration: 0.7,
+					ease: 'power2.out',
+					scrollTrigger: { trigger: el, start: 'top 88%' }
+				});
+			});
+
+			// Stats count-up
+			gsap.utils.toArray<HTMLElement>('[data-anim="stat-value"]').forEach((el) => {
+				const raw = el.dataset.value ?? el.textContent ?? '';
+				const num = parseFloat(raw.replace(/[^0-9.]/g, ''));
+				if (Number.isNaN(num)) return;
+				const suffix = raw.replace(/[0-9.]/g, '');
+				const obj = { val: 0 };
+				gsap.to(obj, {
+					val: num,
+					duration: 1.6,
+					ease: 'power2.out',
+					scrollTrigger: { trigger: el, start: 'top 90%' },
+					onUpdate: () => {
+						const isFloat = raw.includes('.');
+						el.textContent = (isFloat ? obj.val.toFixed(1) : Math.round(obj.val).toString()) + suffix;
+					}
+				});
+			});
+
+			// Batched card / item reveals with stagger per group
+			const groups: string[] = [
+				'[data-anim="feature-card"]',
+				'[data-anim="inv-mockup"]',
+				'[data-anim="inv-item"]',
+				'[data-anim="workflow-step"]',
+				'[data-anim="benefit"]',
+				'[data-anim="role"]',
+				'[data-anim="ai-card"]',
+				'[data-anim="tech-card"]',
+				'[data-anim="faq-item"]'
+			];
+			groups.forEach((sel) => {
+				const items = gsap.utils.toArray<HTMLElement>(sel);
+				if (!items.length) return;
+				gsap.from(items, {
+					y: 36,
+					opacity: 0,
+					duration: 0.6,
+					ease: 'power2.out',
+					stagger: 0.1,
+					scrollTrigger: { trigger: items[0], start: 'top 88%' }
+				});
+			});
+
+			// CTA pops in
+			gsap.from('[data-anim="cta"]', {
+				scale: 0.94,
+				opacity: 0,
+				duration: 0.7,
+				ease: 'back.out(1.4)',
+				scrollTrigger: { trigger: '[data-anim="cta"]', start: 'top 85%' }
+			});
+		});
+
+		return () => ctx.revert();
+	});
 </script>
 
 <svelte:head>
@@ -171,30 +283,30 @@
 
 	<!-- Hero -->
 	<section class="relative overflow-hidden px-6 pt-28 pb-20 md:pt-36 md:pb-28">
-		<div class="absolute -top-32 left-1/2 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-gradient-to-r from-blue-500/20 via-indigo-500/15 to-cyan-500/20 blur-3xl dark:from-blue-600/15 dark:via-indigo-600/10 dark:to-cyan-600/15"></div>
+		<div data-anim="hero-glow" class="absolute -top-32 left-1/2 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-gradient-to-r from-blue-500/20 via-indigo-500/15 to-cyan-500/20 blur-3xl dark:from-blue-600/15 dark:via-indigo-600/10 dark:to-cyan-600/15"></div>
 
 		<div class="relative mx-auto max-w-4xl text-center">
-			<div class="mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card px-4 py-1.5 text-xs font-medium shadow-sm">
+			<div data-anim="hero" class="mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card px-4 py-1.5 text-xs font-medium shadow-sm">
 				<Sparkles class="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
 				Powered by AI & Rule-Based Expert Systems
 			</div>
 
-			<h1 class="mb-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
+			<h1 data-anim="hero" class="mb-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
 				Smart Clinic
 				<span class="bg-gradient-to-r from-blue-600 via-indigo-500 to-cyan-500 bg-clip-text text-transparent">
 					Management
 				</span>
 			</h1>
 
-			<p class="mx-auto mb-4 max-w-2xl text-lg text-muted-foreground md:text-xl">
+			<p data-anim="hero" class="mx-auto mb-4 max-w-2xl text-lg text-muted-foreground md:text-xl">
 				A comprehensive AI-integrated platform for medical logging, pre-diagnosis, first aid guidance, referrals, inventory, and notifications.
 			</p>
 
-			<p class="mx-auto mb-10 max-w-xl text-sm text-muted-foreground/80">
+			<p data-anim="hero" class="mx-auto mb-10 max-w-xl text-sm text-muted-foreground/80">
 				Designed for clinic administrators, nurses, and patients — streamlining healthcare operations with intelligent automation.
 			</p>
 
-			<div class="flex flex-col items-center justify-center gap-3 sm:flex-row">
+			<div data-anim="hero" class="flex flex-col items-center justify-center gap-3 sm:flex-row">
 				<a href="/login">
 					<Button class="h-12 gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 px-8 text-base font-medium shadow-lg shadow-blue-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/30">
 						Get Started
@@ -212,9 +324,9 @@
 	</section>
 
 	<!-- Dashboard Mockup Preview -->
-	<section class="px-6 pb-16 md:pb-24">
+	<section class="px-6 pb-16 md:pb-24" style="perspective: 1200px;">
 		<div class="mx-auto max-w-5xl">
-			<div class="overflow-hidden rounded-2xl border border-border/60 bg-card/50 shadow-2xl backdrop-blur-sm">
+			<div data-anim="mockup" class="overflow-hidden rounded-2xl border border-border/60 bg-card/50 shadow-2xl backdrop-blur-sm">
 				<!-- Browser chrome -->
 				<div class="flex items-center gap-2 border-b border-border/40 px-4 py-2.5">
 					<div class="flex gap-1.5">
@@ -304,7 +416,7 @@
 			<div class="grid grid-cols-2 gap-6 md:grid-cols-4">
 				{#each stats as stat}
 					<div class="text-center">
-						<div class="text-2xl font-bold text-foreground md:text-3xl">{stat.value}</div>
+						<div data-anim="stat-value" data-value={stat.value} class="text-2xl font-bold text-foreground md:text-3xl">{stat.value}</div>
 						<div class="text-xs text-muted-foreground">{stat.label}</div>
 					</div>
 				{/each}
@@ -315,7 +427,7 @@
 	<!-- Features -->
 	<section id="features" class="scroll-mt-20 px-6 py-20 md:py-28">
 		<div class="mx-auto max-w-6xl">
-			<div class="mx-auto mb-14 max-w-2xl text-center">
+			<div data-anim="section-head" class="mx-auto mb-14 max-w-2xl text-center">
 				<p class="mb-3 text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Core Modules</p>
 				<h2 class="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
 					Everything your clinic needs
@@ -327,7 +439,7 @@
 
 			<div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
 				{#each features as feature}
-					<div class="group relative rounded-xl border border-border/60 bg-card/50 p-6 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-border hover:shadow-md">
+					<div data-anim="feature-card" class="group relative rounded-xl border border-border/60 bg-card/50 p-6 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-border hover:shadow-md">
 						<div class="mb-4 inline-flex rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 p-2.5 dark:from-blue-950/50 dark:to-indigo-950/50">
 							<feature.icon class="h-5 w-5 text-blue-600 dark:text-blue-400" />
 						</div>
@@ -356,7 +468,7 @@
 		<div class="mx-auto max-w-6xl">
 			<div class="grid gap-12 items-center lg:grid-cols-2 lg:gap-16">
 				<!-- Left: Mockup -->
-				<div class="rounded-2xl border border-border/60 bg-card/50 shadow-2xl backdrop-blur-sm overflow-hidden">
+				<div data-anim="inv-mockup" class="rounded-2xl border border-border/60 bg-card/50 shadow-2xl backdrop-blur-sm overflow-hidden">
 					<div class="flex items-center gap-2 border-b border-border/40 px-4 py-2.5 bg-muted/30">
 						<div class="flex gap-1.5">
 							<div class="h-3 w-3 rounded-full bg-red-400"></div>
@@ -423,7 +535,7 @@
 					</p>
 
 					<div class="space-y-4">
-						<div class="flex gap-4">
+						<div data-anim="inv-item" class="flex gap-4">
 							<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 shadow-sm flex-shrink-0">
 								<ClipboardList class="h-5 w-5 text-white" />
 							</div>
@@ -433,7 +545,7 @@
 							</div>
 						</div>
 
-						<div class="flex gap-4">
+						<div data-anim="inv-item" class="flex gap-4">
 							<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 shadow-sm flex-shrink-0">
 								<Activity class="h-5 w-5 text-white" />
 							</div>
@@ -443,7 +555,7 @@
 							</div>
 						</div>
 
-						<div class="flex gap-4">
+						<div data-anim="inv-item" class="flex gap-4">
 							<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-red-500 to-pink-600 shadow-sm flex-shrink-0">
 								<AlertTriangle class="h-5 w-5 text-white" />
 							</div>
@@ -453,7 +565,7 @@
 							</div>
 						</div>
 
-						<div class="flex gap-4">
+						<div data-anim="inv-item" class="flex gap-4">
 							<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 shadow-sm flex-shrink-0">
 								<Calendar class="h-5 w-5 text-white" />
 							</div>
@@ -483,7 +595,7 @@
 
 			<div class="space-y-6">
 				{#each workflowSteps as step, i}
-					<div class="flex items-start gap-6">
+					<div data-anim="workflow-step" class="flex items-start gap-6">
 						<div class="flex flex-col items-center">
 							<div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/20">
 								<step.icon class="h-5 w-5 text-white" />
@@ -517,7 +629,7 @@
 
 				<div class="space-y-4">
 					{#each benefits as benefit}
-						<div class="flex items-start gap-3">
+						<div data-anim="benefit" class="flex items-start gap-3">
 							<CheckCircle2 class="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-600 dark:text-emerald-400" />
 							<p class="text-sm text-muted-foreground">{benefit}</p>
 						</div>
@@ -532,7 +644,7 @@
 				</h3>
 
 				<div class="space-y-4">
-					<div class="flex items-center gap-4 rounded-lg border border-border/40 p-4 transition-colors hover:bg-accent/50">
+					<div data-anim="role" class="flex items-center gap-4 rounded-lg border border-border/40 p-4 transition-colors hover:bg-accent/50">
 						<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 shadow-sm">
 							<Shield class="h-5 w-5 text-white" />
 						</div>
@@ -542,7 +654,7 @@
 						</div>
 					</div>
 
-					<div class="flex items-center gap-4 rounded-lg border border-border/40 p-4 transition-colors hover:bg-accent/50">
+					<div data-anim="role" class="flex items-center gap-4 rounded-lg border border-border/40 p-4 transition-colors hover:bg-accent/50">
 						<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 shadow-sm">
 							<Stethoscope class="h-5 w-5 text-white" />
 						</div>
@@ -552,7 +664,7 @@
 						</div>
 					</div>
 
-					<div class="flex items-center gap-4 rounded-lg border border-border/40 p-4 transition-colors hover:bg-accent/50">
+					<div data-anim="role" class="flex items-center gap-4 rounded-lg border border-border/40 p-4 transition-colors hover:bg-accent/50">
 						<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 shadow-sm">
 							<HeartPulse class="h-5 w-5 text-white" />
 						</div>
@@ -577,17 +689,17 @@
 					</h2>
 
 					<div class="grid gap-4 sm:grid-cols-3">
-						<div class="rounded-xl bg-white/70 p-5 shadow-sm dark:bg-slate-800/60">
+						<div data-anim="ai-card" class="rounded-xl bg-white/70 p-5 shadow-sm dark:bg-slate-800/60">
 							<Brain class="mx-auto mb-3 h-6 w-6 text-blue-600 dark:text-blue-400" />
 							<h3 class="mb-1 text-sm font-semibold text-foreground">Rule-Based Expert System</h3>
 							<p class="text-xs text-muted-foreground">Symptom assessment & analysis</p>
 						</div>
-						<div class="rounded-xl bg-white/70 p-5 shadow-sm dark:bg-slate-800/60">
+						<div data-anim="ai-card" class="rounded-xl bg-white/70 p-5 shadow-sm dark:bg-slate-800/60">
 							<Zap class="mx-auto mb-3 h-6 w-6 text-amber-600 dark:text-amber-400" />
 							<h3 class="mb-1 text-sm font-semibold text-foreground">Machine Learning</h3>
 							<p class="text-xs text-muted-foreground">Pre-diagnosis pattern recognition</p>
 						</div>
-						<div class="rounded-xl bg-white/70 p-5 shadow-sm dark:bg-slate-800/60">
+						<div data-anim="ai-card" class="rounded-xl bg-white/70 p-5 shadow-sm dark:bg-slate-800/60">
 							<Activity class="mx-auto mb-3 h-6 w-6 text-emerald-600 dark:text-emerald-400" />
 							<h3 class="mb-1 text-sm font-semibold text-foreground">Recommendation Engine</h3>
 							<p class="text-xs text-muted-foreground">Automated first-aid suggestions</p>
@@ -610,7 +722,7 @@
 
 			<div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
 				{#each techStack as tech}
-					<div class="rounded-xl border border-border/60 bg-card/50 p-4 text-center backdrop-blur-sm transition-colors hover:bg-accent/50">
+					<div data-anim="tech-card" class="rounded-xl border border-border/60 bg-card/50 p-4 text-center backdrop-blur-sm transition-colors hover:bg-accent/50">
 						<tech.icon class="mx-auto mb-2 h-6 w-6 text-blue-600 dark:text-blue-400" />
 						<p class="text-sm font-semibold text-foreground">{tech.name}</p>
 						<p class="text-xs text-muted-foreground">{tech.desc}</p>
@@ -632,7 +744,7 @@
 
 			<div class="space-y-3">
 				{#each faqs as faq, i}
-					<div class="rounded-xl border border-border/60 bg-card/50 backdrop-blur-sm">
+					<div data-anim="faq-item" class="rounded-xl border border-border/60 bg-card/50 backdrop-blur-sm">
 						<button
 							class="flex w-full items-center justify-between gap-4 p-5 text-left transition-colors hover:bg-accent/50"
 							onclick={() => openFaq = openFaq === i ? null : i}
@@ -653,7 +765,7 @@
 
 	<!-- CTA -->
 	<section class="px-6 pb-20 text-center md:pb-32">
-		<div class="mx-auto max-w-2xl rounded-2xl border border-border/60 bg-gradient-to-br from-blue-50/80 via-indigo-50/60 to-cyan-50/80 p-8 backdrop-blur-sm dark:from-blue-950/30 dark:via-indigo-950/20 dark:to-cyan-950/30 md:p-12">
+		<div data-anim="cta" class="mx-auto max-w-2xl rounded-2xl border border-border/60 bg-gradient-to-br from-blue-50/80 via-indigo-50/60 to-cyan-50/80 p-8 backdrop-blur-sm dark:from-blue-950/30 dark:via-indigo-950/20 dark:to-cyan-950/30 md:p-12">
 			<h2 class="mb-3 text-2xl font-bold tracking-tight text-foreground md:text-3xl">
 				Ready to streamline your clinic?
 			</h2>
