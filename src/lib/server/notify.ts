@@ -39,8 +39,10 @@ export interface NotifyPayload {
 	recipientName?: string;
 	/** Subject line (email only) */
 	subject?: string;
-	/** Plain-text message body — used for SMS and as fallback for email */
+	/** Plain-text message body — used for email fallback */
 	message: string;
+	/** SMS-optimized message (max 160 chars, no HTML). Falls back to message if not provided. */
+	smsMessage?: string;
 	/** Optional HTML body for email (make.com can use this if provided) */
 	htmlMessage?: string;
 	/** Arbitrary extra data make.com scenarios can use */
@@ -77,12 +79,23 @@ export async function sendNotification(payload: NotifyPayload): Promise<void> {
 	}
 
 	try {
+		// Build clean SMS message — strip HTML, normalize whitespace
+		const smsContent = payload.smsMessage
+			?? payload.message
+				.replace(/<[^>]*>/g, '')           // strip HTML tags
+				.replace(/&nbsp;/g, ' ')            // decode entities
+				.replace(/&amp;/g, '&')
+				.replace(/\s{2,}/g, ' ')            // collapse multiple spaces
+				.trim()
+				.slice(0, 160);                     // SMS max length
+
 		const response = await fetch(webhookUrl, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				...payload,
 				phone: payload.phone ? normalizePhone(payload.phone) : undefined,
+				smsMessage: smsContent,
 				sentAt: new Date().toISOString(),
 				source: 'carelog'
 			})
