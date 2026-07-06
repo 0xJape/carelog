@@ -177,6 +177,7 @@ export async function sendEmailAndSMS(
 	message: string,
 	options?: {
 		htmlMessage?: string;
+		smsMessage?: string;
 		recipientName?: string;
 		type?: NotifyType;
 		meta?: Record<string, unknown>;
@@ -189,6 +190,7 @@ export async function sendEmailAndSMS(
 		phone,
 		subject,
 		message,
+		smsMessage: options?.smsMessage,
 		htmlMessage: options?.htmlMessage,
 		recipientName: options?.recipientName,
 		meta: options?.meta
