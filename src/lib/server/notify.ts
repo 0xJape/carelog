@@ -89,6 +89,13 @@ export async function sendNotification(payload: NotifyPayload): Promise<void> {
 				.trim()
 				.slice(0, 160);                     // SMS max length
 
+		// Sanitize htmlMessage — remove literal newlines/tabs that break JSON
+		const safeHtml = payload.htmlMessage
+			?.replace(/\r?\n/g, ' ')
+			?.replace(/\t/g, ' ')
+			?.replace(/\s{2,}/g, ' ')
+			?.trim();
+
 		const response = await fetch(webhookUrl, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -96,6 +103,7 @@ export async function sendNotification(payload: NotifyPayload): Promise<void> {
 				...payload,
 				phone: payload.phone ? normalizePhone(payload.phone) : undefined,
 				smsMessage: smsContent,
+				htmlMessage: safeHtml,
 				sentAt: new Date().toISOString(),
 				source: 'carelog'
 			})
