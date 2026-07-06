@@ -251,9 +251,9 @@ export const actions: Actions = {
 				})
 				.returning({ id: clinicVisits.id });
 
-			// Auto-notify primary emergency contact — fire and forget, never await
-			// This runs in background and won't block or timeout the response
-			(async () => {
+			// Auto-notify primary emergency contact
+			// Use Promise.race with timeout so it never blocks visit creation > 5s
+			const notifyPromise = (async () => {
 				try {
 					const [studentFull] = await db
 						.select({ firstName: students.firstName, lastName: students.lastName, studentId: students.studentId, grade: students.grade, section: students.section })
@@ -291,6 +291,9 @@ export const actions: Actions = {
 					console.error('[createVisit] Notification failed:', notifyErr);
 				}
 			})();
+
+			const timeout = new Promise<void>((resolve) => setTimeout(resolve, 5000));
+			await Promise.race([notifyPromise, timeout]);
 
 			return {
 				success: true,
