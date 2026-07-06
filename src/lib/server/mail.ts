@@ -7,7 +7,7 @@ import nodemailer from 'nodemailer';
 export const MAIL_VERIFICATION_KEY = env.MAIL_VERIFICATION_KEY || generateSessionToken();
 
 if ((!env.SMTP2GO_USERNAME || !env.SMTP2GO_PASSWORD || !env.SMTP2GO_SENDER_EMAIL) && !building) {
-	throw 'SMTP2GO USERNAME, PASSWORD and SENDER EMAIL needed';
+	console.warn('[mail] SMTP2GO credentials not set — legacy email sending will be unavailable.');
 }
 
 // Create nodemailer transporter for SMTP2GO

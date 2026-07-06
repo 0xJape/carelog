@@ -7,7 +7,7 @@
 	import VisitSummaryCards from '$lib/components/visit-summary-cards.svelte';
 	import VisitsTable from '$lib/components/visits-table.svelte';
 	import { app } from '$lib/states/app.svelte.js';
-	import { AlertTriangle, Circle, QrCode } from '@lucide/svelte';
+	import { AlertTriangle, CalendarClock, CalendarDays, Circle, ClipboardList, QrCode } from '@lucide/svelte';
 
 	let { data } = $props();
 
@@ -29,21 +29,30 @@
 	const visitSummaries = $derived([
 		{
 			title: "Today's Visits",
+			subtitle: 'Recorded today',
 			count: data.visitsThisDay,
 			actionText: 'View Records',
-			actionHref: '/visits?filter=today'
+			actionHref: '/visits?filter=today',
+			icon: CalendarClock,
+			accent: 'blue' as const
 		},
 		{
 			title: "This Month's Visits",
+			subtitle: 'Current month total',
 			count: data.visitsThisMonth,
 			actionText: 'View Records',
-			actionHref: '/visits?filter=month'
+			actionHref: '/visits?filter=month',
+			icon: CalendarDays,
+			accent: 'violet' as const
 		},
 		{
 			title: 'All Visits',
+			subtitle: 'All-time records',
 			count: data.totalVisits,
 			actionText: 'View Records',
-			actionHref: '/visits'
+			actionHref: '/visits',
+			icon: ClipboardList,
+			accent: 'emerald' as const
 		}
 	]);
 

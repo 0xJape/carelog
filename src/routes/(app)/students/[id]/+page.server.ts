@@ -353,9 +353,14 @@ Best regards,
 School Health Office
 			`.trim();
 
-			// Send the email
-			const { sendMailMessage } = await import('$lib/server/mail.js');
-			await sendMailMessage(contact.email, emailContent, mailData.subject);
+			// Send via make.com webhook
+			const { sendEmail } = await import('$lib/server/notify.js');
+			await sendEmail(
+				contact.email,
+				mailData.subject,
+				emailContent,
+				{ recipientName: contact.name, type: 'visit_notification' }
+			);
 
 			return {
 				success: true,
@@ -539,9 +544,14 @@ School Health Office
 				`.trim();
 			}
 
-			// Send the email
-			const { sendMailMessage } = await import('$lib/server/mail.js');
-			await sendMailMessage(emailData.recipientEmail, emailContent, emailData.subject);
+			// Send via make.com webhook
+			const { sendEmail } = await import('$lib/server/notify.js');
+			await sendEmail(
+				emailData.recipientEmail,
+				emailData.subject,
+				emailContent,
+				{ recipientName, type: 'visit_notification' }
+			);
 
 			return {
 				success: true,
@@ -668,9 +678,14 @@ Designation: ${emailData.referringPersonDesignation}
 This medical referral was sent from CareLog School Health Management System.
 			`.trim();
 
-			// Send the email with referral content
-			const { sendMailMessage } = await import('$lib/server/mail.js');
-			await sendMailMessage(emailData.recipientEmail, emailContent, emailData.subject);
+			// Send via make.com webhook
+			const { sendEmail } = await import('$lib/server/notify.js');
+			await sendEmail(
+				emailData.recipientEmail,
+				emailData.subject,
+				emailContent,
+				{ type: 'referral_notification' }
+			);
 
 			return {
 				success: true,

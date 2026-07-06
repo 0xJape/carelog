@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { gsap } from 'gsap';
-	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import {
@@ -140,9 +138,14 @@
 		const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 		if (prefersReduced) return;
 
-		gsap.registerPlugin(ScrollTrigger);
+		let ctx: ReturnType<typeof import('gsap').gsap.context> | undefined;
 
-		const ctx = gsap.context(() => {
+		(async () => {
+			const { gsap } = await import('gsap');
+			const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+			gsap.registerPlugin(ScrollTrigger);
+
+			ctx = gsap.context(() => {
 			// Hero entrance — staggered reveal on load
 			gsap.from('[data-anim="hero"]', {
 				y: 32,
@@ -240,10 +243,10 @@
 				scrollTrigger: { trigger: '[data-anim="cta"]', start: 'top 85%' }
 			});
 		});
+		})();
 
-		return () => ctx.revert();
-	});
-</script>
+		return () => ctx?.revert();
+	});</script>
 
 <svelte:head>
 	<title>CLINIQAI — AI-Integrated Clinic Management System</title>
