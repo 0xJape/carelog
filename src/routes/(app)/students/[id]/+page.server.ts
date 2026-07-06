@@ -251,47 +251,46 @@ export const actions: Actions = {
 				})
 				.returning({ id: clinicVisits.id });
 
-			// Auto-notify primary emergency contact
-			try {
-				const [studentFull] = await db
-					.select({ firstName: students.firstName, lastName: students.lastName, studentId: students.studentId, grade: students.grade, section: students.section })
-					.from(students)
-					.where(eq(students.id, student.id))
-					.limit(1);
+			// Auto-notify primary emergency contact — fire and forget, never await
+			// This runs in background and won't block or timeout the response
+			(async () => {
+				try {
+					const [studentFull] = await db
+						.select({ firstName: students.firstName, lastName: students.lastName, studentId: students.studentId, grade: students.grade, section: students.section })
+						.from(students)
+						.where(eq(students.id, student.id))
+						.limit(1);
 
-				const [primaryContact] = await db
-					.select({ name: emergencyContacts.name, email: emergencyContacts.email, phoneNumber: emergencyContacts.phoneNumber })
-					.from(emergencyContacts)
-					.where(eq(emergencyContacts.studentId, student.id))
-					.orderBy(emergencyContacts.priority)
-					.limit(1);
+					const [primaryContact] = await db
+						.select({ name: emergencyContacts.name, email: emergencyContacts.email, phoneNumber: emergencyContacts.phoneNumber })
+						.from(emergencyContacts)
+						.where(eq(emergencyContacts.studentId, student.id))
+						.orderBy(emergencyContacts.priority)
+						.limit(1);
 
-				if (primaryContact && (primaryContact.email || primaryContact.phoneNumber)) {
-					const { sendEmailAndSMS, sendEmail, sendSMS } = await import('$lib/server/notify.js');
-					const visitTime = new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila', dateStyle: 'medium', timeStyle: 'short' });
-					const studentName = `${studentFull.firstName} ${studentFull.lastName}`;
-					const grade = `${studentFull.grade}${studentFull.section ? ` - ${studentFull.section}` : ''}`;
-					const severityLabel = visitData.severity.charAt(0).toUpperCase() + visitData.severity.slice(1);
-					const subject = `CareLog: ${studentName} visited the clinic`;
+					if (primaryContact && (primaryContact.email || primaryContact.phoneNumber)) {
+						const { sendEmailAndSMS, sendEmail, sendSMS } = await import('$lib/server/notify.js');
+						const visitTime = new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila', dateStyle: 'medium', timeStyle: 'short' });
+						const studentName = `${studentFull.firstName} ${studentFull.lastName}`;
+						const grade = `${studentFull.grade}${studentFull.section ? ` - ${studentFull.section}` : ''}`;
+						const severityLabel = visitData.severity.charAt(0).toUpperCase() + visitData.severity.slice(1);
+						const subject = `CareLog: ${studentName} visited the clinic`;
+						const smsMessage = `CareLog: ${studentName} (${grade}) visited the clinic. Reason: ${visitData.reason}. Severity: ${severityLabel}.${visitData.isEmergency ? ' EMERGENCY.' : ''} Time: ${visitTime}. -CareLog School Health`.slice(0, 160);
+						const htmlMessage = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto"><div style="background:#2563eb;padding:24px;text-align:center"><h2 style="color:white;margin:0">CareLog Health Office</h2></div><div style="padding:30px"><p>Dear ${primaryContact.name},</p><p>Your child <strong>${studentName}</strong> has visited the school clinic.</p><table style="width:100%;border-collapse:collapse;margin:16px 0"><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Student</td><td style="padding:8px;border:1px solid #e2e8f0">${studentName}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Grade</td><td style="padding:8px;border:1px solid #e2e8f0">${grade}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Reason</td><td style="padding:8px;border:1px solid #e2e8f0">${visitData.reason}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Severity</td><td style="padding:8px;border:1px solid #e2e8f0">${severityLabel}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Time</td><td style="padding:8px;border:1px solid #e2e8f0">${visitTime}</td></tr></table><p style="color:#64748b;font-size:13px">The school nurse is attending to your child.</p></div><div style="background:#f1f5f9;padding:16px;text-align:center;font-size:12px;color:#94a3b8">CareLog School Health Management System</div></div>`;
+						const message = `Dear ${primaryContact.name}, your child ${studentName} visited the school clinic. Reason: ${visitData.reason}. Severity: ${severityLabel}. Time: ${visitTime}. -CareLog`;
 
-					const smsMessage = `CareLog: ${studentName} (${grade}) visited the clinic. Reason: ${visitData.reason}. Severity: ${severityLabel}.${visitData.isEmergency ? ' EMERGENCY.' : ''} Time: ${visitTime}. -CareLog School Health`.slice(0, 160);
-
-					const htmlMessage = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto"><div style="background:#2563eb;padding:24px;text-align:center"><h2 style="color:white;margin:0">CareLog Health Office</h2></div><div style="padding:30px"><p>Dear ${primaryContact.name},</p><p>Your child <strong>${studentName}</strong> has visited the school clinic.</p><table style="width:100%;border-collapse:collapse;margin:16px 0"><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Student</td><td style="padding:8px;border:1px solid #e2e8f0">${studentName}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Grade</td><td style="padding:8px;border:1px solid #e2e8f0">${grade}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Reason</td><td style="padding:8px;border:1px solid #e2e8f0">${visitData.reason}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Severity</td><td style="padding:8px;border:1px solid #e2e8f0">${severityLabel}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Time</td><td style="padding:8px;border:1px solid #e2e8f0">${visitTime}</td></tr></table><p style="color:#64748b;font-size:13px">The school nurse is attending to your child. We will update you if needed.</p></div><div style="background:#f1f5f9;padding:16px;text-align:center;font-size:12px;color:#94a3b8">CareLog School Health Management System</div></div>`;
-
-					const message = `Dear ${primaryContact.name}, your child ${studentName} visited the school clinic. Reason: ${visitData.reason}. Severity: ${severityLabel}. Time: ${visitTime}. The nurse is attending to your child. -CareLog`;
-
-					if (primaryContact.email && primaryContact.phoneNumber) {
-						await sendEmailAndSMS(primaryContact.email, primaryContact.phoneNumber, subject, message, { htmlMessage, smsMessage: smsMessage, recipientName: primaryContact.name, type: 'visit_notification' });
-					} else if (primaryContact.email) {
-						await sendEmail(primaryContact.email, subject, message, { htmlMessage, recipientName: primaryContact.name, type: 'visit_notification' });
-					} else if (primaryContact.phoneNumber) {
-						await sendSMS(primaryContact.phoneNumber, smsMessage, { recipientName: primaryContact.name, type: 'visit_notification' });
+						if (primaryContact.email && primaryContact.phoneNumber) {
+							await sendEmailAndSMS(primaryContact.email, primaryContact.phoneNumber, subject, message, { htmlMessage, smsMessage, recipientName: primaryContact.name, type: 'visit_notification' });
+						} else if (primaryContact.email) {
+							await sendEmail(primaryContact.email, subject, message, { htmlMessage, recipientName: primaryContact.name, type: 'visit_notification' });
+						} else if (primaryContact.phoneNumber) {
+							await sendSMS(primaryContact.phoneNumber, smsMessage, { recipientName: primaryContact.name, type: 'visit_notification' });
+						}
 					}
+				} catch (notifyErr) {
+					console.error('[createVisit] Notification failed:', notifyErr);
 				}
-			} catch (notifyErr) {
-				// Never block visit creation due to notification failure
-				console.error('[createVisit] Notification failed:', notifyErr);
-			}
+			})();
 
 			return {
 				success: true,
