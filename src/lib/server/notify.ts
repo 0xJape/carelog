@@ -48,6 +48,18 @@ export interface NotifyPayload {
 }
 
 /**
+ * Normalize a Philippine phone number to E.164 format.
+ * 09xxxxxxxxx → +639xxxxxxxxx
+ * +639xxxxxxxxx → unchanged
+ */
+function normalizePhone(phone: string): string {
+	const cleaned = phone.replace(/\s+/g, '');
+	if (cleaned.startsWith('09')) return '+63' + cleaned.slice(1);
+	if (cleaned.startsWith('9') && cleaned.length === 10) return '+63' + cleaned;
+	return cleaned;
+}
+
+/**
  * Send a notification via make.com webhook.
  * Fires and returns — does not throw on webhook errors so a failed notification
  * never breaks the main request flow. Errors are logged server-side.
@@ -70,6 +82,7 @@ export async function sendNotification(payload: NotifyPayload): Promise<void> {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				...payload,
+				phone: payload.phone ? normalizePhone(payload.phone) : undefined,
 				sentAt: new Date().toISOString(),
 				source: 'carelog'
 			})
