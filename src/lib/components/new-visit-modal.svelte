@@ -144,7 +144,9 @@
 	let aiResult = $state<AiDiagnosis | null>(null);
 	let aiError = $state<string | null>(null);
 	let aiStep = $state(0);
+	let speaking = $state(false);
 	let aiStepTimer: ReturnType<typeof setInterval> | undefined;
+	let speaking = $state(false);
 
 	const aiSteps = [
 		'Reading medical history & allergies…',
@@ -166,9 +168,6 @@
 		clearInterval(aiStepTimer);
 		aiStepTimer = undefined;
 	}
-
-	// Text-to-speech state
-	let speaking = $state(false);
 
 	function buildSpeechText(r: AiDiagnosis): string {
 		const parts: string[] = [];
