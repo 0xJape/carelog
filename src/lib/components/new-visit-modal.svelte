@@ -303,64 +303,6 @@
 		toast.success('AI findings added to visit details');
 	}
 
-	function buildSpeechText(r: AiDiagnosis): string {
-		const parts: string[] = [];
-		parts.push(`AI Pre-Diagnosis Summary. ${r.summary}`);
-		parts.push(`Assessed severity: ${r.assessedSeverity}.`);
-		if (r.referralRecommended) {
-			parts.push(`Referral recommended. ${r.referralReason ?? ''}`);
-		}
-		if (r.possibleConditions.length) {
-			parts.push('Possible causes:');
-			r.possibleConditions.forEach((c) =>
-				parts.push(`${c.name}, ${c.likelihood} likelihood. ${c.explanation}`)
-			);
-		}
-		if (r.suggestedMedications.length) {
-			parts.push('Suggested medications:');
-			r.suggestedMedications.forEach((m) =>
-				parts.push(`${m.name}. ${m.purpose}. Dosage: ${m.dosageNote}.${m.caution ? ' Caution: ' + m.caution : ''}`)
-			);
-		}
-		if (r.recommendedRemedies.length) {
-			parts.push('Care recommendations: ' + r.recommendedRemedies.join('. '));
-		}
-		if (r.firstAidSteps.length) {
-			parts.push('First aid steps:');
-			r.firstAidSteps.forEach((s, i) => parts.push(`Step ${i + 1}: ${s}`));
-		}
-		if (r.redFlags.length) {
-			parts.push('Watch for these warning signs and escalate if present:');
-			r.redFlags.forEach((f) => parts.push(f));
-		}
-		return parts.join(' ');
-	}
-
-	function speakResult() {
-		if (!aiResult || typeof window === 'undefined') return;
-		if (speaking) {
-			speechSynthesis.cancel();
-			speaking = false;
-			return;
-		}
-		const utt = new SpeechSynthesisUtterance(buildSpeechText(aiResult));
-		utt.rate = 0.95;
-		utt.pitch = 1;
-		utt.lang = 'en-US';
-		utt.onstart = () => (speaking = true);
-		utt.onend = () => (speaking = false);
-		utt.onerror = () => (speaking = false);
-		speechSynthesis.speak(utt);
-	}
-
-	// Stop speech when modal closes or component is destroyed
-	$effect(() => {
-		if (!open && typeof window !== 'undefined') {
-			speechSynthesis.cancel();
-			speaking = false;
-		}
-	});
-
 	const likelihoodStyle: Record<string, string> = {
 		high: 'bg-red-500/15 text-red-600 dark:text-red-400',
 		moderate: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
