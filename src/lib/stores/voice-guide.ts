@@ -35,26 +35,19 @@ const DYNAMIC_ROUTE_AUDIO: Array<{ pattern: RegExp; file: string }> = [
  * Returns null if no audio is mapped to that route.
  */
 export function getAudioForRoute(pathname: string): string | null {
-	// Check exact matches first
-	for (const [route, file] of Object.entries(ROUTE_AUDIO_MAP)) {
-		if (pathname === route || pathname.startsWith(route + '/') && !isDeepPath(pathname, route)) {
-			return file;
-		}
-	}
-
-	// Check dynamic routes
+	// Check dynamic routes FIRST (more specific)
 	for (const { pattern, file } of DYNAMIC_ROUTE_AUDIO) {
 		if (pattern.test(pathname)) {
 			return file;
 		}
 	}
 
-	return null;
-}
+	// Then check exact static matches only
+	if (ROUTE_AUDIO_MAP[pathname]) {
+		return ROUTE_AUDIO_MAP[pathname];
+	}
 
-function isDeepPath(pathname: string, base: string): boolean {
-	const rest = pathname.slice(base.length + 1);
-	return rest.includes('/');
+	return null;
 }
 
 /**
@@ -87,7 +80,6 @@ class VoiceGuide {
 
 	play(src: string) {
 		if (!this.enabled || typeof window === 'undefined') return;
-		if (this.currentSrc === src && this.audio && !this.audio.paused) return;
 
 		this.stop();
 
@@ -117,10 +109,10 @@ class VoiceGuide {
 
 	playForRoute(pathname: string) {
 		const src = getAudioForRoute(pathname);
+		// Always stop current audio first regardless of src match
+		this.stop();
 		if (src) {
 			this.play(src);
-		} else {
-			this.stop();
 		}
 	}
 
