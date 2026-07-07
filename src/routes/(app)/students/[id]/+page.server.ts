@@ -591,7 +591,14 @@ School Health Office
 			// Send via make.com webhook
 			const { sendEmail } = await import('$lib/server/notify.js');
 
-			const htmlMessage = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto"><div style="background:#2563eb;padding:24px;text-align:center"><h2 style="color:white;margin:0">CareLog Health Office</h2></div><div style="padding:30px"><p>Dear ${recipientName},</p><div style="white-space:pre-wrap;line-height:1.6;color:#333">${emailData.message}</div><hr style="margin:24px 0;border:none;border-top:1px solid #e2e8f0"><p style="font-size:12px;color:#94a3b8">This message was sent from CareLog School Health Management System. Please contact the school if you have any questions.</p></div><div style="background:#f1f5f9;padding:16px;text-align:center;font-size:12px;color:#94a3b8">CareLog School Health Management System</div></div>`;
+			// Sanitize user message for safe HTML embedding
+			const safeUserMessage = emailData.message
+				.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/\r?\n/g, '<br>');
+
+			const htmlMessage = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto"><div style="background:#2563eb;padding:24px;text-align:center"><h2 style="color:white;margin:0">CareLog Health Office</h2></div><div style="padding:30px"><p>Dear ${recipientName},</p><div style="line-height:1.6;color:#333">${safeUserMessage}</div><hr style="margin:24px 0;border:none;border-top:1px solid #e2e8f0"><p style="font-size:12px;color:#94a3b8">This message was sent from CareLog School Health Management System.</p></div><div style="background:#f1f5f9;padding:16px;text-align:center;font-size:12px;color:#94a3b8">CareLog School Health Management System</div></div>`;
 
 			await sendEmail(
 				emailData.recipientEmail,
