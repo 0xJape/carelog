@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
 	import VoiceGuideButton from '$lib/components/voice-guide-button.svelte';
+	import { voiceGuide } from '$lib/stores/voice-guide';
 	import { Button } from '$lib/components/ui/button';
 	import {
 		Activity,
@@ -135,16 +136,20 @@
 	];
 
 	onMount(() => {
-		// Play homepage voice guide
-		const audio = new Audio('/audio/welcome.mp3');
-		audio.volume = 0.85;
-		audio.play().catch(() => {});
+		// Play homepage voice guide through the shared singleton so it gets
+		// stopped automatically when navigating to any other route (e.g. dashboard)
+		voiceGuide.init();
+		voiceGuide.playWelcome();
 
 		// Respect users who prefer reduced motion
 		const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 		if (prefersReduced) return;
 
 		let ctx: ReturnType<typeof import('gsap').gsap.context> | undefined;
+
+		onDestroy(() => {
+			voiceGuide.stop();
+		});
 
 		(async () => {
 			const { gsap } = await import('gsap');
