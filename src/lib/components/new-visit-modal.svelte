@@ -12,22 +12,17 @@
 	import type { NurseComboboxOption } from '$lib/types/nurse.js';
 	import { cn } from '$lib/utils.js';
 	import {
-		Activity,
 		AlertTriangle,
 		Check,
 		ChevronsUpDown,
-		HeartPulse,
-		ListChecks,
 		Loader2,
 		Pill,
 		Plus,
 		Sparkles,
-		Square,
-		Stethoscope,
-		Volume2
+		Stethoscope
 	} from '@lucide/svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { onDestroy, tick } from 'svelte';
+	import { tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
 	// AI pre-diagnosis result shape (mirrors DiagnosisResult on the server)
@@ -143,93 +138,6 @@
 	let aiLoading = $state(false);
 	let aiResult = $state<AiDiagnosis | null>(null);
 	let aiError = $state<string | null>(null);
-	let aiStep = $state(0);
-	let speaking = $state(false);
-	let aiStepTimer: ReturnType<typeof setInterval> | undefined;
-
-	const aiSteps = [
-		'Reading medical history & allergies…',
-		'Analyzing reported symptoms…',
-		'Matching possible conditions…',
-		'Preparing remedies & first-aid steps…',
-		'Finalizing assessment…'
-	];
-
-	function startAiStepCycle() {
-		aiStep = 0;
-		clearInterval(aiStepTimer);
-		aiStepTimer = setInterval(() => {
-			if (aiStep < aiSteps.length - 1) aiStep++;
-		}, 1400);
-	}
-
-	function stopAiStepCycle() {
-		clearInterval(aiStepTimer);
-		aiStepTimer = undefined;
-	}
-
-	function buildSpeechText(r: AiDiagnosis): string {
-		const parts: string[] = [];
-		parts.push(`AI Pre-Diagnosis Summary. ${r.summary}`);
-		parts.push(`Assessed severity: ${r.assessedSeverity}.`);
-		if (r.referralRecommended) {
-			parts.push(`Referral recommended. ${r.referralReason ?? ''}`);
-		}
-		if (r.possibleConditions.length) {
-			parts.push('Possible causes:');
-			r.possibleConditions.forEach((c) =>
-				parts.push(`${c.name}, ${c.likelihood} likelihood. ${c.explanation}`)
-			);
-		}
-		if (r.suggestedMedications.length) {
-			parts.push('Suggested medications:');
-			r.suggestedMedications.forEach((m) =>
-				parts.push(`${m.name}. ${m.purpose}. Dosage: ${m.dosageNote}.${m.caution ? ' Caution: ' + m.caution : ''}`)
-			);
-		}
-		if (r.recommendedRemedies.length) {
-			parts.push('Care recommendations: ' + r.recommendedRemedies.join('. '));
-		}
-		if (r.firstAidSteps.length) {
-			parts.push('First aid steps:');
-			r.firstAidSteps.forEach((s, i) => parts.push(`Step ${i + 1}: ${s}`));
-		}
-		if (r.redFlags.length) {
-			parts.push('Watch for these warning signs and escalate if present:');
-			r.redFlags.forEach((f) => parts.push(f));
-		}
-		return parts.join(' ');
-	}
-
-	function speakResult() {
-		if (!aiResult || typeof window === 'undefined') return;
-		if (speaking) {
-			speechSynthesis.cancel();
-			speaking = false;
-			return;
-		}
-		const utt = new SpeechSynthesisUtterance(buildSpeechText(aiResult));
-		utt.rate = 0.95;
-		utt.pitch = 1;
-		utt.lang = 'en-US';
-		utt.onstart = () => (speaking = true);
-		utt.onend = () => (speaking = false);
-		utt.onerror = () => (speaking = false);
-		speechSynthesis.speak(utt);
-	}
-
-	// Stop speech when modal closes
-	$effect(() => {
-		if (!open && typeof window !== 'undefined') {
-			speechSynthesis.cancel();
-			speaking = false;
-		}
-	});
-
-	onDestroy(() => {
-		clearInterval(aiStepTimer);
-		if (typeof window !== 'undefined') speechSynthesis.cancel();
-	});
 
 	async function runAiDiagnosis() {
 		if (!formData.reason.trim()) {
@@ -239,7 +147,6 @@
 		aiLoading = true;
 		aiError = null;
 		aiResult = null;
-		startAiStepCycle();
 		try {
 			const res = await fetch('/api/ai-diagnosis', {
 				method: 'POST',
@@ -272,7 +179,6 @@
 			toast.error('AI pre-diagnosis failed', { description: aiError });
 		} finally {
 			aiLoading = false;
-			stopAiStepCycle();
 		}
 	}
 
@@ -532,36 +438,30 @@
 			</div>
 
 			<!-- AI Pre-Diagnosis -->
-			<div class="overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/[0.06] to-transparent">
-				<!-- Header -->
-				<div class="flex items-start justify-between gap-3 p-4 pb-3">
-					<div class="flex items-start gap-2.5">
-						<div class="relative flex size-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 shadow-sm">
-							<Sparkles class="size-4.5 text-white" />
-							{#if aiLoading}
-								<span class="absolute -inset-0.5 animate-ping rounded-lg bg-blue-500/40"></span>
-							{/if}
+			<div class="space-y-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
+				<div class="flex items-start justify-between gap-3">
+					<div class="flex items-start gap-2">
+						<div class="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
+							<Sparkles class="size-4 text-white" />
 						</div>
 						<div>
-							<p class="flex items-center gap-1.5 text-sm font-semibold text-foreground">
-								AI Pre-Diagnosis
-								<span class="rounded-full bg-primary/10 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wide text-primary">Beta</span>
-							</p>
+							<p class="text-sm font-semibold text-foreground">AI Pre-Diagnosis</p>
 							<p class="text-xs text-muted-foreground">
-								Symptoms + medical history → likely causes, remedies & first aid.
+								Analyzes symptoms with the student's medical history to suggest causes & remedies.
 							</p>
 						</div>
 					</div>
 					<Button
 						type="button"
+						variant="outline"
 						size="sm"
-						class="shrink-0 gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500"
+						class="shrink-0 gap-1.5"
 						onclick={runAiDiagnosis}
 						disabled={aiLoading || !formData.reason.trim()}
 					>
 						{#if aiLoading}
 							<Loader2 class="size-3.5 animate-spin" />
-							Analyzing
+							Analyzing...
 						{:else}
 							<Sparkles class="size-3.5" />
 							{aiResult ? 'Re-analyze' : 'Analyze'}
@@ -569,217 +469,122 @@
 					</Button>
 				</div>
 
-				<!-- Loading state -->
-				{#if aiLoading}
-					<div class="border-t border-primary/10 p-4">
-						<!-- Animated status line -->
-						<div class="mb-4 flex items-center gap-2.5">
-							<span class="relative flex size-2.5">
-								<span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-500 opacity-60"></span>
-								<span class="relative inline-flex size-2.5 rounded-full bg-blue-600"></span>
-							</span>
-							<p class="text-sm font-medium text-foreground transition-all">{aiSteps[aiStep]}</p>
-						</div>
-
-						<!-- Progress bar -->
-						<div class="mb-4 h-1.5 w-full overflow-hidden rounded-full bg-primary/10">
-							<div
-								class="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-700 ease-out"
-								style="width: {((aiStep + 1) / aiSteps.length) * 100}%"
-							></div>
-						</div>
-
-						<!-- Skeleton preview -->
-						<div class="space-y-2.5">
-							<div class="h-3 w-3/4 animate-pulse rounded bg-primary/10"></div>
-							<div class="h-3 w-full animate-pulse rounded bg-primary/10"></div>
-							<div class="grid grid-cols-2 gap-2 pt-1">
-								<div class="h-14 animate-pulse rounded-lg bg-primary/10"></div>
-								<div class="h-14 animate-pulse rounded-lg bg-primary/10"></div>
-							</div>
-						</div>
+				{#if aiError}
+					<div class="flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2 text-xs text-destructive">
+						<AlertTriangle class="size-4 shrink-0" />
+						{aiError}
 					</div>
 				{/if}
 
-				<!-- Error state -->
-				{#if aiError && !aiLoading}
-					<div class="border-t border-primary/10 p-4">
-						<div class="flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2.5 text-xs text-destructive">
-							<AlertTriangle class="size-4 shrink-0" />
-							{aiError}
-						</div>
-					</div>
-				{/if}
-
-				<!-- Result -->
-				{#if aiResult && !aiLoading}
-					<div class="space-y-4 border-t border-primary/10 p-4">
-						<!-- Summary hero -->
-						<div class="rounded-lg border border-border/50 bg-background/80 p-3.5 shadow-sm">
-							<div class="mb-2 flex items-center justify-between gap-2">
-								<span class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-									<Stethoscope class="size-3.5" /> Assessment
-								</span>
+				{#if aiResult}
+					<div class="space-y-3">
+						<!-- Summary + severity -->
+						<div class="rounded-lg border border-border/50 bg-background/60 p-3">
+							<div class="mb-1.5 flex items-center gap-2">
+								<span class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Assessment</span>
 								<span
 									class={cn(
-										'flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide',
+										'rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase',
 										severityStyle[aiResult.assessedSeverity]
 									)}
 								>
-									{aiResult.assessedSeverity} severity
+									{aiResult.assessedSeverity}
 								</span>
 							</div>
-							<p class="text-sm leading-relaxed text-foreground">{aiResult.summary}</p>
+							<p class="text-sm text-foreground">{aiResult.summary}</p>
 						</div>
 
 						<!-- Referral banner -->
 						{#if aiResult.referralRecommended}
-							<div class="flex items-start gap-2.5 rounded-lg border border-red-500/40 bg-red-500/10 px-3.5 py-3">
-								<div class="flex size-7 shrink-0 items-center justify-center rounded-full bg-red-500/20">
-									<AlertTriangle class="size-4 text-red-600 dark:text-red-400" />
-								</div>
-								<div>
-									<p class="text-xs font-bold text-red-600 dark:text-red-400">Referral Recommended</p>
-									<p class="mt-0.5 text-xs text-red-700/90 dark:text-red-300/90">{aiResult.referralReason ?? 'This case may need a doctor or hospital.'}</p>
-								</div>
+							<div class="flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-600 dark:text-red-400">
+								<AlertTriangle class="size-4 shrink-0" />
+								<span><strong>Referral recommended.</strong> {aiResult.referralReason ?? ''}</span>
 							</div>
 						{/if}
 
 						<!-- Possible conditions -->
 						{#if aiResult.possibleConditions.length}
-							<div class="space-y-2">
-								<p class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-									<Activity class="size-3.5" /> Possible Causes
-								</p>
-								<div class="space-y-2">
-									{#each aiResult.possibleConditions as c}
-										<div class="rounded-lg border border-border/50 bg-background/80 p-3">
-											<div class="flex items-center justify-between gap-2">
-												<span class="text-sm font-semibold text-foreground">{c.name}</span>
-												<span class={cn('flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase', likelihoodStyle[c.likelihood])}>
-													<span class="size-1.5 rounded-full bg-current"></span>
-													{c.likelihood}
-												</span>
-											</div>
-											<p class="mt-1 text-xs leading-relaxed text-muted-foreground">{c.explanation}</p>
+							<div class="space-y-1.5">
+								<p class="text-xs font-semibold text-foreground">Possible Causes</p>
+								{#each aiResult.possibleConditions as c}
+									<div class="rounded-lg border border-border/50 bg-background/60 p-2.5">
+										<div class="flex items-center justify-between gap-2">
+											<span class="text-sm font-medium text-foreground">{c.name}</span>
+											<span class={cn('rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase', likelihoodStyle[c.likelihood])}>
+												{c.likelihood}
+											</span>
 										</div>
-									{/each}
-								</div>
+										<p class="mt-0.5 text-xs text-muted-foreground">{c.explanation}</p>
+									</div>
+								{/each}
 							</div>
 						{/if}
 
 						<!-- Suggested medications -->
 						{#if aiResult.suggestedMedications.length}
-							<div class="space-y-2">
-								<p class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-									<Pill class="size-3.5" /> Suggested Medications & Remedies
+							<div class="space-y-1.5">
+								<p class="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+									<Pill class="size-3.5" /> Suggested Medications / Remedies
 								</p>
-								<div class="space-y-2">
-									{#each aiResult.suggestedMedications as m}
-										<div class="rounded-lg border border-emerald-500/20 bg-emerald-500/[0.04] p-3">
-											<div class="flex items-start gap-2.5">
-												<div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/15">
-													<Pill class="size-4 text-emerald-600 dark:text-emerald-400" />
-												</div>
-												<div class="min-w-0 flex-1">
-													<p class="text-sm font-semibold text-foreground">{m.name}</p>
-													<p class="text-xs text-muted-foreground">{m.purpose}</p>
-													<p class="mt-1 inline-block rounded bg-background/80 px-1.5 py-0.5 text-[11px] font-medium text-foreground">
-														{m.dosageNote}
-													</p>
-													{#if m.caution}
-														<p class="mt-1.5 flex items-start gap-1 rounded-md bg-amber-500/10 px-2 py-1 text-[11px] text-amber-700 dark:text-amber-400">
-															<AlertTriangle class="mt-0.5 size-3 shrink-0" />
-															{m.caution}
-														</p>
-													{/if}
-												</div>
-											</div>
-										</div>
-									{/each}
-								</div>
+								{#each aiResult.suggestedMedications as m}
+									<div class="rounded-lg border border-border/50 bg-background/60 p-2.5">
+										<p class="text-sm font-medium text-foreground">{m.name}</p>
+										<p class="text-xs text-muted-foreground">{m.purpose} — {m.dosageNote}</p>
+										{#if m.caution}
+											<p class="mt-1 flex items-start gap-1 text-[11px] text-amber-600 dark:text-amber-400">
+												<AlertTriangle class="mt-0.5 size-3 shrink-0" />
+												{m.caution}
+											</p>
+										{/if}
+									</div>
+								{/each}
 							</div>
 						{/if}
 
-						<!-- Two-column: remedies + first aid -->
-						<div class="grid gap-3 sm:grid-cols-2">
-							{#if aiResult.recommendedRemedies.length}
-								<div class="rounded-lg border border-border/50 bg-background/80 p-3">
-									<p class="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-										<HeartPulse class="size-3.5" /> Care Tips
-									</p>
-									<ul class="space-y-1.5 text-xs text-muted-foreground">
-										{#each aiResult.recommendedRemedies as r}
-											<li class="flex items-start gap-1.5">
-												<Check class="mt-0.5 size-3 shrink-0 text-emerald-500" />
-												{r}
-											</li>
-										{/each}
-									</ul>
-								</div>
-							{/if}
-
-							{#if aiResult.firstAidSteps.length}
-								<div class="rounded-lg border border-border/50 bg-background/80 p-3">
-									<p class="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-										<ListChecks class="size-3.5" /> First Aid Steps
-									</p>
-									<ol class="space-y-1.5 text-xs text-muted-foreground">
-										{#each aiResult.firstAidSteps as step, i}
-											<li class="flex items-start gap-2">
-												<span class="flex size-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[9px] font-bold text-primary">{i + 1}</span>
-												{step}
-											</li>
-										{/each}
-									</ol>
-								</div>
-							{/if}
-						</div>
-
-						<!-- Red flags -->
-						{#if aiResult.redFlags.length}
-							<div class="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3">
-								<p class="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-amber-600 dark:text-amber-400">
-									<AlertTriangle class="size-3.5" /> Watch For — Escalate If Present
-								</p>
-								<ul class="grid gap-1.5 text-xs text-amber-700/90 dark:text-amber-300/90 sm:grid-cols-2">
-									{#each aiResult.redFlags as flag}
-										<li class="flex items-start gap-1.5">
-											<span class="mt-1 size-1.5 shrink-0 rounded-full bg-amber-500"></span>
-											{flag}
-										</li>
+						<!-- Recommended remedies (non-med) -->
+						{#if aiResult.recommendedRemedies.length}
+							<div class="space-y-1">
+								<p class="text-xs font-semibold text-foreground">Care Recommendations</p>
+								<ul class="list-inside list-disc space-y-0.5 text-xs text-muted-foreground">
+									{#each aiResult.recommendedRemedies as r}
+										<li>{r}</li>
 									{/each}
 								</ul>
 							</div>
 						{/if}
 
-						<!-- Footer -->
-						<div class="flex flex-col gap-2 border-t border-border/40 pt-3 sm:flex-row sm:items-center sm:justify-between">
-							<p class="flex items-start gap-1 text-[10px] italic leading-tight text-muted-foreground">
-								<Sparkles class="mt-0.5 size-3 shrink-0" />
-								{aiResult.disclaimer}
-							</p>
-							<div class="flex shrink-0 gap-2">
-								<Button
-									type="button"
-									variant={speaking ? 'destructive' : 'outline'}
-									size="sm"
-									class="gap-1.5"
-									onclick={speakResult}
-								>
-									{#if speaking}
-										<Square class="size-3.5 fill-current" />
-										Stop
-									{:else}
-										<Volume2 class="size-3.5" />
-										Read aloud
-									{/if}
-								</Button>
-								<Button type="button" variant="secondary" size="sm" class="gap-1.5" onclick={applyAiToDetails}>
-									<Plus class="size-3.5" />
-									Add to details
-								</Button>
+						<!-- First aid steps -->
+						{#if aiResult.firstAidSteps.length}
+							<div class="space-y-1">
+								<p class="text-xs font-semibold text-foreground">First Aid Steps</p>
+								<ol class="list-inside list-decimal space-y-0.5 text-xs text-muted-foreground">
+									{#each aiResult.firstAidSteps as step}
+										<li>{step}</li>
+									{/each}
+								</ol>
 							</div>
+						{/if}
+
+						<!-- Red flags -->
+						{#if aiResult.redFlags.length}
+							<div class="rounded-lg border border-amber-500/30 bg-amber-500/10 p-2.5">
+								<p class="mb-1 flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400">
+									<AlertTriangle class="size-3.5" /> Watch For (Escalate If Present)
+								</p>
+								<ul class="list-inside list-disc space-y-0.5 text-xs text-amber-700/90 dark:text-amber-300/90">
+									{#each aiResult.redFlags as flag}
+										<li>{flag}</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
+
+						<div class="flex items-center justify-between gap-2">
+							<p class="text-[10px] italic text-muted-foreground">{aiResult.disclaimer}</p>
+							<Button type="button" variant="secondary" size="sm" class="shrink-0 gap-1.5" onclick={applyAiToDetails}>
+								<Plus class="size-3.5" />
+								Add to details
+							</Button>
 						</div>
 					</div>
 				{/if}
