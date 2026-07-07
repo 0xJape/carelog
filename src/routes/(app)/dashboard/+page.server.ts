@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db';
-import { clinicVisits, students } from '$lib/server/db/schema';
-import { and, count, desc, eq, gte, lt, ne } from 'drizzle-orm';
+import { clinicVisits, inventoryAlerts, medicineBatches, medicines, students } from '$lib/server/db/schema';
+import { and, count, desc, eq, gte, lt, lte, ne, sum } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
@@ -87,11 +87,48 @@ export const load: PageServerLoad = async () => {
 		.orderBy(desc(clinicVisits.checkInTime))
 		.limit(10);
 
+	// Total active students
+	const [{ count: totalStudents }] = await db
+		.select({ count: count() })
+		.from(students)
+		.where(eq(students.isActive, true));
+
+	// Inventory stats
+	const thirtyDaysFromNow = new Date();
+	thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+
+	const [{ count: totalMedicines }] = await db
+		.select({ count: count() })
+		.from(medicines)
+		.where(eq(medicines.isActive, true));
+
+	const [{ count: lowStockCount }] = await db
+		.select({ count: count() })
+		.from(inventoryAlerts)
+		.where(and(eq(inventoryAlerts.alertType, 'low_stock'), eq(inventoryAlerts.isResolved, false)));
+
+	const [{ count: expiringSoonCount }] = await db
+		.select({ count: count() })
+		.from(medicineBatches)
+		.where(and(
+			eq(medicineBatches.isActive, true),
+			lte(medicineBatches.expirationDate, thirtyDaysFromNow),
+			gte(medicineBatches.expirationDate, new Date())
+		));
+
+	const inventoryStats = {
+		totalMedicines,
+		lowStockCount,
+		expiringSoonCount
+	};
+
 	return {
 		recentVisits,
 		visitsThisDay,
 		visitsThisMonth,
 		totalVisits,
-		severityCounts
+		severityCounts,
+		totalStudents,
+		inventoryStats
 	};
 };

@@ -7,7 +7,7 @@
 	import VisitSummaryCards from '$lib/components/visit-summary-cards.svelte';
 	import VisitsTable from '$lib/components/visits-table.svelte';
 	import { app } from '$lib/states/app.svelte.js';
-	import { AlertTriangle, CalendarClock, CalendarDays, Circle, ClipboardList, QrCode } from '@lucide/svelte';
+	import { AlertTriangle, CalendarClock, CalendarDays, Circle, ClipboardList, Package, QrCode, Users, AlertCircle, Clock } from '@lucide/svelte';
 
 	let { data } = $props();
 
@@ -173,6 +173,59 @@
 					</div>
 				{/if}
 			</div>
+		</div>
+	</section>
+
+	<!-- Stats widgets: Students + Inventory -->
+	<section class="px-4 pb-4 md:px-6 md:pb-6">
+		<div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+			<!-- Total Students -->
+			<a href="/students" class="group rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+				<div class="mb-3 flex items-center justify-between">
+					<div class="flex size-9 items-center justify-center rounded-lg bg-blue-500/10">
+						<Users class="size-4 text-blue-600 dark:text-blue-400" />
+					</div>
+					<span class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Students</span>
+				</div>
+				<p class="text-2xl font-bold text-foreground">{data.totalStudents}</p>
+				<p class="mt-0.5 text-xs text-muted-foreground">Active enrolled</p>
+			</a>
+
+			<!-- Total Medicines -->
+			<a href="/inventory" class="group rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+				<div class="mb-3 flex items-center justify-between">
+					<div class="flex size-9 items-center justify-center rounded-lg bg-emerald-500/10">
+						<Package class="size-4 text-emerald-600 dark:text-emerald-400" />
+					</div>
+					<span class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Inventory</span>
+				</div>
+				<p class="text-2xl font-bold text-foreground">{data.inventoryStats.totalMedicines}</p>
+				<p class="mt-0.5 text-xs text-muted-foreground">Medicine types</p>
+			</a>
+
+			<!-- Low Stock -->
+			<a href="/inventory" class="group rounded-xl border p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md {data.inventoryStats.lowStockCount > 0 ? 'border-amber-500/40 bg-amber-500/5' : 'border-border/60 bg-card'}">
+				<div class="mb-3 flex items-center justify-between">
+					<div class="flex size-9 items-center justify-center rounded-lg {data.inventoryStats.lowStockCount > 0 ? 'bg-amber-500/15' : 'bg-muted/50'}">
+						<AlertCircle class="size-4 {data.inventoryStats.lowStockCount > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground'}" />
+					</div>
+					<span class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Low Stock</span>
+				</div>
+				<p class="text-2xl font-bold {data.inventoryStats.lowStockCount > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-foreground'}">{data.inventoryStats.lowStockCount}</p>
+				<p class="mt-0.5 text-xs text-muted-foreground">{data.inventoryStats.lowStockCount === 0 ? 'All stocked' : 'Need restocking'}</p>
+			</a>
+
+			<!-- Expiring Soon -->
+			<a href="/inventory" class="group rounded-xl border p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md {data.inventoryStats.expiringSoonCount > 0 ? 'border-red-500/40 bg-red-500/5' : 'border-border/60 bg-card'}">
+				<div class="mb-3 flex items-center justify-between">
+					<div class="flex size-9 items-center justify-center rounded-lg {data.inventoryStats.expiringSoonCount > 0 ? 'bg-red-500/15' : 'bg-muted/50'}">
+						<Clock class="size-4 {data.inventoryStats.expiringSoonCount > 0 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'}" />
+					</div>
+					<span class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Expiring</span>
+				</div>
+				<p class="text-2xl font-bold {data.inventoryStats.expiringSoonCount > 0 ? 'text-red-600 dark:text-red-400' : 'text-foreground'}">{data.inventoryStats.expiringSoonCount}</p>
+				<p class="mt-0.5 text-xs text-muted-foreground">Within 30 days</p>
+			</a>
 		</div>
 	</section>
 
