@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
+	import SplashScreen from '$lib/components/splash-screen.svelte';
 	import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
 	import VoiceGuideButton from '$lib/components/voice-guide-button.svelte';
 	import { voiceGuide } from '$lib/stores/voice-guide';
@@ -119,6 +120,11 @@
 	];
 
 	let openFaq = $state<number | null>(null);
+	let splashDone = $state(false);
+
+	function onSplashEnter() {
+		splashDone = true;
+	}
 
 	const stats = [
 		{ label: 'Core Modules', value: '6+' },
@@ -136,11 +142,6 @@
 	];
 
 	onMount(() => {
-		// Play homepage voice guide through the shared singleton so it gets
-		// stopped automatically when navigating to any other route (e.g. dashboard)
-		voiceGuide.init();
-		voiceGuide.playWelcome();
-
 		// Respect users who prefer reduced motion
 		const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 		if (prefersReduced) return;
@@ -264,7 +265,11 @@
 	<meta name="description" content="Smart clinic management with AI pre-diagnosis, first aid guidance, inventory tracking, referral management and more." />
 </svelte:head>
 
-<div class="relative min-h-screen bg-background text-foreground">
+{#if !splashDone}
+	<SplashScreen onEnter={onSplashEnter} />
+{/if}
+
+<div class="relative min-h-screen bg-background text-foreground transition-opacity duration-700" class:opacity-0={!splashDone} class:pointer-events-none={!splashDone}>
 	<!-- Dot pattern -->
 	<div class="pointer-events-none absolute inset-0 -z-10">
 		<div class="absolute inset-0 opacity-[0.4] dark:opacity-[0.15]" style="background-image: radial-gradient(circle, hsl(var(--foreground) / 0.15) 1px, transparent 1px); background-size: 24px 24px;"></div>
