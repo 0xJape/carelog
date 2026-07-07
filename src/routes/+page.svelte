@@ -38,48 +38,48 @@
 	const features = [
 		{
 			icon: ClipboardList,
-			title: 'Medical Logging',
-			desc: 'Comprehensive patient records with consultation history, vital signs tracking, and secure medical history storage.',
-			items: ['Patient registration & profiles', 'Vital signs recording', 'Consultation records', 'Medical history storage']
+			title: 'Student Health Records',
+			desc: 'Complete student clinic records with visit history, vital signs, allergies, and medical conditions — all in one secure profile.',
+			items: ['Student registration & profiles', 'Allergies & condition flags', 'Clinic visit history', 'Emergency contact details']
 		},
 		{
 			icon: Brain,
 			title: 'AI Pre-Diagnosis',
-			desc: 'Rule-based expert system for symptom assessment with severity indication and possible illness suggestions.',
-			items: ['Symptom input form', 'AI symptom analysis', 'Illness suggestions', 'Severity levels: Low / Moderate / High']
+			desc: 'Rule-based expert system that helps the school nurse assess a student\u2019s symptoms and gauge how urgent the case is.',
+			items: ['Symptom input form', 'AI symptom analysis', 'Possible illness suggestions', 'Severity: Low / Moderate / High']
 		},
 		{
 			icon: HeartPulse,
 			title: 'First Aid Guidance',
-			desc: 'Automated first-aid recommendation engine with step-by-step emergency instructions and warning messages.',
-			items: ['Symptom-based recommendations', 'Step-by-step instructions', 'Emergency warnings', 'Critical alerts']
+			desc: 'Step-by-step first-aid instructions for common school injuries and emergencies, with clear warnings on when to escalate.',
+			items: ['Symptom-based first aid steps', 'Emergency escalation alerts', 'Common injury protocols', 'When-to-call-parents guidance']
 		},
 		{
 			icon: Users,
 			title: 'Referral Management',
-			desc: 'Generate referral forms, recommend hospitals or clinics, and maintain complete referral record history.',
-			items: ['Referral form generation', 'Hospital recommendations', 'Referral record storage', 'Tracking & follow-up']
+			desc: 'Generate referral forms to nearby hospitals or health centers when a student needs care beyond the school clinic.',
+			items: ['Referral form generation', 'Hospital / health-center info', 'Referral record history', 'Follow-up tracking']
 		},
 		{
 			icon: Package,
-			title: 'Inventory Management',
-			desc: 'Real-time medicine stock monitoring, expiration date tracking, and automated low-stock alerts.',
-			items: ['Medicine inventory list', 'Stock quantity monitoring', 'Low-stock alerts', 'Expiration date tracking']
+			title: 'Medicine Inventory',
+			desc: 'Track the school clinic\u2019s medicine supply, monitor stock levels, and get alerted before items run low or expire.',
+			items: ['Clinic medicine list', 'Stock quantity monitoring', 'Low-stock alerts', 'Expiration date tracking']
 		},
 		{
 			icon: Bell,
-			title: 'Smart Notifications',
-			desc: 'Appointment reminders, follow-up alerts, restocking notifications, and referral status updates.',
-			items: ['Appointment reminders', 'Follow-up reminders', 'Restocking alerts', 'Referral notifications']
+			title: 'Parent Notifications',
+			desc: 'Automatically notify parents and guardians when their child visits the clinic, with the reason and current status.',
+			items: ['Instant parent SMS & email', 'Visit reason & status', 'Pickup requests', 'Follow-up reminders']
 		}
 	];
 
 	const workflowSteps = [
-		{ step: '01', title: 'Register Patient', desc: 'Quick registration via form or QR code scan for instant profile creation.', icon: UserPlus },
-		{ step: '02', title: 'Check-In & Vitals', desc: 'Record vital signs and chief complaint during clinic visit.', icon: Activity },
-		{ step: '03', title: 'AI Assessment', desc: 'System analyzes symptoms and suggests possible diagnoses with severity levels.', icon: Brain },
-		{ step: '04', title: 'Treatment & Referral', desc: 'Administer first aid, prescribe medication, or generate referral forms.', icon: FileText },
-		{ step: '05', title: 'Notify & Follow-Up', desc: 'Automated notifications sent to parents, staff, and follow-up scheduling.', icon: Bell }
+		{ step: '01', title: 'Scan Student ID', desc: 'Student, teacher, or nurse scans the QR code on the ID card to instantly load the student profile.', icon: QrCode },
+		{ step: '02', title: 'Record Symptoms & Vitals', desc: 'Nurse logs the chief complaint and vital signs during the clinic visit.', icon: Activity },
+		{ step: '03', title: 'AI Assessment', desc: 'System analyzes symptoms, suggests possible illnesses, and flags the severity level.', icon: Brain },
+		{ step: '04', title: 'Treat or Refer', desc: 'Administer first aid, give medicine from inventory, or generate a referral form if needed.', icon: FileText },
+		{ step: '05', title: 'Notify Parents', desc: 'Parents and guardians are automatically alerted with the visit details and current status.', icon: Bell }
 	];
 
 	const techStack = [
@@ -94,45 +94,45 @@
 	const faqs = [
 		{
 			q: 'What is CLINIQAI?',
-			a: 'CLINIQAI is an AI-integrated clinic management system designed for medical logging, first aid guidance, pre-diagnosis, referral management, inventory tracking, and automated notifications.'
+			a: 'CLINIQAI is an AI-integrated school clinic management system. It helps the school nurse log student clinic visits, get AI-assisted pre-diagnosis and first aid guidance, manage referrals and medicine inventory, and automatically notify parents.'
 		},
 		{
-			q: 'Who can use the system?',
-			a: 'Three user roles are supported: Clinic Administrators (full system oversight), Nurses/Clinic Staff (patient care & daily operations), and Patients (access records & receive updates).'
+			q: 'Who uses the system?',
+			a: 'Three roles are supported: Clinic Administrators (full oversight of the school clinic), the School Nurse / clinic staff (daily student care and records), and Students / Parents (access records and receive visit updates).'
 		},
 		{
-			q: 'How does the AI pre-diagnosis work?',
-			a: 'The system uses a rule-based expert system combined with machine learning models to analyze symptoms, suggest possible illnesses, and indicate severity levels (Low, Moderate, High).'
+			q: 'How does the AI pre-diagnosis help the nurse?',
+			a: 'It uses a rule-based expert system to analyze a student\u2019s reported symptoms, suggest possible illnesses, and indicate a severity level (Low, Moderate, High) so the nurse can triage quickly. It assists — it never replaces — the nurse\u2019s judgment.'
 		},
 		{
-			q: 'Can it send notifications automatically?',
-			a: 'Yes. The system automatically sends appointment reminders, follow-up reminders, medicine restocking alerts, and referral notifications via email.'
+			q: 'How are parents notified?',
+			a: 'When a student visits the clinic, the system automatically sends the parent or guardian an SMS and email with the reason for the visit, the care being given, and the current status — so families are informed right away.'
 		},
 		{
-			q: 'Is patient data secure?',
-			a: 'All data is stored securely in PostgreSQL with role-based access control. Session management uses secure HTTP-only cookies with Argon2 password hashing.'
+			q: 'Is student health data secure?',
+			a: 'Yes. All records are stored securely in PostgreSQL with role-based access control. Sessions use secure HTTP-only cookies and passwords are hashed with Argon2.'
 		},
 		{
-			q: 'Does it support QR codes?',
-			a: 'Yes. Patients can be identified instantly via QR code scanning, enabling quick check-in and instant access to their medical records.'
+			q: 'How do QR codes work for students?',
+			a: 'Each student ID card carries a unique QR code. Scanning it instantly loads that student\u2019s clinic profile — allergies, conditions, and emergency contacts — with no login needed, which is critical during emergencies.'
 		}
 	];
 
 	let openFaq = $state<number | null>(null);
 
 	const stats = [
-		{ label: 'Modules', value: '6+' },
+		{ label: 'Core Modules', value: '6+' },
 		{ label: 'User Roles', value: '3' },
-		{ label: 'AI Components', value: '3' },
-		{ label: 'Uptime', value: '99.9%' }
+		{ label: 'Seconds to Scan', value: '<5' },
+		{ label: 'Login Needed to View', value: 'None' }
 	];
 
 	const benefits = [
-		'Secure role-based access for admins, nurses, and patients',
-		'Real-time dashboards with analytics and insights',
-		'QR code integration for instant patient identification',
-		'Automated email and notification system',
-		'Fully responsive design across all devices'
+		'Secure role-based access for admins, the school nurse, and parents',
+		'Instant QR scanning of student ID cards during emergencies',
+		'Automatic SMS & email alerts to parents on every clinic visit',
+		'Real-time dashboard of clinic visits, medicine stock, and referrals',
+		'Fully responsive — works on any phone, tablet, or clinic computer'
 	];
 
 	onMount(() => {
@@ -260,7 +260,7 @@
 	});</script>
 
 <svelte:head>
-	<title>CLINIQAI — AI-Integrated Clinic Management System</title>
+	<title>CLINIQUEAI — AI-Integrated Clinic Management System</title>
 	<meta name="description" content="Smart clinic management with AI pre-diagnosis, first aid guidance, inventory tracking, referral management and more." />
 </svelte:head>
 
@@ -274,8 +274,8 @@
 	<nav class="fixed top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg">
 		<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
 			<a href="/" class="flex items-center gap-3">
-				<img src="/logo.png" alt="CLINIQAI" class="h-8 w-8 rounded-lg" />
-				<span class="text-lg font-bold tracking-tight">CLINIQAI</span>
+				<img src="/logo.png" alt="CLINIQUEAI" class="h-8 w-8 rounded-lg" />
+				<span class="text-lg font-bold tracking-tight">CLINIQUEAI</span>
 			</a>
 			<div class="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
 				<a href="#features" class="transition-colors hover:text-foreground">Features</a>
@@ -331,7 +331,7 @@
 					</p>
 
 					<p data-anim="hero" class="mx-auto mb-10 max-w-xl text-sm text-slate-300/90 lg:mx-0">
-						Serving the community of Tupi — streamlining healthcare operations for clinic administrators, nurses, and patients with intelligent automation.
+						Built for the school clinic — helping the nurse care for students faster, keep parents informed, and handle emergencies when every second counts.
 					</p>
 
 					<div data-anim="hero" class="flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
@@ -450,7 +450,7 @@
 						<!-- Stats cards -->
 						<div class="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
 							{#each [
-								{ color: 'bg-blue-500', label: 'Total Patients', value: '248' },
+								{ color: 'bg-blue-500', label: 'Total Students', value: '248' },
 								{ color: 'bg-emerald-500', label: "Today's Visits", value: '18' },
 								{ color: 'bg-amber-500', label: 'Low Stock Items', value: '5' },
 								{ color: 'bg-red-500', label: 'Pending Referrals', value: '3' }
@@ -503,10 +503,10 @@
 			<div data-anim="section-head" class="mx-auto mb-14 max-w-2xl text-center">
 				<p class="mb-3 text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Core Modules</p>
 				<h2 class="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-					Everything your clinic needs
+					Everything the school clinic needs
 				</h2>
 				<p class="mt-3 text-muted-foreground">
-					Six essential modules designed for modern healthcare operations
+					Six essential modules built for fast, reliable student care
 				</p>
 			</div>
 
@@ -644,7 +644,7 @@
 							</div>
 							<div>
 								<h4 class="font-semibold text-foreground mb-1">Expiration Date Tracking</h4>
-								<p class="text-sm text-muted-foreground">Automatic tracking of expiration dates with alerts for items nearing expiry. Maintain compliance and patient safety.</p>
+								<p class="text-sm text-muted-foreground">Automatic tracking of expiration dates with alerts for items nearing expiry — so the clinic never gives out expired medicine to a student.</p>
 							</div>
 						</div>
 					</div>
@@ -662,7 +662,7 @@
 					How it works
 				</h2>
 				<p class="mt-3 text-muted-foreground">
-					From patient check-in to automated follow-up in five simple steps
+					From QR scan to parent notification in five simple steps
 				</p>
 			</div>
 
@@ -695,7 +695,7 @@
 		<div class="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:gap-20">
 			<!-- Benefits -->
 			<div>
-				<p class="mb-3 text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Why CLINIQAI</p>
+				<p class="mb-3 text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Why CLINIQUEAI</p>
 				<h2 class="mb-6 text-2xl font-bold tracking-tight text-foreground md:text-3xl">
 					Built for efficiency
 				</h2>
@@ -732,8 +732,8 @@
 							<Stethoscope class="h-5 w-5 text-white" />
 						</div>
 						<div>
-							<p class="text-sm font-semibold text-foreground">Nurse / Clinic Staff</p>
-							<p class="text-xs text-muted-foreground">Patient care, vitals & daily operations</p>
+							<p class="text-sm font-semibold text-foreground">School Nurse / Clinic Staff</p>
+							<p class="text-xs text-muted-foreground">Student care, vitals & daily clinic operations</p>
 						</div>
 					</div>
 
@@ -742,8 +742,8 @@
 							<HeartPulse class="h-5 w-5 text-white" />
 						</div>
 						<div>
-							<p class="text-sm font-semibold text-foreground">Patient</p>
-							<p class="text-xs text-muted-foreground">Access records, view history & receive updates</p>
+							<p class="text-sm font-semibold text-foreground">Student / Parent</p>
+							<p class="text-xs text-muted-foreground">View clinic visit history & receive updates</p>
 						</div>
 					</div>
 				</div>
@@ -840,10 +840,10 @@
 	<section class="px-6 pb-20 text-center md:pb-32">
 		<div data-anim="cta" class="mx-auto max-w-2xl rounded-2xl border border-border/60 bg-gradient-to-br from-blue-50/80 via-indigo-50/60 to-cyan-50/80 p-8 backdrop-blur-sm dark:from-blue-950/30 dark:via-indigo-950/20 dark:to-cyan-950/30 md:p-12">
 			<h2 class="mb-3 text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-				Ready to streamline your clinic?
+				Ready to modernize your school clinic?
 			</h2>
 			<p class="mx-auto mb-8 max-w-md text-sm text-muted-foreground">
-				Start managing patient records, AI pre-diagnosis, inventory, and more — all in one platform.
+				Log student visits, get AI-assisted triage, track medicine, and keep parents informed — all in one platform.
 			</p>
 			<a href="/login">
 				<Button class="h-11 gap-2 px-8">
@@ -862,11 +862,11 @@
 				<!-- Brand -->
 				<div class="md:col-span-1">
 					<div class="mb-3 flex items-center gap-2">
-						<img src="/logo.png" alt="CLINIQAI" class="h-7 w-7 rounded" />
-						<span class="text-base font-bold">CLINIQAI</span>
+						<img src="/logo.png" alt="CLINIQUEAI" class="h-7 w-7 rounded" />
+						<span class="text-base font-bold">CLINIQUEAI</span>
 					</div>
 					<p class="text-xs text-muted-foreground">
-						AI-Integrated Clinic Management System for medical logging, pre-diagnosis, and healthcare operations.
+						AI-Integrated School Clinic Management System for student health records, pre-diagnosis, first aid, and parent notifications.
 					</p>
 				</div>
 
@@ -885,12 +885,12 @@
 				<div>
 					<h4 class="mb-3 text-sm font-semibold text-foreground">Modules</h4>
 					<ul class="space-y-2 text-xs text-muted-foreground">
-						<li><span>Medical Logging</span></li>
+						<li><span>Student Health Records</span></li>
 						<li><span>AI Pre-Diagnosis</span></li>
 						<li><span>First Aid Guidance</span></li>
 						<li><span>Referral Management</span></li>
-						<li><span>Inventory</span></li>
-						<li><span>Notifications</span></li>
+						<li><span>Medicine Inventory</span></li>
+						<li><span>Parent Notifications</span></li>
 					</ul>
 				</div>
 
@@ -900,15 +900,15 @@
 					<ul class="space-y-2 text-xs text-muted-foreground">
 						<li><a href="/login" class="transition-colors hover:text-foreground">Sign In</a></li>
 						<li><span>Clinic Administrator</span></li>
-						<li><span>Nurse / Staff</span></li>
-						<li><span>Patient Portal</span></li>
+						<li><span>School Nurse / Staff</span></li>
+						<li><span>Student / Parent</span></li>
 					</ul>
 				</div>
 			</div>
 
 			<div class="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border/40 pt-6 sm:flex-row">
 				<p class="text-xs text-muted-foreground">
-					&copy; 2025 CLINIQAI. All rights reserved.
+					&copy; 2025 CLINIQUEAI. All rights reserved.
 				</p>
 				<div class="flex items-center gap-4 text-xs text-muted-foreground">
 					<span class="flex items-center gap-1.5">
