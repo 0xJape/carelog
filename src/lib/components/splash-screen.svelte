@@ -80,8 +80,6 @@
 		to { opacity: 0; }
 	}
 </style>
-
-	<!-- Animated grid background -->
 	<div class="pointer-events-none absolute inset-0">
 		<div class="absolute inset-0 opacity-20"
 			style="background-image: linear-gradient(rgba(59,130,246,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.3) 1px, transparent 1px); background-size: 60px 60px;">
