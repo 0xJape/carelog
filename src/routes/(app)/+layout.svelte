@@ -3,6 +3,8 @@
 	import MobileNavigation from '$lib/components/mobile-navigation.svelte';
 	import SidebarNavigation from '$lib/components/sidebar-navigation.svelte';
 	import { app } from '$lib/states/app.svelte';
+	import { voiceGuide } from '$lib/stores/voice-guide.js';
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { Toaster } from 'svelte-sonner';
 
@@ -26,10 +28,22 @@
 		} else {
 			localStorage.setItem('qrEnabled', String(app.qrEnabled));
 		}
+
+		// Init voice guide (loads user preference from localStorage)
+		voiceGuide.init();
+
+		// Play audio for current route on mount
+		voiceGuide.playForRoute(page.url.pathname);
 	});
 
 	$effect(() => {
 		localStorage.setItem('qrEnabled', String(app.qrEnabled));
+	});
+
+	// Stop current audio and play new one on every route change
+	$effect(() => {
+		const pathname = page.url.pathname;
+		voiceGuide.playForRoute(pathname);
 	});
 </script>
 
