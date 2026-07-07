@@ -7,7 +7,7 @@
 	import VisitSummaryCards from '$lib/components/visit-summary-cards.svelte';
 	import VisitsTable from '$lib/components/visits-table.svelte';
 	import { app } from '$lib/states/app.svelte.js';
-	import { AlertTriangle, CalendarClock, CalendarDays, Circle, ClipboardList, Package, QrCode, Users, AlertCircle, Clock } from '@lucide/svelte';
+	import { AlertCircle, AlertTriangle, CalendarClock, CalendarDays, Circle, ClipboardList, Clock, Package, QrCode, Users } from '@lucide/svelte';
 
 	let { data } = $props();
 
@@ -126,106 +126,100 @@
 
 	<!-- Dashboard Stats Section -->
 	<section class="px-4 py-4 md:px-6">
-		<div class="rounded-lg border border-border bg-card p-4">
-			<h2 class="medical-typography-heading mb-3 text-sm font-medium text-foreground">
-				This Month's Cases by Severity
-			</h2>
-			<div class="flex flex-wrap gap-4 text-sm">
-				<!-- Medium Cases -->
-				{#if severityStats.medium > 0}
-					<div class="flex items-center gap-2">
-						<Circle class="h-3 w-3 fill-yellow-500 text-yellow-500" />
-						<span class="text-foreground">
-							<strong>{severityStats.medium}</strong> Medium case{severityStats.medium !== 1
-								? 's'
-								: ''}
-						</span>
-					</div>
-				{/if}
-
-				<!-- High Cases -->
-				{#if severityStats.high > 0}
-					<div class="flex items-center gap-2">
-						<AlertTriangle class="h-3 w-3 fill-orange-500 text-orange-500" />
-						<span class="text-foreground">
-							<strong>{severityStats.high}</strong> High case{severityStats.high !== 1 ? 's' : ''}
-						</span>
-					</div>
-				{/if}
-
-				<!-- Critical Cases -->
-				{#if severityStats.critical > 0}
-					<div class="flex items-center gap-2">
-						<AlertTriangle class="h-3 w-3 fill-red-500 text-red-500" />
-						<span class="text-foreground">
-							<strong>{severityStats.critical}</strong> Critical case{severityStats.critical !== 1
-								? 's'
-								: ''}
-						</span>
-					</div>
-				{/if}
-
-				<!-- No urgent cases message -->
-				{#if severityStats.medium === 0 && severityStats.high === 0 && severityStats.critical === 0}
-					<div class="flex items-center gap-2 text-muted-foreground">
-						<Circle class="h-3 w-3 fill-green-500 text-green-500" />
-						<span>No medium, high, or critical cases this month</span>
-					</div>
-				{/if}
-			</div>
-		</div>
-	</section>
-
-	<!-- Stats widgets: Students + Inventory -->
-	<section class="px-4 pb-4 md:px-6 md:pb-6">
 		<div class="grid grid-cols-2 gap-3 md:grid-cols-4">
 			<!-- Total Students -->
-			<a href="/students" class="group rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
-				<div class="mb-3 flex items-center justify-between">
+			<a href="/students" class="group flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-blue-500/40 hover:shadow-md">
+				<div class="flex items-center justify-between">
 					<div class="flex size-9 items-center justify-center rounded-lg bg-blue-500/10">
 						<Users class="size-4 text-blue-600 dark:text-blue-400" />
 					</div>
-					<span class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Students</span>
+					<span class="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Students</span>
 				</div>
-				<p class="text-2xl font-bold text-foreground">{data.totalStudents}</p>
-				<p class="mt-0.5 text-xs text-muted-foreground">Active enrolled</p>
+				<div>
+					<p class="text-3xl font-bold tracking-tight text-foreground">{data.totalStudents}</p>
+					<p class="mt-0.5 text-xs text-muted-foreground">Active enrolled</p>
+				</div>
 			</a>
 
 			<!-- Total Medicines -->
-			<a href="/inventory" class="group rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
-				<div class="mb-3 flex items-center justify-between">
+			<a href="/inventory" class="group flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-emerald-500/40 hover:shadow-md">
+				<div class="flex items-center justify-between">
 					<div class="flex size-9 items-center justify-center rounded-lg bg-emerald-500/10">
 						<Package class="size-4 text-emerald-600 dark:text-emerald-400" />
 					</div>
-					<span class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Inventory</span>
+					<span class="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Medicines</span>
 				</div>
-				<p class="text-2xl font-bold text-foreground">{data.inventoryStats.totalMedicines}</p>
-				<p class="mt-0.5 text-xs text-muted-foreground">Medicine types</p>
+				<div>
+					<p class="text-3xl font-bold tracking-tight text-foreground">{data.inventoryStats.totalMedicines}</p>
+					<p class="mt-0.5 text-xs text-muted-foreground">In inventory</p>
+				</div>
 			</a>
 
 			<!-- Low Stock -->
-			<a href="/inventory" class="group rounded-xl border p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md {data.inventoryStats.lowStockCount > 0 ? 'border-amber-500/40 bg-amber-500/5' : 'border-border/60 bg-card'}">
-				<div class="mb-3 flex items-center justify-between">
+			<a href="/inventory" class="group flex flex-col gap-3 rounded-xl border p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md
+				{data.inventoryStats.lowStockCount > 0
+					? 'border-amber-500/40 bg-amber-500/5 hover:border-amber-500/60'
+					: 'border-border/60 bg-card hover:border-border'}">
+				<div class="flex items-center justify-between">
 					<div class="flex size-9 items-center justify-center rounded-lg {data.inventoryStats.lowStockCount > 0 ? 'bg-amber-500/15' : 'bg-muted/50'}">
 						<AlertCircle class="size-4 {data.inventoryStats.lowStockCount > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground'}" />
 					</div>
-					<span class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Low Stock</span>
+					<span class="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Low Stock</span>
 				</div>
-				<p class="text-2xl font-bold {data.inventoryStats.lowStockCount > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-foreground'}">{data.inventoryStats.lowStockCount}</p>
-				<p class="mt-0.5 text-xs text-muted-foreground">{data.inventoryStats.lowStockCount === 0 ? 'All stocked' : 'Need restocking'}</p>
+				<div>
+					<p class="text-3xl font-bold tracking-tight {data.inventoryStats.lowStockCount > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-foreground'}">{data.inventoryStats.lowStockCount}</p>
+					<p class="mt-0.5 text-xs text-muted-foreground">{data.inventoryStats.lowStockCount === 0 ? 'All stocked' : 'Need restocking'}</p>
+				</div>
 			</a>
 
 			<!-- Expiring Soon -->
-			<a href="/inventory" class="group rounded-xl border p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md {data.inventoryStats.expiringSoonCount > 0 ? 'border-red-500/40 bg-red-500/5' : 'border-border/60 bg-card'}">
-				<div class="mb-3 flex items-center justify-between">
+			<a href="/inventory" class="group flex flex-col gap-3 rounded-xl border p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md
+				{data.inventoryStats.expiringSoonCount > 0
+					? 'border-red-500/40 bg-red-500/5 hover:border-red-500/60'
+					: 'border-border/60 bg-card hover:border-border'}">
+				<div class="flex items-center justify-between">
 					<div class="flex size-9 items-center justify-center rounded-lg {data.inventoryStats.expiringSoonCount > 0 ? 'bg-red-500/15' : 'bg-muted/50'}">
 						<Clock class="size-4 {data.inventoryStats.expiringSoonCount > 0 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'}" />
 					</div>
-					<span class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Expiring</span>
+					<span class="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Expiring</span>
 				</div>
-				<p class="text-2xl font-bold {data.inventoryStats.expiringSoonCount > 0 ? 'text-red-600 dark:text-red-400' : 'text-foreground'}">{data.inventoryStats.expiringSoonCount}</p>
-				<p class="mt-0.5 text-xs text-muted-foreground">Within 30 days</p>
+				<div>
+					<p class="text-3xl font-bold tracking-tight {data.inventoryStats.expiringSoonCount > 0 ? 'text-red-600 dark:text-red-400' : 'text-foreground'}">{data.inventoryStats.expiringSoonCount}</p>
+					<p class="mt-0.5 text-xs text-muted-foreground">Within 30 days</p>
+				</div>
 			</a>
+		</div>
+	</section>
+
+	<!-- Severity strip -->
+	<section class="px-4 pb-2 md:px-6">
+		<div class="flex flex-wrap items-center gap-3 rounded-xl border border-border/60 bg-card px-4 py-3 text-sm">
+			<span class="text-xs font-semibold uppercase tracking-widest text-muted-foreground">This month</span>
+			<div class="h-3 w-px bg-border"></div>
+			{#if severityStats.medium > 0}
+				<div class="flex items-center gap-1.5">
+					<span class="size-2 rounded-full bg-yellow-500"></span>
+					<span class="text-foreground"><strong>{severityStats.medium}</strong> Medium</span>
+				</div>
+			{/if}
+			{#if severityStats.high > 0}
+				<div class="flex items-center gap-1.5">
+					<span class="size-2 rounded-full bg-orange-500"></span>
+					<span class="text-foreground"><strong>{severityStats.high}</strong> High</span>
+				</div>
+			{/if}
+			{#if severityStats.critical > 0}
+				<div class="flex items-center gap-1.5">
+					<span class="size-2 rounded-full bg-red-500"></span>
+					<span class="text-foreground"><strong>{severityStats.critical}</strong> Critical</span>
+				</div>
+			{/if}
+			{#if severityStats.medium === 0 && severityStats.high === 0 && severityStats.critical === 0}
+				<div class="flex items-center gap-1.5 text-muted-foreground">
+					<span class="size-2 rounded-full bg-emerald-500"></span>
+					<span>No urgent cases this month</span>
+				</div>
+			{/if}
 		</div>
 	</section>
 
