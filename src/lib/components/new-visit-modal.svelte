@@ -72,7 +72,12 @@
 		medicationsGiven: '',
 		visitType: 'other',
 		severity: 'low',
-		isEmergency: false
+		isEmergency: false,
+		// Vitals (optional)
+		temperature: '',
+		bloodPressureSystolic: '',
+		bloodPressureDiastolic: '',
+		pulse: ''
 	});
 
 	// Nurse combobox state
@@ -138,6 +143,7 @@
 	let aiLoading = $state(false);
 	let aiResult = $state<AiDiagnosis | null>(null);
 	let aiError = $state<string | null>(null);
+	let aiSource = $state<'ai' | 'rules' | null>(null);
 	let activeTab = $state('causes');
 
 	async function runAiDiagnosis() {
@@ -165,6 +171,7 @@
 				throw new Error(data?.error || 'Failed to generate pre-diagnosis');
 			}
 			aiResult = data.result as AiDiagnosis;
+			aiSource = (data.source ?? 'ai') as 'ai' | 'rules';
 			// Adopt the AI-assessed severity into the form (nurse can still change it)
 			const sevMap: Record<string, string> = {
 				low: 'low',
@@ -247,7 +254,12 @@
 		aiResult = null;
 		aiError = null;
 		aiLoading = false;
+		aiSource = null;
 		activeTab = 'causes';
+		formData.temperature = '';
+		formData.bloodPressureSystolic = '';
+		formData.bloodPressureDiastolic = '';
+		formData.pulse = '';
 	}
 
 	// Close dialog when clicking outside or escape
@@ -423,6 +435,69 @@
 			<!-- Emergency flag (hidden input) -->
 			<input type="hidden" name="isEmergency" value={formData.isEmergency.toString()} />
 
+			<!-- Vitals (optional) -->
+			<div class="space-y-2">
+				<div class="flex items-center gap-2">
+					<Label class="text-sm font-medium">Vitals <span class="text-xs font-normal text-muted-foreground">(optional)</span></Label>
+				</div>
+				<div class="grid grid-cols-2 gap-3">
+					<div class="space-y-1">
+						<Label for="temperature" class="text-xs text-muted-foreground">Temperature (°C)</Label>
+						<Input
+							id="temperature"
+							type="number"
+							min="30"
+							max="45"
+							step="0.1"
+							placeholder="e.g. 37.5"
+							bind:value={formData.temperature}
+							class="h-9"
+						/>
+					</div>
+					<div class="space-y-1">
+						<Label for="pulse" class="text-xs text-muted-foreground">Pulse (bpm)</Label>
+						<Input
+							id="pulse"
+							type="number"
+							min="30"
+							max="250"
+							placeholder="e.g. 80"
+							bind:value={formData.pulse}
+							class="h-9"
+						/>
+					</div>
+					<div class="space-y-1 col-span-2">
+						<Label class="text-xs text-muted-foreground">Blood Pressure (mmHg)</Label>
+						<div class="flex items-center gap-2">
+							<Input
+								type="number"
+								min="50"
+								max="250"
+								placeholder="Systolic"
+								bind:value={formData.bloodPressureSystolic}
+								class="h-9"
+							/>
+							<span class="text-muted-foreground font-medium">/</span>
+							<Input
+								type="number"
+								min="30"
+								max="150"
+								placeholder="Diastolic"
+								bind:value={formData.bloodPressureDiastolic}
+								class="h-9"
+							/>
+						</div>
+					</div>
+				</div>
+				<!-- Hidden JSON field sent with form -->
+				<input type="hidden" name="vitals" value={JSON.stringify({
+					...(formData.temperature ? { temperature: parseFloat(formData.temperature) } : {}),
+					...(formData.bloodPressureSystolic ? { bloodPressureSystolic: parseInt(formData.bloodPressureSystolic) } : {}),
+					...(formData.bloodPressureDiastolic ? { bloodPressureDiastolic: parseInt(formData.bloodPressureDiastolic) } : {}),
+					...(formData.pulse ? { pulse: parseInt(formData.pulse) } : {})
+				})} />
+			</div>
+
 			<!-- Reason -->
 			<div class="space-y-2">
 				<Label for="reason">Reason for Visit *</Label>
@@ -526,6 +601,14 @@
 				{/if}
 
 				{#if aiResult}
+					<!-- Source indicator -->
+					{#if aiSource === 'rules'}
+						<div class="flex items-center gap-1.5 rounded-md bg-amber-500/10 px-2.5 py-1 text-[10px] font-medium text-amber-600 dark:text-amber-400">
+							<AlertTriangle class="size-3 shrink-0" />
+							Offline mode — AI unavailable, using rule-based guidance
+						</div>
+					{/if}
+
 					<!-- Top summary bar -->
 					<div class="flex items-center gap-2 rounded-lg bg-background/70 px-3 py-2 border border-border/40">
 						<span class={cn(

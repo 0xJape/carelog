@@ -1,4 +1,5 @@
 import { generateDiagnosis } from '$lib/server/ai-diagnosis.js';
+import { ruleBasedDiagnosis } from '$lib/server/ai-rules.js';
 import { db } from '$lib/server/db/index.js';
 import { students } from '$lib/server/db/schema.js';
 import { json } from '@sveltejs/kit';
@@ -75,13 +76,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			}
 		});
 
-		return json({ result });
+		return json({ result, source: 'ai' });
 	} catch (err) {
-		console.error('AI diagnosis error:', err);
-		const message =
-			err instanceof Error && err.message.includes('GEMINI_API_KEY')
-				? 'AI service is not configured. Please contact the administrator.'
-				: 'Failed to generate pre-diagnosis. Please try again.';
-		return json({ error: message }, { status: 500 });
+		console.error('AI diagnosis error — falling back to rule engine:', err);
+		// Offline fallback: rule-based engine
+		const result = ruleBasedDiagnosis(reason.trim(), details?.trim(), visitType);
+		return json({ result, source: 'rules' });
 	}
 };

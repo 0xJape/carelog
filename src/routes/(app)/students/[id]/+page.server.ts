@@ -161,7 +161,15 @@ export const actions: Actions = {
 				isEmergency: formData.get('isEmergency') === 'true',
 				reason: formData.get('reason') as string,
 				details: formData.get('details') as string,
-				medicationsGiven: formData.get('medicationsGiven') as string
+				medicationsGiven: formData.get('medicationsGiven') as string,
+				vitals: (() => {
+					try {
+						const raw = formData.get('vitals') as string;
+						const parsed = JSON.parse(raw || '{}');
+						// Only save if at least one vital was entered
+						return Object.keys(parsed).length > 0 ? parsed : null;
+					} catch { return null; }
+				})()
 			};
 
 			// Validate required fields
@@ -246,6 +254,7 @@ export const actions: Actions = {
 					chiefComplaint: visitData.reason,
 					symptoms: visitData.details || null,
 					medicationGiven: visitData.medicationsGiven || null,
+					vitalSigns: visitData.vitals,
 					status: 'active',
 					parentNotified: visitData.isEmergency
 				})
