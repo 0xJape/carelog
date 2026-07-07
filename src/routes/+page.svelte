@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
+	import VoiceGuideButton from '$lib/components/voice-guide-button.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import {
 		Activity,
@@ -278,6 +279,7 @@
 				<a href="#faq" class="transition-colors hover:text-foreground">FAQ</a>
 			</div>
 			<div class="flex items-center gap-3">
+				<VoiceGuideButton />
 				<ThemeSwitcher />
 				<a href="/login">
 					<Button variant="default" size="sm" class="gap-1.5">

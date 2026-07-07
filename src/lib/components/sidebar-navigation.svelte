@@ -3,6 +3,7 @@
 	import AppLogo from './app-logo.svelte';
 	import NavigationMenuItems from './navigation-menu-items.svelte';
 	import ThemeSwitcher from './theme-switcher.svelte';
+	import VoiceGuideButton from './voice-guide-button.svelte';
 
 	let { data } = $props();
 
@@ -21,7 +22,10 @@
 		<!-- Logo section -->
 		<div class="flex items-center justify-between gap-2 px-5 py-5">
 			<AppLogo />
-			<ThemeSwitcher initialTheme={data?.theme} />
+			<div class="flex items-center gap-1.5">
+				<VoiceGuideButton />
+				<ThemeSwitcher initialTheme={data?.theme} />
+			</div>
 		</div>
 
 		<div class="mx-5 border-t border-sidebar-border/60"></div>
