@@ -95,6 +95,12 @@ class VoiceGuide {
 		this.audio.volume = 0.85;
 		this.currentSrc = src;
 
+		// Silently ignore 404s and autoplay blocks
+		this.audio.addEventListener('error', () => {
+			this.audio = null;
+			this.currentSrc = null;
+		});
+
 		this.audio.play().catch(() => {
 			// Autoplay blocked — silently ignore
 		});
