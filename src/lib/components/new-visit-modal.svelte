@@ -187,22 +187,32 @@
 	function applyAiToDetails() {
 		if (!aiResult) return;
 		const lines: string[] = [];
-		lines.push(`AI PRE-DIAGNOSIS SUMMARY: ${aiResult.summary}`);
+
+		// Top conditions (max 2, no alarming language)
 		if (aiResult.possibleConditions.length) {
-			lines.push(
-				'Possible causes: ' +
-					aiResult.possibleConditions.map((c) => `${c.name} (${c.likelihood})`).join(', ')
-			);
+			const top = aiResult.possibleConditions.slice(0, 2).map((c) => c.name).join(', ');
+			lines.push(`Possible: ${top}`);
 		}
+
+		// First aid / remedies (max 2 steps)
+		if (aiResult.firstAidSteps.length) {
+			lines.push(`Care: ${aiResult.firstAidSteps.slice(0, 2).join('; ')}`);
+		}
+
+		// Medications (names + dosage only, max 2)
 		if (aiResult.suggestedMedications.length) {
-			lines.push(
-				'Suggested medications: ' +
-					aiResult.suggestedMedications.map((m) => `${m.name} — ${m.dosageNote}`).join('; ')
-			);
+			const meds = aiResult.suggestedMedications
+				.slice(0, 2)
+				.map((m) => `${m.name} (${m.dosageNote})`)
+				.join(', ');
+			lines.push(`Meds: ${meds}`);
 		}
+
+		// Referral — keep it neutral
 		if (aiResult.referralRecommended) {
-			lines.push(`Referral recommended: ${aiResult.referralReason ?? 'Yes'}`);
+			lines.push('Follow-up with physician recommended.');
 		}
+
 		const block = lines.join('\n');
 		formData.details = formData.details.trim()
 			? `${formData.details.trim()}\n\n${block}`
