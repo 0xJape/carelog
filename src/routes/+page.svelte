@@ -135,7 +135,7 @@
 
 	onMount(() => {
 		// Play homepage voice guide
-		const audio = new Audio('/audio/homepage.mp3');
+		const audio = new Audio('/audio/welcome.mp3');
 		audio.volume = 0.85;
 		audio.play().catch(() => {});
 
