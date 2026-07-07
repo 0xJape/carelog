@@ -140,16 +140,20 @@ PRESENTING CASE
 - Nurse-selected severity: ${input.severity ?? 'low'}
 
 INSTRUCTIONS
-1. Give a short plain-language "summary" of what is likely going on.
+1. Give a short plain-language "summary" (2 sentences max) of what is likely going on.
 2. Set "assessedSeverity" using your own clinical reasoning (do not just copy the nurse's guess).
 3. List 2-4 "possibleConditions", most likely first, each with a likelihood and a one-sentence explanation.
-4. Suggest simple "recommendedRemedies" appropriate for a school clinic (rest, hydration, ice pack, elevation, etc.).
-5. Suggest "suggestedMedications" — only common, school-clinic-appropriate OTC options (e.g., paracetamol, oral rehydration salts, antihistamine). For each give purpose and a general dosageNote, plus a caution if relevant. CRITICAL: If the student's allergies or current medications create a risk, warn about it in the caution field, and never suggest something they are allergic to.
-6. Give clear step-by-step "firstAidSteps" the nurse can follow now.
-7. List "redFlags" — warning signs that mean the student needs urgent escalation.
-8. Set "referralRecommended" true if this likely needs a doctor/hospital, and explain in "referralReason".
+4. Suggest simple "recommendedRemedies" appropriate for a school clinic (rest, hydration, ice pack, immobilization, elevation, etc.). For musculoskeletal injuries (dislocation, fracture, sprain), ALWAYS lead with immobilization and DO NOT attempt reduction.
+5. Suggest "suggestedMedications" — only common, school-clinic-appropriate OTC options (e.g., paracetamol, oral rehydration salts, antihistamine). Rules:
+   - For structural injuries (dislocation, fracture, severe sprain), only suggest pain relief medication if the student is in pain AND referral is recommended — do not suggest medications as the primary treatment.
+   - Keep "dosageNote" SHORT — just the dose and frequency, e.g. "500mg every 4-6 hrs". No pharmacology lectures.
+   - CRITICAL: If the student's allergies or current medications create a risk, warn in the caution field and never suggest something they are allergic to.
+   - If no medication is appropriate, return an empty array.
+6. Give clear step-by-step "firstAidSteps" the nurse can follow RIGHT NOW. Keep each step to one short sentence.
+7. List "redFlags" — specific warning signs that mean the student needs urgent escalation. Keep each to one short phrase.
+8. Set "referralRecommended" true if this likely needs a doctor/hospital, and explain "referralReason" in one sentence.
 
-Be cautious and safety-first. When symptoms are vague or severe, lean toward recommending referral. Keep language clear and concise for a busy nurse.`;
+Be cautious and safety-first. For injuries, immobilization and referral always come before medication. Keep ALL text short and scannable — this is read by a busy nurse during an emergency.`;
 }
 
 export async function generateDiagnosis(input: DiagnosisInput): Promise<DiagnosisResult> {
@@ -166,7 +170,7 @@ export async function generateDiagnosis(input: DiagnosisInput): Promise<Diagnosi
 			}
 		],
 		generationConfig: {
-			temperature: 0.4,
+			temperature: 0.2,
 			responseMimeType: 'application/json',
 			responseSchema: RESPONSE_SCHEMA
 		}
