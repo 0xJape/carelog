@@ -290,43 +290,72 @@
 	</nav>
 
 	<!-- Hero -->
-	<section class="relative overflow-hidden px-6 pt-28 pb-20 md:pt-36 md:pb-28">
+	<section class="relative overflow-hidden px-6 pt-28 pb-10 md:pt-36 md:pb-16">
 		<div data-anim="hero-glow" class="absolute -top-32 left-1/2 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-gradient-to-r from-blue-500/20 via-indigo-500/15 to-cyan-500/20 blur-3xl dark:from-blue-600/15 dark:via-indigo-600/10 dark:to-cyan-600/15"></div>
 
-		<div class="relative mx-auto max-w-4xl text-center">
-			<div data-anim="hero" class="mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card px-4 py-1.5 text-xs font-medium shadow-sm">
-				<Sparkles class="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-				Powered by AI & Rule-Based Expert Systems
-			</div>
+		<div class="relative mx-auto max-w-6xl">
+			<div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+				<!-- Left: Text -->
+				<div class="text-center lg:text-left">
+					<div data-anim="hero" class="mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card px-4 py-1.5 text-xs font-medium shadow-sm">
+						<Sparkles class="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+						Powered by AI & Rule-Based Expert Systems
+					</div>
 
-			<h1 data-anim="hero" class="mb-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-				Smart Clinic
-				<span class="bg-gradient-to-r from-blue-600 via-indigo-500 to-cyan-500 bg-clip-text text-transparent">
-					Management
-				</span>
-			</h1>
+					<h1 data-anim="hero" class="mb-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
+						Smart Clinic
+						<span class="bg-gradient-to-r from-blue-600 via-indigo-500 to-cyan-500 bg-clip-text text-transparent">
+							Management
+						</span>
+					</h1>
 
-			<p data-anim="hero" class="mx-auto mb-4 max-w-2xl text-lg text-muted-foreground md:text-xl">
-				A comprehensive AI-integrated platform for medical logging, pre-diagnosis, first aid guidance, referrals, inventory, and notifications.
-			</p>
+					<p data-anim="hero" class="mx-auto mb-4 max-w-2xl text-lg text-muted-foreground md:text-xl lg:mx-0">
+						A comprehensive AI-integrated platform for medical logging, pre-diagnosis, first aid guidance, referrals, inventory, and notifications.
+					</p>
 
-			<p data-anim="hero" class="mx-auto mb-10 max-w-xl text-sm text-muted-foreground/80">
-				Designed for clinic administrators, nurses, and patients — streamlining healthcare operations with intelligent automation.
-			</p>
+					<p data-anim="hero" class="mx-auto mb-10 max-w-xl text-sm text-muted-foreground/80 lg:mx-0">
+						Designed for clinic administrators, nurses, and patients — streamlining healthcare operations with intelligent automation.
+					</p>
 
-			<div data-anim="hero" class="flex flex-col items-center justify-center gap-3 sm:flex-row">
-				<a href="/login">
-					<Button class="h-12 gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 px-8 text-base font-medium shadow-lg shadow-blue-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/30">
-						Get Started
-						<ArrowRight class="h-4 w-4" />
-					</Button>
-				</a>
-				<a href="#features">
-					<Button variant="outline" class="h-12 gap-2 px-8">
-						Explore Features
-						<ChevronDown class="h-4 w-4" />
-					</Button>
-				</a>
+					<div data-anim="hero" class="flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
+						<a href="/login">
+							<Button class="h-12 gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 px-8 text-base font-medium shadow-lg shadow-blue-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/30">
+								Get Started
+								<ArrowRight class="h-4 w-4" />
+							</Button>
+						</a>
+						<a href="#features">
+							<Button variant="outline" class="h-12 gap-2 px-8">
+								Explore Features
+								<ChevronDown class="h-4 w-4" />
+							</Button>
+						</a>
+					</div>
+				</div>
+
+				<!-- Right: Hero Image -->
+				<div data-anim="hero" class="relative mx-auto w-full max-w-lg lg:mx-0">
+					<div class="relative overflow-hidden rounded-2xl border border-border/60 shadow-2xl">
+						<img
+							src="/images/Tupi-Municipal-Hall-Gradient-ForHeroPage.jpg"
+							alt="CliniqueAI School Clinic"
+							class="h-full w-full object-cover"
+						/>
+						<!-- Overlay badge -->
+						<div class="absolute bottom-4 left-4 right-4 rounded-xl border border-white/20 bg-background/80 p-3 backdrop-blur-sm">
+							<div class="flex items-center gap-3">
+								<img src="/images/Juan_Dela_Cruz_QR_Scan.png" alt="QR Scan" class="h-12 w-12 rounded-lg object-cover" />
+								<div>
+									<p class="text-xs font-semibold text-foreground">QR Code Scanning</p>
+									<p class="text-xs text-muted-foreground">Instant student identification</p>
+								</div>
+								<div class="ml-auto flex h-6 items-center rounded-full bg-emerald-500/20 px-2 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+									● Live
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</section>
