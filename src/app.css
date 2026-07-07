@@ -234,3 +234,24 @@
 		transform: translateY(0);
 	}
 }
+
+@keyframes fadeSlideIn {
+	0% {
+		opacity: 0;
+		transform: translateX(-8px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes progressFill {
+	0% { width: 0%; }
+	50% { width: 85%; }
+	100% { width: 15%; }
+}
+
+.animate-progress-fill {
+	animation: progressFill 1.5s ease-in-out infinite;
+}

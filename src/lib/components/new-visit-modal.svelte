@@ -474,6 +474,43 @@
 					</div>
 				{/if}
 
+				{#if aiLoading}
+					<div class="rounded-lg border border-blue-500/20 bg-background/60 p-4 space-y-3">
+						<!-- Pulsing brain icon -->
+						<div class="flex flex-col items-center gap-3 py-2">
+							<div class="relative flex size-12 items-center justify-center">
+								<div class="absolute inset-0 animate-ping rounded-full bg-blue-500/20"></div>
+								<div class="absolute inset-1 animate-pulse rounded-full bg-blue-500/10"></div>
+								<div class="relative flex size-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/30">
+									<Sparkles class="size-5 text-white" />
+								</div>
+							</div>
+							<div class="text-center">
+								<p class="text-sm font-semibold text-foreground">Analyzing symptoms...</p>
+								<p class="text-xs text-muted-foreground">Reviewing medical history & conditions</p>
+							</div>
+						</div>
+
+						<!-- Animated steps -->
+						<div class="space-y-2">
+							{#each [
+								{ label: 'Reading student medical profile', delay: '0ms' },
+								{ label: 'Matching symptoms to conditions', delay: '400ms' },
+								{ label: 'Evaluating medications & allergies', delay: '800ms' },
+								{ label: 'Generating first aid guidance', delay: '1200ms' }
+							] as step}
+								<div class="flex items-center gap-2.5" style="animation: fadeSlideIn 0.4s ease both; animation-delay: {step.delay}">
+									<div class="size-1.5 shrink-0 animate-pulse rounded-full bg-blue-500" style="animation-delay: {step.delay}"></div>
+									<p class="text-xs text-muted-foreground">{step.label}</p>
+									<div class="ml-auto h-1.5 w-12 overflow-hidden rounded-full bg-muted">
+										<div class="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 animate-progress-fill" style="animation-delay: {step.delay}"></div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				{/if}
+
 				{#if !aiResult && !aiLoading && !aiError}
 					<p class="text-xs text-muted-foreground">Fill in the reason above, then click Analyze to get AI-assisted triage.</p>
 				{/if}
