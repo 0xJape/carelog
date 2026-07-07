@@ -11,10 +11,33 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import type { NurseComboboxOption } from '$lib/types/nurse.js';
 	import { cn } from '$lib/utils.js';
-	import { Check, ChevronsUpDown, Loader2, Plus, Stethoscope } from '@lucide/svelte';
+	import {
+		AlertTriangle,
+		Check,
+		ChevronsUpDown,
+		Loader2,
+		Pill,
+		Plus,
+		Sparkles,
+		Stethoscope
+	} from '@lucide/svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
+
+	// AI pre-diagnosis result shape (mirrors DiagnosisResult on the server)
+	interface AiDiagnosis {
+		summary: string;
+		assessedSeverity: 'low' | 'moderate' | 'high' | 'critical';
+		possibleConditions: { name: string; likelihood: 'high' | 'moderate' | 'low'; explanation: string }[];
+		recommendedRemedies: string[];
+		suggestedMedications: { name: string; purpose: string; dosageNote: string; caution?: string }[];
+		firstAidSteps: string[];
+		redFlags: string[];
+		referralRecommended: boolean;
+		referralReason?: string;
+		disclaimer: string;
+	}
 
 	// Types
 	interface Student {
@@ -111,6 +134,94 @@
 		};
 	};
 
+	// AI pre-diagnosis state
+	let aiLoading = $state(false);
+	let aiResult = $state<AiDiagnosis | null>(null);
+	let aiError = $state<string | null>(null);
+
+	async function runAiDiagnosis() {
+		if (!formData.reason.trim()) {
+			toast.error('Enter a reason for the visit first');
+			return;
+		}
+		aiLoading = true;
+		aiError = null;
+		aiResult = null;
+		try {
+			const res = await fetch('/api/ai-diagnosis', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					studentId: student.id,
+					reason: formData.reason,
+					details: formData.details,
+					visitType: formData.visitType,
+					severity: formData.severity
+				})
+			});
+			const data = await res.json();
+			if (!res.ok) {
+				throw new Error(data?.error || 'Failed to generate pre-diagnosis');
+			}
+			aiResult = data.result as AiDiagnosis;
+			// Adopt the AI-assessed severity into the form (nurse can still change it)
+			const sevMap: Record<string, string> = {
+				low: 'low',
+				moderate: 'medium',
+				high: 'high',
+				critical: 'critical'
+			};
+			if (aiResult.assessedSeverity && sevMap[aiResult.assessedSeverity]) {
+				formData.severity = sevMap[aiResult.assessedSeverity];
+			}
+		} catch (err) {
+			aiError = err instanceof Error ? err.message : 'Something went wrong';
+			toast.error('AI pre-diagnosis failed', { description: aiError });
+		} finally {
+			aiLoading = false;
+		}
+	}
+
+	// Copy the AI findings into the visit details field so they get saved
+	function applyAiToDetails() {
+		if (!aiResult) return;
+		const lines: string[] = [];
+		lines.push(`AI PRE-DIAGNOSIS SUMMARY: ${aiResult.summary}`);
+		if (aiResult.possibleConditions.length) {
+			lines.push(
+				'Possible causes: ' +
+					aiResult.possibleConditions.map((c) => `${c.name} (${c.likelihood})`).join(', ')
+			);
+		}
+		if (aiResult.suggestedMedications.length) {
+			lines.push(
+				'Suggested medications: ' +
+					aiResult.suggestedMedications.map((m) => `${m.name} — ${m.dosageNote}`).join('; ')
+			);
+		}
+		if (aiResult.referralRecommended) {
+			lines.push(`Referral recommended: ${aiResult.referralReason ?? 'Yes'}`);
+		}
+		const block = lines.join('\n');
+		formData.details = formData.details.trim()
+			? `${formData.details.trim()}\n\n${block}`
+			: block;
+		toast.success('AI findings added to visit details');
+	}
+
+	const likelihoodStyle: Record<string, string> = {
+		high: 'bg-red-500/15 text-red-600 dark:text-red-400',
+		moderate: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
+		low: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+	};
+
+	const severityStyle: Record<string, string> = {
+		low: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
+		moderate: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
+		high: 'bg-orange-500/15 text-orange-600 dark:text-orange-400',
+		critical: 'bg-red-500/15 text-red-600 dark:text-red-400'
+	};
+
 	// Reset form
 	function resetForm() {
 		formData = {
@@ -122,6 +233,9 @@
 			severity: 'low',
 			isEmergency: false
 		};
+		aiResult = null;
+		aiError = null;
+		aiLoading = false;
 	}
 
 	// Close dialog when clicking outside or escape
@@ -321,6 +435,159 @@
 					rows={3}
 					class="min-h-20"
 				/>
+			</div>
+
+			<!-- AI Pre-Diagnosis -->
+			<div class="space-y-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
+				<div class="flex items-start justify-between gap-3">
+					<div class="flex items-start gap-2">
+						<div class="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
+							<Sparkles class="size-4 text-white" />
+						</div>
+						<div>
+							<p class="text-sm font-semibold text-foreground">AI Pre-Diagnosis</p>
+							<p class="text-xs text-muted-foreground">
+								Analyzes symptoms with the student's medical history to suggest causes & remedies.
+							</p>
+						</div>
+					</div>
+					<Button
+						type="button"
+						variant="outline"
+						size="sm"
+						class="shrink-0 gap-1.5"
+						onclick={runAiDiagnosis}
+						disabled={aiLoading || !formData.reason.trim()}
+					>
+						{#if aiLoading}
+							<Loader2 class="size-3.5 animate-spin" />
+							Analyzing...
+						{:else}
+							<Sparkles class="size-3.5" />
+							{aiResult ? 'Re-analyze' : 'Analyze'}
+						{/if}
+					</Button>
+				</div>
+
+				{#if aiError}
+					<div class="flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2 text-xs text-destructive">
+						<AlertTriangle class="size-4 shrink-0" />
+						{aiError}
+					</div>
+				{/if}
+
+				{#if aiResult}
+					<div class="space-y-3">
+						<!-- Summary + severity -->
+						<div class="rounded-lg border border-border/50 bg-background/60 p-3">
+							<div class="mb-1.5 flex items-center gap-2">
+								<span class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Assessment</span>
+								<span
+									class={cn(
+										'rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase',
+										severityStyle[aiResult.assessedSeverity]
+									)}
+								>
+									{aiResult.assessedSeverity}
+								</span>
+							</div>
+							<p class="text-sm text-foreground">{aiResult.summary}</p>
+						</div>
+
+						<!-- Referral banner -->
+						{#if aiResult.referralRecommended}
+							<div class="flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-600 dark:text-red-400">
+								<AlertTriangle class="size-4 shrink-0" />
+								<span><strong>Referral recommended.</strong> {aiResult.referralReason ?? ''}</span>
+							</div>
+						{/if}
+
+						<!-- Possible conditions -->
+						{#if aiResult.possibleConditions.length}
+							<div class="space-y-1.5">
+								<p class="text-xs font-semibold text-foreground">Possible Causes</p>
+								{#each aiResult.possibleConditions as c}
+									<div class="rounded-lg border border-border/50 bg-background/60 p-2.5">
+										<div class="flex items-center justify-between gap-2">
+											<span class="text-sm font-medium text-foreground">{c.name}</span>
+											<span class={cn('rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase', likelihoodStyle[c.likelihood])}>
+												{c.likelihood}
+											</span>
+										</div>
+										<p class="mt-0.5 text-xs text-muted-foreground">{c.explanation}</p>
+									</div>
+								{/each}
+							</div>
+						{/if}
+
+						<!-- Suggested medications -->
+						{#if aiResult.suggestedMedications.length}
+							<div class="space-y-1.5">
+								<p class="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+									<Pill class="size-3.5" /> Suggested Medications / Remedies
+								</p>
+								{#each aiResult.suggestedMedications as m}
+									<div class="rounded-lg border border-border/50 bg-background/60 p-2.5">
+										<p class="text-sm font-medium text-foreground">{m.name}</p>
+										<p class="text-xs text-muted-foreground">{m.purpose} — {m.dosageNote}</p>
+										{#if m.caution}
+											<p class="mt-1 flex items-start gap-1 text-[11px] text-amber-600 dark:text-amber-400">
+												<AlertTriangle class="mt-0.5 size-3 shrink-0" />
+												{m.caution}
+											</p>
+										{/if}
+									</div>
+								{/each}
+							</div>
+						{/if}
+
+						<!-- Recommended remedies (non-med) -->
+						{#if aiResult.recommendedRemedies.length}
+							<div class="space-y-1">
+								<p class="text-xs font-semibold text-foreground">Care Recommendations</p>
+								<ul class="list-inside list-disc space-y-0.5 text-xs text-muted-foreground">
+									{#each aiResult.recommendedRemedies as r}
+										<li>{r}</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
+
+						<!-- First aid steps -->
+						{#if aiResult.firstAidSteps.length}
+							<div class="space-y-1">
+								<p class="text-xs font-semibold text-foreground">First Aid Steps</p>
+								<ol class="list-inside list-decimal space-y-0.5 text-xs text-muted-foreground">
+									{#each aiResult.firstAidSteps as step}
+										<li>{step}</li>
+									{/each}
+								</ol>
+							</div>
+						{/if}
+
+						<!-- Red flags -->
+						{#if aiResult.redFlags.length}
+							<div class="rounded-lg border border-amber-500/30 bg-amber-500/10 p-2.5">
+								<p class="mb-1 flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400">
+									<AlertTriangle class="size-3.5" /> Watch For (Escalate If Present)
+								</p>
+								<ul class="list-inside list-disc space-y-0.5 text-xs text-amber-700/90 dark:text-amber-300/90">
+									{#each aiResult.redFlags as flag}
+										<li>{flag}</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
+
+						<div class="flex items-center justify-between gap-2">
+							<p class="text-[10px] italic text-muted-foreground">{aiResult.disclaimer}</p>
+							<Button type="button" variant="secondary" size="sm" class="shrink-0 gap-1.5" onclick={applyAiToDetails}>
+								<Plus class="size-3.5" />
+								Add to details
+							</Button>
+						</div>
+					</div>
+				{/if}
 			</div>
 
 			<!-- Medications Given -->
