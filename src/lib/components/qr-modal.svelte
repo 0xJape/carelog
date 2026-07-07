@@ -106,10 +106,10 @@
 			ctx.font = '14px Arial';
 			ctx.fillText(`Student ID: ${studentId}`, canvas.width / 2, textStartY + 25);
 
-			// CliniqueAI label
+			// CLINIQAI label
 			ctx.font = '12px Arial';
 			ctx.fillStyle = '#666666';
-			ctx.fillText('CliniqueAI - School Clinic Management', canvas.width / 2, textStartY + 45);
+			ctx.fillText('CLINIQAI - School Clinic Management', canvas.width / 2, textStartY + 45);
 
 			// Convert to blob and download
 			canvas.toBlob((blob) => {

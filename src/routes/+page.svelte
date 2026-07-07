@@ -261,7 +261,7 @@
 	});</script>
 
 <svelte:head>
-	<title>CLINIQUEAI — AI-Integrated Clinic Management System</title>
+	<title>CLINIQAI — AI-Integrated Clinic Management System</title>
 	<meta name="description" content="Smart clinic management with AI pre-diagnosis, first aid guidance, inventory tracking, referral management and more." />
 </svelte:head>
 
@@ -279,8 +279,8 @@
 	<nav class="fixed top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg">
 		<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
 			<a href="/" class="flex items-center gap-3">
-				<img src="/logo.png" alt="CLINIQUEAI" class="h-8 w-8 rounded-lg" />
-				<span class="text-lg font-bold tracking-tight">CLINIQUEAI</span>
+				<img src="/logo.png" alt="CLINIQAI" class="h-8 w-8 rounded-lg" />
+				<span class="text-lg font-bold tracking-tight">CLINIQAI</span>
 			</a>
 			<div class="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
 				<a href="#features" class="transition-colors hover:text-foreground">Features</a>
@@ -902,7 +902,7 @@
 		<div class="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:gap-20">
 			<!-- Benefits -->
 			<div>
-				<p class="mb-3 text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Why CLINIQUEAI</p>
+				<p class="mb-3 text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Why CLINIQAI</p>
 				<h2 class="mb-6 text-2xl font-bold tracking-tight text-foreground md:text-3xl">
 					Built for efficiency
 				</h2>
@@ -1069,8 +1069,8 @@
 				<!-- Brand -->
 				<div class="md:col-span-1">
 					<div class="mb-3 flex items-center gap-2">
-						<img src="/logo.png" alt="CLINIQUEAI" class="h-7 w-7 rounded" />
-						<span class="text-base font-bold">CLINIQUEAI</span>
+						<img src="/logo.png" alt="CLINIQAI" class="h-7 w-7 rounded" />
+						<span class="text-base font-bold">CLINIQAI</span>
 					</div>
 					<p class="text-xs text-muted-foreground">
 						AI-Integrated School Clinic Management System for student health records, pre-diagnosis, first aid, and parent notifications.
@@ -1115,7 +1115,7 @@
 
 			<div class="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border/40 pt-6 sm:flex-row">
 				<p class="text-xs text-muted-foreground">
-					&copy; 2025 CLINIQUEAI. All rights reserved.
+					&copy; 2025 CLINIQAI. All rights reserved.
 				</p>
 				<div class="flex items-center gap-4 text-xs text-muted-foreground">
 					<span class="flex items-center gap-1.5">

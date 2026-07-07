@@ -1,6 +1,6 @@
-# CareLog - School Clinic Management System
+# CLINIQAI - School Clinic Management System
 
-A simple and efficient School Clinic Management System that uses QR code technology to provide quick healthcare access at educational institutions. CareLog is designed specifically for emergency situations where time, accuracy, and immediate access to student information are crucial.
+A simple and efficient School Clinic Management System that uses QR code technology to provide quick healthcare access at educational institutions. CLINIQAI is designed specifically for emergency situations where time, accuracy, and immediate access to student information are crucial.
 
 <!-- Updated: 2026-05-01 - Using Supabase Transaction Pooler for Vercel deployment -->
 
@@ -35,7 +35,7 @@ A simple and efficient School Clinic Management System that uses QR code technol
 
 1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
 2. Click "Add New Project"
-3. Import your GitHub repository: `https://github.com/0xJape/carelog.git`
+3. Import your GitHub repository: `https://github.com/0xJape/CLINIQAI.git`
 
 ### Step 2: Configure Environment Variables
 
@@ -144,6 +144,6 @@ This project is licensed under the MIT License.
 
 ---
 
-**CareLog** - Simple, fast, and reliable school clinic management for emergency care.
+**CLINIQAI** - Simple, fast, and reliable school clinic management for emergency care.
 
 _Designed for simplicity and speed when every second counts._

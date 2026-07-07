@@ -56,7 +56,7 @@
 </script>
 
 <svelte:head>
-	<title>{status} - {errorInfo.title} | CliniqueAI</title>
+	<title>{status} - {errorInfo.title} | CLINIQAI</title>
 	<meta name="description" content={errorInfo.description} />
 </svelte:head>
 
@@ -128,7 +128,7 @@
 			If this problem persists, please contact the system administrator or IT support.
 		</p>
 		<p class="medical-typography-body mt-2 text-xs text-muted-foreground">
-			CliniqueAI School Clinic Management System
+			CLINIQAI School Clinic Management System
 		</p>
 	</div>
 </main>

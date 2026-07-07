@@ -113,7 +113,7 @@ export async function sendNotification(payload: NotifyPayload): Promise<void> {
 				smsMessage: smsContent,
 				htmlMessage: safeHtml,
 				sentAt: new Date().toISOString(),
-				source: 'carelog'
+				source: 'CLINIQAI'
 			})
 		});
 

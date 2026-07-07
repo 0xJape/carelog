@@ -31,7 +31,7 @@ function getMailTransporter() {
 export async function sendMailMessage(
 	email: string,
 	message: string,
-	subject: string = 'Important Notification from CliniqueAI'
+	subject: string = 'Important Notification from CLINIQAI'
 ) {
 	try {
 		const logData = {
@@ -53,19 +53,19 @@ export async function sendMailMessage(
 		console.log('Nodemailer transporter initialized');
 
 		const mailOptions = {
-			from: `"CliniqueAI Health Office" <${env.SMTP2GO_SENDER_EMAIL}>`,
+			from: `"CLINIQAI Health Office" <${env.SMTP2GO_SENDER_EMAIL}>`,
 			to: email,
 			subject: subject,
 			html: `
 			<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
 				<div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-bottom: 1px solid #dee2e6;">
-					<h2 style="color: #2c3e50; margin: 0;">CliniqueAI Health Office</h2>
+					<h2 style="color: #2c3e50; margin: 0;">CLINIQAI Health Office</h2>
 				</div>
 				<div style="padding: 30px 20px;">
 					<div style="white-space: pre-wrap; line-height: 1.6; color: #333;">${message}</div>
 				</div>
 				<div style="background-color: #f8f9fa; padding: 15px; text-align: center; border-top: 1px solid #dee2e6; font-size: 12px; color: #6c757d;">
-					<p style="margin: 0;">This message was sent from CliniqueAI School Health Management System.</p>
+					<p style="margin: 0;">This message was sent from CLINIQAI School Health Management System.</p>
 					<p style="margin: 5px 0 0 0;">Please contact the school if you have any questions or concerns.</p>
 				</div>
 			</div>

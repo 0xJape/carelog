@@ -92,7 +92,7 @@
 						Welcome Back
 					</h1>
 					<p class="text-sm text-slate-600 dark:text-slate-400">
-						Sign in to access your CliniqueAI dashboard
+						Sign in to access your CLINIQAI dashboard
 					</p>
 				</div>
 			</div>
@@ -118,7 +118,7 @@
 							return async ({ result, update }) => {
 								if (result.type === 'success') {
 									toast.success('Login successful!', {
-										description: 'Welcome back to CliniqueAI.'
+										description: 'Welcome back to CLINIQAI.'
 									});
 								} else if (result.type === 'failure') {
 									toast.error('Login failed', {
@@ -225,7 +225,7 @@
 								<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 								Signing In...
 							{:else}
-								Sign In to CliniqueAI
+								Sign In to CLINIQAI
 							{/if}
 						</Button>
 					</form>
@@ -242,7 +242,7 @@
 			<!-- Footer -->
 			<div class="mt-8 text-center">
 				<p class="text-xs text-slate-500 dark:text-slate-400">
-					© 2025 CliniqueAI. All rights reserved. | School Clinic Management System
+					© 2025 CLINIQAI. All rights reserved. | School Clinic Management System
 				</p>
 			</div>
 		</div>

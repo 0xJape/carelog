@@ -8,7 +8,7 @@
 - [x] Updated .env.example with correct SMTP configuration
 - [x] Created comprehensive README.md with deployment instructions
 - [x] Added vercel.json configuration file
-- [x] Pushed all code to GitHub: https://github.com/0xJape/carelog.git
+- [x] Pushed all code to GitHub: https://github.com/0xJape/CLINIQAI.git
 
 ## 📋 Vercel Deployment Steps
 
@@ -16,7 +16,7 @@
 
 1. Go to https://vercel.com/dashboard
 2. Click "Add New Project"
-3. Import from GitHub: `0xJape/carelog`
+3. Import from GitHub: `0xJape/CLINIQAI`
 4. Vercel will auto-detect SvelteKit framework
 
 ### 2. Configure Environment Variables
@@ -40,7 +40,7 @@ PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_fybfXET4Jh0WXQBoc6fm3g_hNe4cCLN
 
 1. Click "Deploy"
 2. Wait for build to complete (~2-3 minutes)
-3. Your app will be live at `https://carelog-<random>.vercel.app`
+3. Your app will be live at `https://CLINIQAI-<random>.vercel.app`
 
 ### 4. Post-Deployment Setup
 
@@ -98,7 +98,7 @@ All users currently have password: `Welcome123!`
 - [Vercel Documentation](https://vercel.com/docs)
 - [SvelteKit Deployment](https://kit.svelte.dev/docs/adapter-vercel)
 - [Supabase Documentation](https://supabase.com/docs)
-- [GitHub Repository](https://github.com/0xJape/carelog)
+- [GitHub Repository](https://github.com/0xJape/CLINIQAI)
 
 ---
 
