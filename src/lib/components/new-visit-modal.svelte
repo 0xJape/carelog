@@ -138,6 +138,7 @@
 	let aiLoading = $state(false);
 	let aiResult = $state<AiDiagnosis | null>(null);
 	let aiError = $state<string | null>(null);
+	let activeTab = $state('causes');
 
 	async function runAiDiagnosis() {
 		if (!formData.reason.trim()) {
@@ -236,6 +237,7 @@
 		aiResult = null;
 		aiError = null;
 		aiLoading = false;
+		activeTab = 'causes';
 	}
 
 	// Close dialog when clicking outside or escape
@@ -477,8 +479,6 @@
 				{/if}
 
 				{#if aiResult}
-					{@const activeTab = $state('causes')}
-
 					<!-- Top summary bar -->
 					<div class="flex items-center gap-2 rounded-lg bg-background/70 px-3 py-2 border border-border/40">
 						<span class={cn(
