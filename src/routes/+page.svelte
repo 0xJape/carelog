@@ -297,42 +297,54 @@
 	</nav>
 
 	<!-- Hero -->
-	<section class="relative overflow-hidden px-6 pt-28 pb-10 md:pt-36 md:pb-16">
-		<div data-anim="hero-glow" class="absolute -top-32 left-1/2 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-gradient-to-r from-blue-500/20 via-indigo-500/15 to-cyan-500/20 blur-3xl dark:from-blue-600/15 dark:via-indigo-600/10 dark:to-cyan-600/15"></div>
+	<section class="relative flex min-h-screen items-center overflow-hidden">
+		<!-- Background image -->
+		<div class="absolute inset-0 -z-20">
+			<img
+				src="/images/Tupi-Municipal-Hall-Gradient-ForHeroPage.jpg"
+				alt="Tupi Municipal Hall"
+				class="h-full w-full object-cover"
+			/>
+		</div>
 
-		<div class="relative mx-auto max-w-6xl">
-			<div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+		<!-- Gradient overlays for readable text -->
+		<div class="absolute inset-0 -z-10 bg-gradient-to-r from-slate-950/90 via-slate-950/70 to-slate-950/30"></div>
+		<div class="absolute inset-0 -z-10 bg-gradient-to-t from-slate-950/95 via-transparent to-slate-950/60"></div>
+		<div data-anim="hero-glow" class="absolute top-1/4 -left-20 -z-10 h-[500px] w-[600px] rounded-full bg-gradient-to-r from-blue-500/25 via-indigo-500/15 to-transparent blur-3xl"></div>
+
+		<div class="relative mx-auto w-full max-w-7xl px-6 py-28 md:py-32">
+			<div class="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
 				<!-- Left: Text -->
 				<div class="text-center lg:text-left">
-					<div data-anim="hero" class="mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card px-4 py-1.5 text-xs font-medium shadow-sm">
-						<Sparkles class="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+					<div data-anim="hero" class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium text-white shadow-sm backdrop-blur-md">
+						<Sparkles class="h-3.5 w-3.5 text-cyan-300" />
 						Powered by AI & Rule-Based Expert Systems
 					</div>
 
-					<h1 data-anim="hero" class="mb-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
+					<h1 data-anim="hero" class="mb-6 text-4xl font-bold tracking-tight text-white drop-shadow-lg sm:text-5xl md:text-6xl lg:text-7xl">
 						Smart Clinic
-						<span class="bg-gradient-to-r from-blue-600 via-indigo-500 to-cyan-500 bg-clip-text text-transparent">
+						<span class="block bg-gradient-to-r from-cyan-300 via-blue-300 to-indigo-300 bg-clip-text text-transparent">
 							Management
 						</span>
 					</h1>
 
-					<p data-anim="hero" class="mx-auto mb-4 max-w-2xl text-lg text-muted-foreground md:text-xl lg:mx-0">
+					<p data-anim="hero" class="mx-auto mb-4 max-w-2xl text-lg text-slate-200 drop-shadow md:text-xl lg:mx-0">
 						A comprehensive AI-integrated platform for medical logging, pre-diagnosis, first aid guidance, referrals, inventory, and notifications.
 					</p>
 
-					<p data-anim="hero" class="mx-auto mb-10 max-w-xl text-sm text-muted-foreground/80 lg:mx-0">
-						Designed for clinic administrators, nurses, and patients — streamlining healthcare operations with intelligent automation.
+					<p data-anim="hero" class="mx-auto mb-10 max-w-xl text-sm text-slate-300/90 lg:mx-0">
+						Serving the community of Tupi — streamlining healthcare operations for clinic administrators, nurses, and patients with intelligent automation.
 					</p>
 
 					<div data-anim="hero" class="flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
 						<a href="/login">
-							<Button class="h-12 gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 px-8 text-base font-medium shadow-lg shadow-blue-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/30">
+							<Button class="h-12 gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 px-8 text-base font-medium shadow-lg shadow-blue-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/40">
 								Get Started
 								<ArrowRight class="h-4 w-4" />
 							</Button>
 						</a>
 						<a href="#features">
-							<Button variant="outline" class="h-12 gap-2 px-8">
+							<Button variant="outline" class="h-12 gap-2 border-white/30 bg-white/10 px-8 text-white backdrop-blur-md hover:bg-white/20 hover:text-white">
 								Explore Features
 								<ChevronDown class="h-4 w-4" />
 							</Button>
@@ -340,31 +352,50 @@
 					</div>
 				</div>
 
-				<!-- Right: Hero Image -->
-				<div data-anim="hero" class="relative mx-auto w-full max-w-lg lg:mx-0">
-					<div class="relative overflow-hidden rounded-2xl border border-border/60 shadow-2xl">
-						<img
-							src="/images/Tupi-Municipal-Hall-Gradient-ForHeroPage.jpg"
-							alt="CliniqueAI School Clinic"
-							class="h-full w-full object-cover"
-						/>
-						<!-- Overlay badge -->
-						<div class="absolute bottom-4 left-4 right-4 rounded-xl border border-white/20 bg-background/80 p-3 backdrop-blur-sm">
-							<div class="flex items-center gap-3">
-								<img src="/images/Juan_Dela_Cruz_QR_Scan.png" alt="QR Scan" class="h-12 w-12 rounded-lg object-cover" />
-								<div>
-									<p class="text-xs font-semibold text-foreground">QR Code Scanning</p>
-									<p class="text-xs text-muted-foreground">Instant student identification</p>
-								</div>
-								<div class="ml-auto flex h-6 items-center rounded-full bg-emerald-500/20 px-2 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-									● Live
-								</div>
+				<!-- Right: QR integration showcase -->
+				<div data-anim="hero" class="relative mx-auto w-full max-w-sm lg:mx-0 lg:ml-auto">
+					<div class="relative overflow-hidden rounded-2xl border border-white/20 bg-white/10 p-6 shadow-2xl backdrop-blur-xl">
+						<div class="mb-4 flex items-center gap-2 text-white">
+							<div class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
+								<QrCode class="h-5 w-5 text-white" />
 							</div>
+							<div>
+								<p class="text-sm font-semibold">QR Code Integration</p>
+								<p class="text-xs text-slate-300">Scan to identify instantly</p>
+							</div>
+							<div class="ml-auto flex h-6 items-center gap-1.5 rounded-full bg-emerald-500/20 px-2.5 text-xs font-medium text-emerald-300">
+								<span class="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400"></span>
+								Live
+							</div>
+						</div>
+
+						<!-- QR sample -->
+						<div class="overflow-hidden rounded-xl border border-white/20 bg-white">
+							<img
+								src="/images/Juan_Dela_Cruz_QR_Scan.png"
+								alt="Student QR code example"
+								class="h-full w-full object-contain"
+							/>
+						</div>
+
+						<p class="mt-4 text-center text-xs text-slate-300">
+							Each student ID carries a unique QR code — scanning loads their full medical profile in seconds, no login required.
+						</p>
+					</div>
+
+					<!-- Floating chips -->
+					<div class="absolute -bottom-4 -left-4 hidden rounded-xl border border-white/20 bg-white/10 px-3 py-2 shadow-lg backdrop-blur-xl sm:block">
+						<div class="flex items-center gap-2 text-white">
+							<HeartPulse class="h-4 w-4 text-rose-300" />
+							<span class="text-xs font-medium">Instant Medical Access</span>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+
+		<!-- Bottom fade into page background -->
+		<div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent"></div>
 	</section>
 
 	<!-- Dashboard Mockup Preview -->
