@@ -274,10 +274,10 @@ export const actions: Actions = {
 						const studentName = `${studentFull.firstName} ${studentFull.lastName}`;
 						const grade = `${studentFull.grade}${studentFull.section ? ` - ${studentFull.section}` : ''}`;
 						const severityLabel = visitData.severity.charAt(0).toUpperCase() + visitData.severity.slice(1);
-						const subject = `CareLog: ${studentName} visited the clinic`;
-						const smsMessage = `CareLog: ${studentName} (${grade}) visited the clinic. Reason: ${visitData.reason}. Severity: ${severityLabel}.${visitData.isEmergency ? ' EMERGENCY.' : ''} Time: ${visitTime}. -CareLog School Health`.slice(0, 160);
-						const htmlMessage = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto"><div style="background:#2563eb;padding:24px;text-align:center"><h2 style="color:white;margin:0">CareLog Health Office</h2></div><div style="padding:30px"><p>Dear ${primaryContact.name},</p><p>Your child <strong>${studentName}</strong> has visited the school clinic.</p><table style="width:100%;border-collapse:collapse;margin:16px 0"><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Student</td><td style="padding:8px;border:1px solid #e2e8f0">${studentName}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Grade</td><td style="padding:8px;border:1px solid #e2e8f0">${grade}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Reason</td><td style="padding:8px;border:1px solid #e2e8f0">${visitData.reason}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Severity</td><td style="padding:8px;border:1px solid #e2e8f0">${severityLabel}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Time</td><td style="padding:8px;border:1px solid #e2e8f0">${visitTime}</td></tr></table><p style="color:#64748b;font-size:13px">The school nurse is attending to your child.</p></div><div style="background:#f1f5f9;padding:16px;text-align:center;font-size:12px;color:#94a3b8">CareLog School Health Management System</div></div>`;
-						const message = `Dear ${primaryContact.name}, your child ${studentName} visited the school clinic. Reason: ${visitData.reason}. Severity: ${severityLabel}. Time: ${visitTime}. -CareLog`;
+						const subject = `CliniqueAI: ${studentName} visited the clinic`;
+						const smsMessage = `CliniqueAI: ${studentName} (${grade}) visited the clinic. Reason: ${visitData.reason}. Severity: ${severityLabel}.${visitData.isEmergency ? ' EMERGENCY.' : ''} Time: ${visitTime}. -CliniqueAI School Health`.slice(0, 160);
+						const htmlMessage = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto"><div style="background:#2563eb;padding:24px;text-align:center"><h2 style="color:white;margin:0">CliniqueAI Health Office</h2></div><div style="padding:30px"><p>Dear ${primaryContact.name},</p><p>Your child <strong>${studentName}</strong> has visited the school clinic.</p><table style="width:100%;border-collapse:collapse;margin:16px 0"><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Student</td><td style="padding:8px;border:1px solid #e2e8f0">${studentName}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Grade</td><td style="padding:8px;border:1px solid #e2e8f0">${grade}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Reason</td><td style="padding:8px;border:1px solid #e2e8f0">${visitData.reason}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Severity</td><td style="padding:8px;border:1px solid #e2e8f0">${severityLabel}</td></tr><tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600">Time</td><td style="padding:8px;border:1px solid #e2e8f0">${visitTime}</td></tr></table><p style="color:#64748b;font-size:13px">The school nurse is attending to your child.</p></div><div style="background:#f1f5f9;padding:16px;text-align:center;font-size:12px;color:#94a3b8">CliniqueAI School Health Management System</div></div>`;
+						const message = `Dear ${primaryContact.name}, your child ${studentName} visited the school clinic. Reason: ${visitData.reason}. Severity: ${severityLabel}. Time: ${visitTime}. -CliniqueAI`;
 
 						if (primaryContact.email && primaryContact.phoneNumber) {
 							await sendEmailAndSMS(primaryContact.email, primaryContact.phoneNumber, subject, message, { htmlMessage, smsMessage, recipientName: primaryContact.name, type: 'visit_notification' });
@@ -390,7 +390,7 @@ This is an important message regarding ${student.firstName} ${student.lastName} 
 ${mailData.message}
 
 ---
-This message was sent from CareLog School Health Management System.
+This message was sent from CliniqueAI School Health Management System.
 Please contact the school if you have any questions or concerns.
 
 Best regards,
@@ -510,7 +510,7 @@ This is an important message regarding ${student.firstName} ${student.lastName} 
 ${emailData.message}
 
 ---
-This message was sent from CareLog School Health Management System.
+This message was sent from CliniqueAI School Health Management System.
 Please contact the school if you have any questions or concerns.
 
 Best regards,
@@ -533,7 +533,7 @@ This is an important message from the school health office.
 ${emailData.message}
 
 ---
-This message was sent from CareLog School Health Management System.
+This message was sent from CliniqueAI School Health Management System.
 If you have any questions or concerns, please contact the school health office.
 
 Best regards,
@@ -580,7 +580,7 @@ This is an important message regarding your patient ${student.firstName} ${stude
 ${emailData.message}
 
 ---
-This message was sent from CareLog School Health Management System.
+This message was sent from CliniqueAI School Health Management System.
 Please contact the school if you need additional information.
 
 Best regards,
@@ -598,7 +598,7 @@ School Health Office
 				.replace(/>/g, '&gt;')
 				.replace(/\r?\n/g, '<br>');
 
-			const htmlMessage = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto"><div style="background:#2563eb;padding:24px;text-align:center"><h2 style="color:white;margin:0">CareLog Health Office</h2></div><div style="padding:30px"><p>Dear ${recipientName},</p><div style="line-height:1.6;color:#333">${safeUserMessage}</div><hr style="margin:24px 0;border:none;border-top:1px solid #e2e8f0"><p style="font-size:12px;color:#94a3b8">This message was sent from CareLog School Health Management System.</p></div><div style="background:#f1f5f9;padding:16px;text-align:center;font-size:12px;color:#94a3b8">CareLog School Health Management System</div></div>`;
+			const htmlMessage = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto"><div style="background:#2563eb;padding:24px;text-align:center"><h2 style="color:white;margin:0">CliniqueAI Health Office</h2></div><div style="padding:30px"><p>Dear ${recipientName},</p><div style="line-height:1.6;color:#333">${safeUserMessage}</div><hr style="margin:24px 0;border:none;border-top:1px solid #e2e8f0"><p style="font-size:12px;color:#94a3b8">This message was sent from CliniqueAI School Health Management System.</p></div><div style="background:#f1f5f9;padding:16px;text-align:center;font-size:12px;color:#94a3b8">CliniqueAI School Health Management System</div></div>`;
 
 			await sendEmail(
 				emailData.recipientEmail,
@@ -729,7 +729,7 @@ Name: ${emailData.referringPersonName}
 Designation: ${emailData.referringPersonDesignation}
 
 ---
-This medical referral was sent from CareLog School Health Management System.
+This medical referral was sent from CliniqueAI School Health Management System.
 			`.trim();
 
 			// Send via make.com webhook

@@ -1,5 +1,5 @@
 /**
- * voice-guide.ts — Audio guide system for CareLog
+ * voice-guide.ts — Audio guide system for CliniqueAI
  *
  * Drop MP3 files in /static/audio/ with these exact names:
  *

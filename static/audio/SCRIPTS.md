@@ -1,4 +1,4 @@
-# CareLog Voice Guide Scripts
+# CliniqueAI Voice Guide Scripts
 
 Convert each script to MP3 using any TTS tool (ElevenLabs, Google TTS, etc.)
 and save with the exact filename shown.
@@ -6,7 +6,7 @@ and save with the exact filename shown.
 ---
 
 ## welcome.mp3
-> "Welcome to CareLog. CareLog is an AI-integrated school clinic management system that helps nurses and administrators manage student health records, clinic visits, medicine inventory, referrals, and parent notifications — all in one place. This system is designed for speed and accuracy, especially in emergency situations where every second counts. Please log in to get started."
+> "Welcome to CliniqueAI. CliniqueAI is an AI-integrated school clinic management system that helps nurses and administrators manage student health records, clinic visits, medicine inventory, referrals, and parent notifications — all in one place. This system is designed for speed and accuracy, especially in emergency situations where every second counts. Please log in to get started."
 
 ---
 
@@ -51,14 +51,14 @@ and save with the exact filename shown.
 ---
 
 ## homepage.mp3 (landing page — full introduction)
-> "Welcome to CareLog — an AI-integrated school clinic management system designed to make healthcare in schools faster, smarter, and more organized.
+> "Welcome to CliniqueAI — an AI-integrated school clinic management system designed to make healthcare in schools faster, smarter, and more organized.
 
-> CareLog brings together everything a school clinic needs in one platform. With our medical logging module, nurses can register students, record vital signs, document consultations, and maintain complete health histories. Our AI pre-diagnosis engine analyzes symptoms and suggests possible illnesses with severity levels — helping nurses make faster, more informed decisions.
+> CliniqueAI brings together everything a school clinic needs in one platform. With our medical logging module, nurses can register students, record vital signs, document consultations, and maintain complete health histories. Our AI pre-diagnosis engine analyzes symptoms and suggests possible illnesses with severity levels — helping nurses make faster, more informed decisions.
 
-> When emergencies happen, CareLog's first aid guidance provides step-by-step instructions based on the student's symptoms and medical history. The referral management module lets you generate referral forms and recommend hospitals or clinics with just a few clicks.
+> When emergencies happen, CliniqueAI's first aid guidance provides step-by-step instructions based on the student's symptoms and medical history. The referral management module lets you generate referral forms and recommend hospitals or clinics with just a few clicks.
 
 > Managing medicines has never been easier. The inventory module tracks stock levels in real time, alerts you when supplies are running low, and monitors expiration dates automatically. And with automated notifications, parents are kept informed the moment their child visits the clinic — through email and SMS.
 
-> CareLog is built for three types of users: Clinic Administrators who oversee the entire system, Nurses and Clinic Staff who handle day-to-day patient care, and soon — a Patient portal for students to access their own health records.
+> CliniqueAI is built for three types of users: Clinic Administrators who oversee the entire system, Nurses and Clinic Staff who handle day-to-day patient care, and soon — a Patient portal for students to access their own health records.
 
 > Scroll down to explore all features, or click Sign In to access the system."

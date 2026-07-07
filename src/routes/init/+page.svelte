@@ -76,10 +76,10 @@
 </script>
 
 <svelte:head>
-	<title>Setup Admin Account - CareLog</title>
+	<title>Setup Admin Account - CliniqueAI</title>
 	<meta
 		name="description"
-		content="Create your administrator account to get started with CareLog"
+		content="Create your administrator account to get started with CliniqueAI"
 	/>
 </svelte:head>
 
@@ -92,12 +92,12 @@
 		<div class="space-y-4 text-center">
 			<div class="flex justify-center">
 				<div class="flex items-center gap-3">
-					<img src="/logo.png" alt="CareLog logo" class="size-16 rounded-xl text-white shadow-lg" />
+					<img src="/logo.png" alt="CliniqueAI logo" class="size-16 rounded-xl text-white shadow-lg" />
 				</div>
 			</div>
 			<div class="space-y-2">
 				<h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-					Welcome to CareLog
+					Welcome to CliniqueAI
 				</h1>
 				<p class="text-gray-600 dark:text-gray-300">
 					Set up your administrator account to get started
@@ -431,7 +431,7 @@
 				This account will have full administrative privileges
 			</p>
 			<p class="text-xs text-gray-400 dark:text-gray-500">
-				CareLog v1.0 - School Clinic Management System
+				CliniqueAI v1.0 - School Clinic Management System
 			</p>
 		</div>
 	</div>
