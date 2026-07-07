@@ -438,32 +438,28 @@
 			</div>
 
 			<!-- AI Pre-Diagnosis -->
-			<div class="space-y-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
-				<div class="flex items-start justify-between gap-3">
-					<div class="flex items-start gap-2">
-						<div class="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
-							<Sparkles class="size-4 text-white" />
+			<div class="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 space-y-3">
+				<!-- Header row -->
+				<div class="flex items-center justify-between gap-3">
+					<div class="flex items-center gap-2">
+						<div class="flex size-7 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
+							<Sparkles class="size-3.5 text-white" />
 						</div>
-						<div>
-							<p class="text-sm font-semibold text-foreground">AI Pre-Diagnosis</p>
-							<p class="text-xs text-muted-foreground">
-								Analyzes symptoms with the student's medical history to suggest causes & remedies.
-							</p>
-						</div>
+						<span class="text-sm font-semibold text-foreground">AI Pre-Diagnosis</span>
 					</div>
 					<Button
 						type="button"
 						variant="outline"
 						size="sm"
-						class="shrink-0 gap-1.5"
+						class="h-7 shrink-0 gap-1.5 text-xs"
 						onclick={runAiDiagnosis}
 						disabled={aiLoading || !formData.reason.trim()}
 					>
 						{#if aiLoading}
-							<Loader2 class="size-3.5 animate-spin" />
+							<Loader2 class="size-3 animate-spin" />
 							Analyzing...
 						{:else}
-							<Sparkles class="size-3.5" />
+							<Sparkles class="size-3" />
 							{aiResult ? 'Re-analyze' : 'Analyze'}
 						{/if}
 					</Button>
@@ -471,121 +467,136 @@
 
 				{#if aiError}
 					<div class="flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2 text-xs text-destructive">
-						<AlertTriangle class="size-4 shrink-0" />
+						<AlertTriangle class="size-3.5 shrink-0" />
 						{aiError}
 					</div>
 				{/if}
 
+				{#if !aiResult && !aiLoading && !aiError}
+					<p class="text-xs text-muted-foreground">Fill in the reason above, then click Analyze to get AI-assisted triage.</p>
+				{/if}
+
 				{#if aiResult}
-					<div class="space-y-3">
-						<!-- Summary + severity -->
-						<div class="rounded-lg border border-border/50 bg-background/60 p-3">
-							<div class="mb-1.5 flex items-center gap-2">
-								<span class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Assessment</span>
-								<span
-									class={cn(
-										'rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase',
-										severityStyle[aiResult.assessedSeverity]
-									)}
-								>
-									{aiResult.assessedSeverity}
-								</span>
-							</div>
-							<p class="text-sm text-foreground">{aiResult.summary}</p>
-						</div>
+					{@const activeTab = $state('causes')}
 
-						<!-- Referral banner -->
+					<!-- Top summary bar -->
+					<div class="flex items-center gap-2 rounded-lg bg-background/70 px-3 py-2 border border-border/40">
+						<span class={cn(
+							'shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide',
+							severityStyle[aiResult.assessedSeverity]
+						)}>{aiResult.assessedSeverity}</span>
+						<p class="text-xs text-foreground leading-snug line-clamp-2">{aiResult.summary}</p>
 						{#if aiResult.referralRecommended}
-							<div class="flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-600 dark:text-red-400">
-								<AlertTriangle class="size-4 shrink-0" />
-								<span><strong>Referral recommended.</strong> {aiResult.referralReason ?? ''}</span>
-							</div>
+							<span class="ml-auto shrink-0 rounded-full bg-red-500/15 px-2 py-0.5 text-[10px] font-semibold text-red-600 dark:text-red-400">Refer</span>
 						{/if}
+					</div>
 
-						<!-- Possible conditions -->
-						{#if aiResult.possibleConditions.length}
-							<div class="space-y-1.5">
-								<p class="text-xs font-semibold text-foreground">Possible Causes</p>
-								{#each aiResult.possibleConditions as c}
-									<div class="rounded-lg border border-border/50 bg-background/60 p-2.5">
-										<div class="flex items-center justify-between gap-2">
-											<span class="text-sm font-medium text-foreground">{c.name}</span>
-											<span class={cn('rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase', likelihoodStyle[c.likelihood])}>
-												{c.likelihood}
-											</span>
-										</div>
-										<p class="mt-0.5 text-xs text-muted-foreground">{c.explanation}</p>
-									</div>
-								{/each}
-							</div>
-						{/if}
-
-						<!-- Suggested medications -->
-						{#if aiResult.suggestedMedications.length}
-							<div class="space-y-1.5">
-								<p class="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-									<Pill class="size-3.5" /> Suggested Medications / Remedies
-								</p>
-								{#each aiResult.suggestedMedications as m}
-									<div class="rounded-lg border border-border/50 bg-background/60 p-2.5">
-										<p class="text-sm font-medium text-foreground">{m.name}</p>
-										<p class="text-xs text-muted-foreground">{m.purpose} — {m.dosageNote}</p>
-										{#if m.caution}
-											<p class="mt-1 flex items-start gap-1 text-[11px] text-amber-600 dark:text-amber-400">
-												<AlertTriangle class="mt-0.5 size-3 shrink-0" />
-												{m.caution}
-											</p>
-										{/if}
-									</div>
-								{/each}
-							</div>
-						{/if}
-
-						<!-- Recommended remedies (non-med) -->
-						{#if aiResult.recommendedRemedies.length}
-							<div class="space-y-1">
-								<p class="text-xs font-semibold text-foreground">Care Recommendations</p>
-								<ul class="list-inside list-disc space-y-0.5 text-xs text-muted-foreground">
-									{#each aiResult.recommendedRemedies as r}
-										<li>{r}</li>
-									{/each}
-								</ul>
-							</div>
-						{/if}
-
-						<!-- First aid steps -->
-						{#if aiResult.firstAidSteps.length}
-							<div class="space-y-1">
-								<p class="text-xs font-semibold text-foreground">First Aid Steps</p>
-								<ol class="list-inside list-decimal space-y-0.5 text-xs text-muted-foreground">
-									{#each aiResult.firstAidSteps as step}
-										<li>{step}</li>
-									{/each}
-								</ol>
-							</div>
-						{/if}
-
-						<!-- Red flags -->
-						{#if aiResult.redFlags.length}
-							<div class="rounded-lg border border-amber-500/30 bg-amber-500/10 p-2.5">
-								<p class="mb-1 flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400">
-									<AlertTriangle class="size-3.5" /> Watch For (Escalate If Present)
-								</p>
-								<ul class="list-inside list-disc space-y-0.5 text-xs text-amber-700/90 dark:text-amber-300/90">
-									{#each aiResult.redFlags as flag}
-										<li>{flag}</li>
-									{/each}
-								</ul>
-							</div>
-						{/if}
-
-						<div class="flex items-center justify-between gap-2">
-							<p class="text-[10px] italic text-muted-foreground">{aiResult.disclaimer}</p>
-							<Button type="button" variant="secondary" size="sm" class="shrink-0 gap-1.5" onclick={applyAiToDetails}>
-								<Plus class="size-3.5" />
-								Add to details
-							</Button>
+					<!-- Referral reason (only if recommended) -->
+					{#if aiResult.referralRecommended && aiResult.referralReason}
+						<div class="flex items-start gap-1.5 rounded-lg border border-red-500/25 bg-red-500/8 px-3 py-2 text-xs text-red-600 dark:text-red-400">
+							<AlertTriangle class="mt-0.5 size-3.5 shrink-0" />
+							{aiResult.referralReason}
 						</div>
+					{/if}
+
+					<!-- Tab buttons -->
+					<div class="flex gap-1 rounded-lg bg-muted/50 p-1">
+						{#each [
+							{ id: 'causes', label: 'Causes' },
+							{ id: 'treatment', label: 'Treatment' },
+							{ id: 'firstaid', label: 'First Aid' },
+							{ id: 'flags', label: 'Red Flags' }
+						] as tab}
+							<button
+								type="button"
+								onclick={() => activeTab = tab.id}
+								class={cn(
+									'flex-1 rounded-md py-1 text-[11px] font-medium transition-colors',
+									activeTab === tab.id
+										? 'bg-background text-foreground shadow-sm'
+										: 'text-muted-foreground hover:text-foreground'
+								)}
+							>
+								{tab.label}
+							</button>
+						{/each}
+					</div>
+
+					<!-- Tab panels -->
+					<div class="min-h-[80px]">
+						{#if activeTab === 'causes'}
+							<div class="space-y-1.5">
+								{#each aiResult.possibleConditions as c}
+									<div class="flex items-start gap-2 rounded-lg bg-background/60 border border-border/40 px-3 py-2">
+										<span class={cn('mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase', likelihoodStyle[c.likelihood])}>
+											{c.likelihood}
+										</span>
+										<div>
+											<p class="text-xs font-semibold text-foreground">{c.name}</p>
+											<p class="text-[11px] text-muted-foreground">{c.explanation}</p>
+										</div>
+									</div>
+								{/each}
+							</div>
+
+						{:else if activeTab === 'treatment'}
+							<div class="space-y-2">
+								{#if aiResult.recommendedRemedies.length}
+									<div class="flex flex-wrap gap-1.5">
+										{#each aiResult.recommendedRemedies as r}
+											<span class="rounded-full border border-border/50 bg-background/60 px-2.5 py-1 text-[11px] text-foreground">{r}</span>
+										{/each}
+									</div>
+								{/if}
+								{#if aiResult.suggestedMedications.length}
+									<p class="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+										<Pill class="size-3" /> Medications
+									</p>
+									{#each aiResult.suggestedMedications as m}
+										<div class="rounded-lg bg-background/60 border border-border/40 px-3 py-2">
+											<div class="flex items-center justify-between gap-2">
+												<p class="text-xs font-semibold text-foreground">{m.name}</p>
+												<span class="text-[10px] text-muted-foreground">{m.dosageNote}</span>
+											</div>
+											<p class="text-[11px] text-muted-foreground">{m.purpose}</p>
+											{#if m.caution}
+												<p class="mt-1 flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400">
+													<AlertTriangle class="size-3 shrink-0" />{m.caution}
+												</p>
+											{/if}
+										</div>
+									{/each}
+								{/if}
+							</div>
+
+						{:else if activeTab === 'firstaid'}
+							<ol class="space-y-1.5">
+								{#each aiResult.firstAidSteps as step, i}
+									<li class="flex items-start gap-2.5">
+										<span class="flex size-4 shrink-0 items-center justify-center rounded-full bg-blue-500/15 text-[9px] font-bold text-blue-600 dark:text-blue-400 mt-0.5">{i + 1}</span>
+										<p class="text-xs text-foreground">{step}</p>
+									</li>
+								{/each}
+							</ol>
+
+						{:else if activeTab === 'flags'}
+							<div class="space-y-1.5">
+								{#each aiResult.redFlags as flag}
+									<div class="flex items-start gap-2 text-xs">
+										<AlertTriangle class="mt-0.5 size-3.5 shrink-0 text-amber-500" />
+										<p class="text-foreground">{flag}</p>
+									</div>
+								{/each}
+							</div>
+						{/if}
+					</div>
+
+					<!-- Footer -->
+					<div class="flex items-center justify-between gap-2 border-t border-border/30 pt-2">
+						<p class="text-[9px] italic text-muted-foreground/70">AI assist only — not a medical diagnosis.</p>
+						<Button type="button" variant="secondary" size="sm" class="h-6 shrink-0 gap-1 text-[11px]" onclick={applyAiToDetails}>
+							<Plus class="size-3" /> Add to details
+						</Button>
 					</div>
 				{/if}
 			</div>
