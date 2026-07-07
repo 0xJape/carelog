@@ -297,22 +297,20 @@
 	</nav>
 
 	<!-- Hero -->
-	<section class="relative flex min-h-screen items-center overflow-hidden">
+	<section class="relative isolate flex min-h-screen items-center overflow-hidden">
 		<!-- Background image -->
-		<div class="absolute inset-0 -z-20">
-			<img
-				src="/images/Tupi-Municipal-Hall-Gradient-ForHeroPage.jpg"
-				alt="Tupi Municipal Hall"
-				class="h-full w-full object-cover"
-			/>
-		</div>
+		<img
+			src="/images/Tupi-Municipal-Hall-Gradient-ForHeroPage.jpg"
+			alt="Tupi Municipal Hall"
+			class="absolute inset-0 z-0 h-full w-full object-cover"
+		/>
 
 		<!-- Gradient overlays for readable text -->
-		<div class="absolute inset-0 -z-10 bg-gradient-to-r from-slate-950/90 via-slate-950/70 to-slate-950/30"></div>
-		<div class="absolute inset-0 -z-10 bg-gradient-to-t from-slate-950/95 via-transparent to-slate-950/60"></div>
-		<div data-anim="hero-glow" class="absolute top-1/4 -left-20 -z-10 h-[500px] w-[600px] rounded-full bg-gradient-to-r from-blue-500/25 via-indigo-500/15 to-transparent blur-3xl"></div>
+		<div class="absolute inset-0 z-[1] bg-gradient-to-r from-slate-950/90 via-slate-950/70 to-slate-950/30"></div>
+		<div class="absolute inset-0 z-[1] bg-gradient-to-t from-slate-950/95 via-transparent to-slate-950/60"></div>
+		<div data-anim="hero-glow" class="absolute top-1/4 -left-20 z-[1] h-[500px] w-[600px] rounded-full bg-gradient-to-r from-blue-500/25 via-indigo-500/15 to-transparent blur-3xl"></div>
 
-		<div class="relative mx-auto w-full max-w-7xl px-6 py-28 md:py-32">
+		<div class="relative z-10 mx-auto w-full max-w-7xl px-6 py-28 md:py-32">
 			<div class="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
 				<!-- Left: Text -->
 				<div class="text-center lg:text-left">
@@ -395,7 +393,7 @@
 		</div>
 
 		<!-- Bottom fade into page background -->
-		<div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent"></div>
+		<div class="absolute bottom-0 left-0 right-0 z-[2] h-24 bg-gradient-to-t from-background to-transparent"></div>
 	</section>
 
 	<!-- Dashboard Mockup Preview -->
