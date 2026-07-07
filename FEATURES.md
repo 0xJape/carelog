@@ -29,7 +29,7 @@ This document maps every project requirement against what is currently implement
 | Visit history per student | ✅ | Last 10 visits shown on student profile page |
 | Visit detail view | ✅ | `/visits/[id]` — full visit record, vitals, badges, quick stats |
 | Visits list (all) | ✅ | `/visits` — sortable/filterable table of all visits |
-| Vital signs input UI | ❌ | Fields not yet added to new visit modal (schema supports JSONB vitals) |
+| Vital signs input UI | ✅ | Temperature, BP (systolic/diastolic), pulse fields in visit modal |
 | Medical history timeline | ❌ | Chronological history view not yet built |
 
 ---
@@ -49,7 +49,7 @@ This document maps every project requirement against what is currently implement
 | Tabbed result UI | ✅ | Causes / Treatment / First Aid / Red Flags tabs |
 | Animated loading state | ✅ | Pulsing icon + 4-step progress animation while Gemini processes |
 | Student medical context passed to AI | ✅ | Age, gender, conditions, medications, health history sent server-side |
-| Rule-based expert system (offline) | ❌ | Currently AI-only; no offline fallback rule engine |
+| Rule-based expert system (offline) | ✅ | `ai-rules.ts` — 10 rules, keyword-matched, auto-fallback when Gemini unavailable |
 | Dedicated symptom checklist UI | ❌ | Free-text only; no checkbox symptom selector |
 
 ---
@@ -112,8 +112,8 @@ This document maps every project requirement against what is currently implement
 |---|---|---|
 | Visit summary cards | ✅ | Total visits, emergency count, this-month count, last visit |
 | Recent visits table | ✅ | Last visits with student, nurse, type, severity, status |
-| Dashboard stats (students, visits) | 🟡 | Visit stats present; total student count card not surfaced |
-| Medicine inventory status widget | ❌ | Low-stock / expiring-soon widget not on dashboard |
+| Dashboard stats (students, visits) | ✅ | Total students card + visit stats all present |
+| Medicine inventory status widget | ✅ | Low-stock and expiring-soon widgets on dashboard |
 | Referral statistics widget | ❌ | Referral counts not surfaced on dashboard |
 
 ---
