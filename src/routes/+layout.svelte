@@ -1,8 +1,19 @@
 <script lang="ts">
+	import { beforeNavigate } from '$app/navigation';
+	import { updated } from '$app/state';
 	import TransitionOverlay from '$lib/components/transition-overlay.svelte';
 	import '../app.css';
 
 	let { children } = $props();
+
+	// Version-skew handling: after a new deploy the hashed JS chunks change.
+	// If an old tab tries to client-side navigate to a chunk that no longer
+	// exists (404), force a full-page load so it fetches the new build.
+	beforeNavigate((navigation) => {
+		if (updated.current && navigation.to?.url) {
+			location.href = navigation.to.url.href;
+		}
+	});
 </script>
 
 <svelte:head>

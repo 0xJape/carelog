@@ -14,6 +14,10 @@ const config = {
 		adapter: adapter(),
 		experimental: {
 			remoteFunctions: true
+		},
+		version: {
+			// Poll for new deployments so open tabs know when chunks have changed
+			pollInterval: 60000
 		}
 	}
 };
