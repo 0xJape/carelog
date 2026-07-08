@@ -35,7 +35,7 @@ export const load: PageServerLoad = async () => {
 						)
 					);
 
-				const totalStock = result[0]?.total || 0;
+				const totalStock = Number(result[0]?.total ?? 0);
 				return {
 					...med,
 					currentStock: totalStock,

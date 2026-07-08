@@ -249,17 +249,17 @@
 			medicationsGiven: '',
 			visitType: 'other',
 			severity: 'low',
-			isEmergency: false
+			isEmergency: false,
+			temperature: '',
+			bloodPressureSystolic: '',
+			bloodPressureDiastolic: '',
+			pulse: ''
 		};
 		aiResult = null;
 		aiError = null;
 		aiLoading = false;
 		aiSource = null;
 		activeTab = 'causes';
-		formData.temperature = '';
-		formData.bloodPressureSystolic = '';
-		formData.bloodPressureDiastolic = '';
-		formData.pulse = '';
 	}
 
 	// Close dialog when clicking outside or escape

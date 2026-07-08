@@ -1,6 +1,7 @@
 import { db } from '$lib/server/db/index.js';
 import { medicines } from '$lib/server/db/schema.js';
 import { json, type RequestHandler } from '@sveltejs/kit';
+import { eq } from 'drizzle-orm';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
@@ -18,7 +19,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const existing = await db
 			.select({ id: medicines.id })
 			.from(medicines)
-			.where(require('drizzle-orm').eq(medicines.name, data.name))
+			.where(eq(medicines.name, data.name))
 			.limit(1);
 
 		if (existing.length > 0) {
