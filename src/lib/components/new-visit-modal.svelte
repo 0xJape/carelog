@@ -171,16 +171,46 @@
 		return parts.join(' ');
 	}
 
+	function pickVoice(): SpeechSynthesisVoice | null {
+		const voices = window.speechSynthesis.getVoices();
+		// 1st priority: Microsoft Zira
+		const zira = voices.find((v) => v.name === 'Microsoft Zira Desktop - English (United States)' || v.name === 'Microsoft Zira - English (United States)' || v.name.includes('Zira'));
+		if (zira) return zira;
+		// 2nd priority: any English female-sounding voice (heuristic by name)
+		const femaleNames = ['Samantha', 'Karen', 'Moira', 'Tessa', 'Fiona', 'Victoria', 'Susan', 'Zoe'];
+		const female = voices.find((v) => femaleNames.some((n) => v.name.includes(n)) && v.lang.startsWith('en'));
+		if (female) return female;
+		// 3rd priority: any English voice
+		const english = voices.find((v) => v.lang.startsWith('en'));
+		return english ?? null;
+	}
+
 	function speakResult(result: AiDiagnosis) {
 		if (typeof window === 'undefined' || !window.speechSynthesis) return;
 		window.speechSynthesis.cancel();
 		const utterance = new SpeechSynthesisUtterance(buildTtsScript(result));
 		utterance.rate = 0.95;
 		utterance.pitch = 1;
-		utterance.onstart = () => (ttsPlaying = true);
-		utterance.onend = () => (ttsPlaying = false);
-		utterance.onerror = () => (ttsPlaying = false);
-		window.speechSynthesis.speak(utterance);
+
+		// Voices may not be loaded yet on first call — wait for them
+		const trySpeak = () => {
+			const voice = pickVoice();
+			if (voice) utterance.voice = voice;
+			utterance.onstart = () => (ttsPlaying = true);
+			utterance.onend = () => (ttsPlaying = false);
+			utterance.onerror = () => (ttsPlaying = false);
+			window.speechSynthesis.speak(utterance);
+		};
+
+		const voices = window.speechSynthesis.getVoices();
+		if (voices.length > 0) {
+			trySpeak();
+		} else {
+			window.speechSynthesis.onvoiceschanged = () => {
+				window.speechSynthesis.onvoiceschanged = null;
+				trySpeak();
+			};
+		}
 	}
 
 	function stopTts() {
