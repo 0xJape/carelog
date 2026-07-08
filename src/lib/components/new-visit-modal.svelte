@@ -146,6 +146,50 @@
 	let aiSource = $state<'ai' | 'rules' | null>(null);
 	let activeTab = $state('causes');
 
+	// TTS state
+	let ttsPlaying = $state(false);
+
+	function buildTtsScript(result: AiDiagnosis): string {
+		const parts: string[] = [];
+		parts.push(`Severity: ${result.assessedSeverity}.`);
+		parts.push(result.summary);
+		if (result.possibleConditions.length) {
+			const names = result.possibleConditions.map((c) => c.name).join(', ');
+			parts.push(`Possible conditions: ${names}.`);
+		}
+		if (result.firstAidSteps.length) {
+			parts.push('First aid steps:');
+			result.firstAidSteps.forEach((s, i) => parts.push(`${i + 1}. ${s}`));
+		}
+		if (result.redFlags.length) {
+			parts.push('Red flags to watch:');
+			result.redFlags.forEach((f) => parts.push(f));
+		}
+		if (result.referralRecommended && result.referralReason) {
+			parts.push(`Referral recommended: ${result.referralReason}`);
+		}
+		return parts.join(' ');
+	}
+
+	function speakResult(result: AiDiagnosis) {
+		if (typeof window === 'undefined' || !window.speechSynthesis) return;
+		window.speechSynthesis.cancel();
+		const utterance = new SpeechSynthesisUtterance(buildTtsScript(result));
+		utterance.rate = 0.95;
+		utterance.pitch = 1;
+		utterance.onstart = () => (ttsPlaying = true);
+		utterance.onend = () => (ttsPlaying = false);
+		utterance.onerror = () => (ttsPlaying = false);
+		window.speechSynthesis.speak(utterance);
+	}
+
+	function stopTts() {
+		if (typeof window !== 'undefined' && window.speechSynthesis) {
+			window.speechSynthesis.cancel();
+		}
+		ttsPlaying = false;
+	}
+
 	async function runAiDiagnosis() {
 		if (!formData.reason.trim()) {
 			toast.error('Enter a reason for the visit first');
@@ -171,8 +215,7 @@
 				throw new Error(data?.error || 'Failed to generate pre-diagnosis');
 			}
 			aiResult = data.result as AiDiagnosis;
-			aiSource = (data.source ?? 'ai') as 'ai' | 'rules';
-			// Adopt the AI-assessed severity into the form (nurse can still change it)
+			aiSource = (data.source ?? 'ai') as 'ai' | 'rules';		speakResult(aiResult);			// Adopt the AI-assessed severity into the form (nurse can still change it)
 			const sevMap: Record<string, string> = {
 				low: 'low',
 				moderate: 'medium',
@@ -242,6 +285,7 @@
 
 	// Reset form
 	function resetForm() {
+		stopTts();
 		formData = {
 			nurseId: '',
 			reason: '',
@@ -617,8 +661,30 @@
 						)}>{aiResult.assessedSeverity}</span>
 						<p class="text-xs text-foreground leading-snug line-clamp-2">{aiResult.summary}</p>
 						{#if aiResult.referralRecommended}
-							<span class="ml-auto shrink-0 rounded-full bg-red-500/15 px-2 py-0.5 text-[10px] font-semibold text-red-600 dark:text-red-400">Refer</span>
+							<span class="shrink-0 rounded-full bg-red-500/15 px-2 py-0.5 text-[10px] font-semibold text-red-600 dark:text-red-400">Refer</span>
 						{/if}
+						<div class="ml-auto flex shrink-0 items-center gap-1">
+							{#if ttsPlaying}
+								<button
+									type="button"
+									onclick={stopTts}
+									class="flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground hover:bg-muted/80 transition-colors"
+									title="Stop reading"
+								>
+									<span class="size-1.5 rounded-full bg-red-500 animate-pulse"></span>
+									Stop
+								</button>
+							{:else}
+								<button
+									type="button"
+									onclick={() => speakResult(aiResult!)}
+									class="flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground hover:bg-muted/80 transition-colors"
+									title="Read aloud"
+								>
+									🔊 Read
+								</button>
+							{/if}
+						</div>
 					</div>
 
 					<!-- Referral reason (only if recommended) -->
