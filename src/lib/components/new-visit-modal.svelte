@@ -286,6 +286,11 @@
 			await prepareSpeech(result);
 			aiResult = result;
 			aiSource = (data.source ?? 'ai') as 'ai' | 'rules';
+			try {
+				await audioPlayer?.play();
+			} catch {
+				// Browser may block autoplay; prepared audio remains available through Listen.
+			}
 			// Adopt the AI-assessed severity into the form (nurse can still change it)
 			const sevMap: Record<string, string> = {
 				low: 'low',

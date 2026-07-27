@@ -3,9 +3,21 @@ import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 const MAX_TEXT_LENGTH = 6000;
+const requests = new Map<string, { count: number; resetAt: number }>();
 
-export const POST: RequestHandler = async ({ request, locals, fetch }) => {
-	if (!locals.user) error(401, 'Unauthorized');
+function rateLimited(address: string): boolean {
+	const now = Date.now();
+	const current = requests.get(address);
+	if (!current || current.resetAt <= now) {
+		requests.set(address, { count: 1, resetAt: now + 60_000 });
+		return false;
+	}
+	current.count++;
+	return current.count > 12;
+}
+
+export const POST: RequestHandler = async ({ request, fetch, getClientAddress }) => {
+	if (rateLimited(getClientAddress())) error(429, 'Too many requests');
 	const { text } = await request.json().catch(() => ({}));
 	if (typeof text !== 'string' || !text.trim() || text.length > MAX_TEXT_LENGTH) {
 		error(400, 'Text is required and must be under 6,000 characters');

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import SplashScreen from '$lib/components/splash-screen.svelte';
+	import FirstAidChat from '$lib/components/first-aid-chat.svelte';
 	import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
 	import VoiceGuideButton from '$lib/components/voice-guide-button.svelte';
 	import { voiceGuide } from '$lib/stores/voice-guide';
@@ -1131,3 +1132,5 @@
 		</div>
 	</footer>
 </div>
+
+<FirstAidChat />
