@@ -13,16 +13,19 @@
 	import { cn } from '$lib/utils.js';
 	import {
 		AlertTriangle,
+		Activity,
 		Check,
 		ChevronsUpDown,
 		Loader2,
 		Mic,
 		Pill,
 		Plus,
+		ShieldAlert,
 		Sparkles,
 		Square,
 		Stethoscope,
-		Volume2
+		Volume2,
+		WandSparkles
 	} from '@lucide/svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { tick } from 'svelte';
@@ -152,6 +155,7 @@
 	// TTS state
 	let ttsPlaying = $state(false);
 	let audioPlayer = $state<HTMLAudioElement | null>(null);
+	let audioUrl = $state<string | null>(null);
 	let recording = $state(false);
 	let transcribing = $state(false);
 	let mediaRecorder = $state<MediaRecorder | null>(null);
@@ -176,27 +180,36 @@
 		if (result.referralRecommended && result.referralReason) {
 			parts.push(`Referral recommended: ${result.referralReason}`);
 		}
-		return parts.join(' ');
+		return parts
+			.join(' ')
+			.replace(/[•*_#~`|<>\[\]{}]/g, ' ')
+			.replace(/[–—-]+/g, ', ')
+			.replace(/\b(\d+)\s*mg\b/gi, '$1 milligrams')
+			.replace(/\b(\d+)\s*ml\b/gi, '$1 milliliters')
+			.replace(/\bhrs?\b/gi, 'hours')
+			.replace(/\s+/g, ' ')
+			.trim();
+	}
+
+	async function prepareSpeech(result: AiDiagnosis): Promise<void> {
+		stopTts();
+		const response = await fetch('/api/speak', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ text: buildTtsScript(result) })
+		});
+		if (!response.ok) throw new Error('Speech generation failed');
+		audioUrl = URL.createObjectURL(await response.blob());
+		audioPlayer = new Audio(audioUrl);
+		audioPlayer.onplay = () => (ttsPlaying = true);
+		audioPlayer.onended = () => (ttsPlaying = false);
+		audioPlayer.onerror = () => (ttsPlaying = false);
 	}
 
 	async function speakResult(result: AiDiagnosis) {
-		stopTts();
 		try {
-			const response = await fetch('/api/speak', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ text: buildTtsScript(result) })
-			});
-			if (!response.ok) throw new Error('Speech generation failed');
-			const url = URL.createObjectURL(await response.blob());
-			audioPlayer = new Audio(url);
-			audioPlayer.onplay = () => (ttsPlaying = true);
-			audioPlayer.onended = () => {
-				ttsPlaying = false;
-				URL.revokeObjectURL(url);
-			};
-			audioPlayer.onerror = () => (ttsPlaying = false);
-			await audioPlayer.play();
+			if (!audioPlayer) await prepareSpeech(result);
+			await audioPlayer?.play();
 		} catch (err) {
 			toast.error('Voice guidance failed', { description: err instanceof Error ? err.message : 'Try again' });
 		}
@@ -205,6 +218,8 @@
 	function stopTts() {
 		audioPlayer?.pause();
 		audioPlayer = null;
+		if (audioUrl) URL.revokeObjectURL(audioUrl);
+		audioUrl = null;
 		ttsPlaying = false;
 	}
 
@@ -267,7 +282,9 @@
 			if (!res.ok) {
 				throw new Error(data?.error || 'Failed to generate pre-diagnosis');
 			}
-			aiResult = data.result as AiDiagnosis;
+			const result = data.result as AiDiagnosis;
+			await prepareSpeech(result);
+			aiResult = result;
 			aiSource = (data.source ?? 'ai') as 'ai' | 'rules';
 			// Adopt the AI-assessed severity into the form (nurse can still change it)
 			const sevMap: Record<string, string> = {
@@ -276,8 +293,8 @@
 				high: 'high',
 				critical: 'critical'
 			};
-			if (aiResult.assessedSeverity && sevMap[aiResult.assessedSeverity]) {
-				formData.severity = sevMap[aiResult.assessedSeverity];
+			if (result.assessedSeverity && sevMap[result.assessedSeverity]) {
+				formData.severity = sevMap[result.assessedSeverity];
 			}
 		} catch (err) {
 			aiError = err instanceof Error ? err.message : 'Something went wrong';
@@ -395,6 +412,27 @@
 
 <Dialog.Root bind:open onOpenChange={handleOpenChange}>
 	<Dialog.Content class="flex max-h-[90vh] max-w-2xl! flex-col overflow-hidden">
+		{#if aiLoading}
+			<div class="absolute inset-0 z-50 grid place-items-center overflow-hidden rounded-lg bg-background/75 backdrop-blur-md">
+				<div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.16),transparent_55%)]"></div>
+				<div class="relative w-[min(82%,22rem)] overflow-hidden rounded-2xl border border-cyan-400/25 bg-background/90 p-6 text-center shadow-2xl shadow-cyan-500/20">
+					<div class="absolute inset-x-0 top-0 h-px animate-pulse bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+					<div class="relative mx-auto mb-5 size-20">
+						<div class="absolute inset-0 animate-spin rounded-full border border-transparent border-t-cyan-400 border-r-blue-500"></div>
+						<div class="absolute inset-2 animate-[spin_1.5s_linear_infinite_reverse] rounded-full border border-transparent border-b-violet-500 border-l-cyan-300"></div>
+						<div class="absolute inset-5 grid place-items-center rounded-full bg-gradient-to-br from-cyan-400 via-blue-500 to-violet-600 shadow-lg shadow-cyan-500/30">
+							<Sparkles class="size-5 animate-pulse text-white" />
+						</div>
+					</div>
+					<p class="text-sm font-semibold text-foreground">Preparing triage briefing</p>
+					<p class="mt-1 text-xs text-muted-foreground">Analyzing case and synthesizing voice guidance</p>
+					<div class="mt-5 h-1 overflow-hidden rounded-full bg-muted">
+						<div class="h-full w-1/2 animate-[pulse_1s_ease-in-out_infinite] rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500"></div>
+					</div>
+					<p class="mt-3 text-[10px] font-medium uppercase tracking-[0.18em] text-cyan-700 dark:text-cyan-300">Groq clinical assist</p>
+				</div>
+			</div>
+		{/if}
 		<Dialog.Header>
 			<Dialog.Title class="flex items-center gap-2">
 				<Stethoscope class="size-5" />
@@ -772,51 +810,55 @@
 					{/if}
 
 					<!-- Tab buttons -->
-					<div class="flex gap-1 rounded-lg bg-muted/50 p-1">
+					<div class="grid grid-cols-4 gap-1 rounded-xl border border-white/10 bg-background/40 p-1.5 shadow-inner backdrop-blur-sm">
 						{#each [
-							{ id: 'causes', label: 'Causes' },
-							{ id: 'treatment', label: 'Treatment' },
-							{ id: 'firstaid', label: 'First Aid' },
-							{ id: 'flags', label: 'Red Flags' }
+							{ id: 'causes', label: 'Causes', icon: Activity, active: 'from-cyan-500 to-blue-600' },
+							{ id: 'treatment', label: 'Treatment', icon: Pill, active: 'from-violet-500 to-fuchsia-600' },
+							{ id: 'firstaid', label: 'First Aid', icon: WandSparkles, active: 'from-emerald-500 to-teal-600' },
+							{ id: 'flags', label: 'Red Flags', icon: ShieldAlert, active: 'from-orange-500 to-red-600' }
 						] as tab}
 							<button
 								type="button"
 								onclick={() => activeTab = tab.id}
 								class={cn(
-									'flex-1 rounded-md py-1 text-[11px] font-medium transition-colors',
+									'flex min-w-0 flex-col items-center gap-1 rounded-lg px-1 py-2 text-[10px] font-semibold transition-all duration-300',
 									activeTab === tab.id
-										? 'bg-background text-foreground shadow-sm'
-										: 'text-muted-foreground hover:text-foreground'
+										? `bg-gradient-to-br ${tab.active} text-white shadow-lg`
+										: 'text-muted-foreground hover:bg-background/70 hover:text-foreground'
 								)}
 							>
+								<tab.icon class="size-3.5" />
 								{tab.label}
 							</button>
 						{/each}
 					</div>
 
 					<!-- Tab panels -->
-					<div class="min-h-[80px]">
+					<div class="min-h-[110px] rounded-xl border border-white/10 bg-background/45 p-3 shadow-inner backdrop-blur-sm">
 						{#if activeTab === 'causes'}
-							<div class="space-y-1.5">
-								{#each aiResult.possibleConditions as c}
-									<div class="flex items-start gap-2 rounded-lg bg-background/60 border border-border/40 px-3 py-2">
+							<div class="grid gap-2 sm:grid-cols-2">
+								{#each aiResult.possibleConditions as c, i}
+									<div class="group relative overflow-hidden rounded-xl border border-cyan-500/15 bg-gradient-to-br from-cyan-500/10 to-blue-500/5 p-3 transition-all hover:-translate-y-0.5 hover:border-cyan-400/35 hover:shadow-lg hover:shadow-cyan-500/10">
+										<span class="absolute right-2 top-1 text-3xl font-black text-cyan-500/8">0{i + 1}</span>
+										<div class="mb-2 flex items-center gap-2">
 										<span class={cn('mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase', likelihoodStyle[c.likelihood])}>
 											{c.likelihood}
 										</span>
-										<div>
-											<p class="text-xs font-semibold text-foreground">{c.name}</p>
-											<p class="text-[11px] text-muted-foreground">{c.explanation}</p>
+											<p class="text-xs font-bold text-foreground">{c.name}</p>
 										</div>
+										<p class="relative text-[11px] leading-relaxed text-muted-foreground">{c.explanation}</p>
 									</div>
 								{/each}
 							</div>
 
 						{:else if activeTab === 'treatment'}
-							<div class="space-y-2">
+							<div class="space-y-3">
 								{#if aiResult.recommendedRemedies.length}
-									<div class="flex flex-wrap gap-1.5">
-										{#each aiResult.recommendedRemedies as r}
-											<span class="rounded-full border border-border/50 bg-background/60 px-2.5 py-1 text-[11px] text-foreground">{r}</span>
+									<div class="grid gap-2 sm:grid-cols-2">
+										{#each aiResult.recommendedRemedies as r, i}
+											<div class="flex items-center gap-2 rounded-lg border border-violet-500/15 bg-violet-500/8 px-3 py-2 text-[11px] text-foreground">
+												<span class="grid size-5 shrink-0 place-items-center rounded-md bg-violet-500/15 text-[9px] font-bold text-violet-600 dark:text-violet-300">{i + 1}</span>{r}
+											</div>
 										{/each}
 									</div>
 								{/if}
@@ -825,7 +867,8 @@
 										<Pill class="size-3" /> Medications
 									</p>
 									{#each aiResult.suggestedMedications as m}
-										<div class="rounded-lg bg-background/60 border border-border/40 px-3 py-2">
+										<div class="relative overflow-hidden rounded-xl border border-fuchsia-500/15 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/5 px-3 py-2.5">
+											<div class="absolute inset-y-0 left-0 w-0.5 bg-gradient-to-b from-violet-400 to-fuchsia-500"></div>
 											<div class="flex items-center justify-between gap-2">
 												<p class="text-xs font-semibold text-foreground">{m.name}</p>
 												<span class="text-[10px] text-muted-foreground">{m.dosageNote}</span>
@@ -842,21 +885,23 @@
 							</div>
 
 						{:else if activeTab === 'firstaid'}
-							<ol class="space-y-1.5">
+							<ol class="relative space-y-2 before:absolute before:bottom-3 before:left-[13px] before:top-3 before:w-px before:bg-gradient-to-b before:from-emerald-400 before:to-teal-500/10">
 								{#each aiResult.firstAidSteps as step, i}
-									<li class="flex items-start gap-2.5">
-										<span class="flex size-4 shrink-0 items-center justify-center rounded-full bg-blue-500/15 text-[9px] font-bold text-blue-600 dark:text-blue-400 mt-0.5">{i + 1}</span>
-										<p class="text-xs text-foreground">{step}</p>
+									<li class="relative flex items-start gap-3 rounded-xl border border-emerald-500/10 bg-emerald-500/5 p-2.5">
+										<span class="z-10 flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-400 to-teal-600 text-[10px] font-bold text-white shadow-md shadow-emerald-500/20">{i + 1}</span>
+										<p class="pt-1 text-xs leading-relaxed text-foreground">{step}</p>
 									</li>
 								{/each}
 							</ol>
 
 						{:else if activeTab === 'flags'}
-							<div class="space-y-1.5">
+							<div class="grid gap-2 sm:grid-cols-2">
 								{#each aiResult.redFlags as flag}
-									<div class="flex items-start gap-2 text-xs">
-										<AlertTriangle class="mt-0.5 size-3.5 shrink-0 text-amber-500" />
-										<p class="text-foreground">{flag}</p>
+									<div class="group flex items-start gap-2.5 rounded-xl border border-red-500/15 bg-gradient-to-br from-orange-500/10 to-red-500/5 p-3 text-xs transition-colors hover:border-red-500/35">
+										<span class="grid size-7 shrink-0 place-items-center rounded-lg bg-red-500/15">
+											<AlertTriangle class="size-3.5 text-red-500" />
+										</span>
+										<p class="pt-1 font-medium leading-relaxed text-foreground">{flag}</p>
 									</div>
 								{/each}
 							</div>

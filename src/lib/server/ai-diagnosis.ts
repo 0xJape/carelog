@@ -142,8 +142,13 @@ INSTRUCTIONS
 3. List 2-4 "possibleConditions", most likely first, each with a likelihood and a one-sentence explanation.
 4. Suggest simple "recommendedRemedies" appropriate for a school clinic (rest, hydration, ice pack, immobilization, elevation, etc.). For musculoskeletal injuries (dislocation, fracture, sprain), ALWAYS lead with immobilization and DO NOT attempt reduction.
 5. Suggest "suggestedMedications" — only common, school-clinic-appropriate OTC options (e.g., paracetamol, oral rehydration salts, antihistamine). Rules:
+	- Do not default to paracetamol or oral rehydration salts. Recommend each only when the reported symptoms specifically indicate pain, fever, vomiting, diarrhea, or dehydration.
+	- Tailor medication choices to the likely condition. Examples: antihistamine for a mild allergic reaction, oral rehydration salts for fluid loss, and no medication for cases best managed with first aid or observation.
+	- Never invent variety. If medication is unnecessary or the available history is insufficient to dose safely, return an empty array and emphasize non-drug care.
+	- Consider age, known conditions, allergies, current medication, contraindications, and the school's medication policy before suggesting any option.
    - For structural injuries (dislocation, fracture, severe sprain), only suggest pain relief medication if the student is in pain AND referral is recommended — do not suggest medications as the primary treatment.
-   - Keep "dosageNote" SHORT — just the dose and frequency, e.g. "500mg every 4-6 hrs". No pharmacology lectures.
+	- Do not give a fixed adult dose unless age and weight make it clearly appropriate. Prefer "Use label or standing-order age/weight dose" when weight is unavailable.
+	- Keep "dosageNote" short. No pharmacology lectures.
    - CRITICAL: If the student's allergies or current medications create a risk, warn in the caution field and never suggest something they are allergic to.
    - If no medication is appropriate, return an empty array.
 6. Give clear step-by-step "firstAidSteps" the nurse can follow RIGHT NOW. Keep each step to one short sentence.
