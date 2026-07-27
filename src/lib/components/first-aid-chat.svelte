@@ -39,7 +39,8 @@
 			.replace(/\b(\d+)\s*mg\b/gi, '$1 milligrams')
 			.replace(/\bhrs?\b/gi, 'hours')
 			.replace(/\s+/g, ' ')
-			.trim();
+			.trim()
+			.slice(0, 200);
 	}
 
 	function stopSpeech() {

@@ -2,7 +2,7 @@ import { env } from '$env/dynamic/private';
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-const MAX_TEXT_LENGTH = 6000;
+const MAX_TEXT_LENGTH = 200;
 const requests = new Map<string, { count: number; resetAt: number }>();
 
 function rateLimited(address: string): boolean {
@@ -20,7 +20,7 @@ export const POST: RequestHandler = async ({ request, fetch, getClientAddress })
 	if (rateLimited(getClientAddress())) error(429, 'Too many requests');
 	const { text } = await request.json().catch(() => ({}));
 	if (typeof text !== 'string' || !text.trim() || text.length > MAX_TEXT_LENGTH) {
-		error(400, 'Text is required and must be under 6,000 characters');
+		error(400, 'Text is required and must be 200 characters or fewer');
 	}
 	if (!env.GROQ_API_KEY) error(500, 'GROQ_API_KEY is not configured');
 
@@ -37,7 +37,10 @@ export const POST: RequestHandler = async ({ request, fetch, getClientAddress })
 			response_format: 'wav'
 		})
 	});
-	if (!response.ok) error(502, 'Speech generation failed');
+	if (!response.ok) {
+		console.error('Groq speech error:', response.status, await response.text());
+		error(502, 'Speech service unavailable');
+	}
 
 	return new Response(response.body, {
 		headers: { 'Content-Type': 'audio/wav', 'Cache-Control': 'no-store' }

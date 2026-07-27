@@ -162,33 +162,16 @@
 	let mediaStream = $state<MediaStream | null>(null);
 
 	function buildTtsScript(result: AiDiagnosis): string {
-		const parts: string[] = [];
-		parts.push(`Severity: ${result.assessedSeverity}.`);
-		parts.push(result.summary);
-		if (result.possibleConditions.length) {
-			const names = result.possibleConditions.map((c) => c.name).join(', ');
-			parts.push(`Possible conditions: ${names}.`);
-		}
-		if (result.firstAidSteps.length) {
-			parts.push('First aid steps:');
-			result.firstAidSteps.forEach((s, i) => parts.push(`${i + 1}. ${s}`));
-		}
-		if (result.redFlags.length) {
-			parts.push('Red flags to watch:');
-			result.redFlags.forEach((f) => parts.push(f));
-		}
-		if (result.referralRecommended && result.referralReason) {
-			parts.push(`Referral recommended: ${result.referralReason}`);
-		}
-		return parts
-			.join(' ')
+		const firstStep = result.firstAidSteps[0] ? ` First step: ${result.firstAidSteps[0]}` : '';
+		return `Severity ${result.assessedSeverity}. ${result.summary}${firstStep}`
 			.replace(/[•*_#~`|<>\[\]{}]/g, ' ')
 			.replace(/[–—-]+/g, ', ')
 			.replace(/\b(\d+)\s*mg\b/gi, '$1 milligrams')
 			.replace(/\b(\d+)\s*ml\b/gi, '$1 milliliters')
 			.replace(/\bhrs?\b/gi, 'hours')
 			.replace(/\s+/g, ' ')
-			.trim();
+			.trim()
+			.slice(0, 190);
 	}
 
 	async function prepareSpeech(result: AiDiagnosis): Promise<void> {
@@ -198,7 +181,10 @@
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ text: buildTtsScript(result) })
 		});
-		if (!response.ok) throw new Error('Speech generation failed');
+		if (!response.ok) {
+			const message = await response.text();
+			throw new Error(message || 'Speech generation failed');
+		}
 		audioUrl = URL.createObjectURL(await response.blob());
 		audioPlayer = new Audio(audioUrl);
 		audioPlayer.onplay = () => (ttsPlaying = true);
