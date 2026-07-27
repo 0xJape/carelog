@@ -1,7 +1,7 @@
 /**
  * ai-diagnosis.ts — AI pre-diagnosis assistant for CLINIQAI
  *
- * Uses Google Gemini (gemini-2.5-flash) to give the school nurse an
+ * Uses Groq (llama-3.1-8b-instant) to give the school nurse an
  * evidence-flavored pre-diagnosis: possible causes, severity, suggested
  * remedies / OTC medications, first-aid steps, red flags, and referral advice.
  *
@@ -11,8 +11,8 @@
 
 import { env } from '$env/dynamic/private';
 
-const GEMINI_MODEL = 'gemini-2.5-flash';
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+const GROQ_MODEL = 'llama-3.1-8b-instant';
+const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 export interface StudentMedicalContext {
 	firstName: string;
@@ -62,9 +62,6 @@ const DISCLAIMER =
 	'This is an AI-generated pre-diagnosis to support the school nurse. It is not a medical diagnosis. ' +
 	'Always rely on professional clinical judgment and seek a licensed physician for anything beyond basic first aid.';
 
-/**
- * JSON schema Gemini must follow (structured output).
- */
 const RESPONSE_SCHEMA = {
 	type: 'object',
 	properties: {
@@ -157,41 +154,48 @@ Be cautious and safety-first. For injuries, immobilization and referral always c
 }
 
 export async function generateDiagnosis(input: DiagnosisInput): Promise<DiagnosisResult> {
-	const apiKey = env.GEMINI_API_KEY;
+	const apiKey = env.GROQ_API_KEY;
 	if (!apiKey) {
-		throw new Error('GEMINI_API_KEY is not configured');
+		throw new Error('GROQ_API_KEY is not configured');
 	}
 
 	const body = {
-		contents: [
+		model: GROQ_MODEL,
+		temperature: 0.2,
+		max_tokens: 1400,
+		response_format: { type: 'json_object' },
+		messages: [
+			{
+				role: 'system',
+				content:
+					'Return valid JSON only. Match requested fields and allowed enum values exactly. Do not include markdown.'
+			},
 			{
 				role: 'user',
-				parts: [{ text: buildPrompt(input) }]
+				content: `${buildPrompt(input)}\n\nReturn JSON with this schema: ${JSON.stringify(RESPONSE_SCHEMA)}`
 			}
-		],
-		generationConfig: {
-			temperature: 0.2,
-			responseMimeType: 'application/json',
-			responseSchema: RESPONSE_SCHEMA
-		}
+		]
 	};
 
-	const res = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
+	const res = await fetch(GROQ_URL, {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
+		headers: {
+			Authorization: `Bearer ${apiKey}`,
+			'Content-Type': 'application/json'
+		},
 		body: JSON.stringify(body)
 	});
 
 	if (!res.ok) {
 		const errText = await res.text().catch(() => '');
-		throw new Error(`Gemini API error (${res.status}): ${errText.slice(0, 300)}`);
+		throw new Error(`Groq API error (${res.status}): ${errText.slice(0, 300)}`);
 	}
 
 	const data = await res.json();
-	const text: string | undefined = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+	const text: string | undefined = data?.choices?.[0]?.message?.content;
 
 	if (!text) {
-		throw new Error('Gemini returned an empty response');
+		throw new Error('Groq returned an empty response');
 	}
 
 	let parsed: Omit<DiagnosisResult, 'disclaimer'>;

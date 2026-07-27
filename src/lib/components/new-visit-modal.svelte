@@ -16,10 +16,13 @@
 		Check,
 		ChevronsUpDown,
 		Loader2,
+		Mic,
 		Pill,
 		Plus,
 		Sparkles,
-		Stethoscope
+		Square,
+		Stethoscope,
+		Volume2
 	} from '@lucide/svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { tick } from 'svelte';
@@ -148,6 +151,11 @@
 
 	// TTS state
 	let ttsPlaying = $state(false);
+	let audioPlayer = $state<HTMLAudioElement | null>(null);
+	let recording = $state(false);
+	let transcribing = $state(false);
+	let mediaRecorder = $state<MediaRecorder | null>(null);
+	let mediaStream = $state<MediaStream | null>(null);
 
 	function buildTtsScript(result: AiDiagnosis): string {
 		const parts: string[] = [];
@@ -171,53 +179,68 @@
 		return parts.join(' ');
 	}
 
-	function pickVoice(): SpeechSynthesisVoice | null {
-		const voices = window.speechSynthesis.getVoices();
-		// 1st priority: Microsoft Zira
-		const zira = voices.find((v) => v.name === 'Microsoft Zira Desktop - English (United States)' || v.name === 'Microsoft Zira - English (United States)' || v.name.includes('Zira'));
-		if (zira) return zira;
-		// 2nd priority: any English female-sounding voice (heuristic by name)
-		const femaleNames = ['Samantha', 'Karen', 'Moira', 'Tessa', 'Fiona', 'Victoria', 'Susan', 'Zoe'];
-		const female = voices.find((v) => femaleNames.some((n) => v.name.includes(n)) && v.lang.startsWith('en'));
-		if (female) return female;
-		// 3rd priority: any English voice
-		const english = voices.find((v) => v.lang.startsWith('en'));
-		return english ?? null;
-	}
-
-	function speakResult(result: AiDiagnosis) {
-		if (typeof window === 'undefined' || !window.speechSynthesis) return;
-		window.speechSynthesis.cancel();
-		const utterance = new SpeechSynthesisUtterance(buildTtsScript(result));
-		utterance.rate = 0.95;
-		utterance.pitch = 1;
-
-		// Voices may not be loaded yet on first call — wait for them
-		const trySpeak = () => {
-			const voice = pickVoice();
-			if (voice) utterance.voice = voice;
-			utterance.onstart = () => (ttsPlaying = true);
-			utterance.onend = () => (ttsPlaying = false);
-			utterance.onerror = () => (ttsPlaying = false);
-			window.speechSynthesis.speak(utterance);
-		};
-
-		const voices = window.speechSynthesis.getVoices();
-		if (voices.length > 0) {
-			trySpeak();
-		} else {
-			window.speechSynthesis.onvoiceschanged = () => {
-				window.speechSynthesis.onvoiceschanged = null;
-				trySpeak();
+	async function speakResult(result: AiDiagnosis) {
+		stopTts();
+		try {
+			const response = await fetch('/api/speak', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ text: buildTtsScript(result) })
+			});
+			if (!response.ok) throw new Error('Speech generation failed');
+			const url = URL.createObjectURL(await response.blob());
+			audioPlayer = new Audio(url);
+			audioPlayer.onplay = () => (ttsPlaying = true);
+			audioPlayer.onended = () => {
+				ttsPlaying = false;
+				URL.revokeObjectURL(url);
 			};
+			audioPlayer.onerror = () => (ttsPlaying = false);
+			await audioPlayer.play();
+		} catch (err) {
+			toast.error('Voice guidance failed', { description: err instanceof Error ? err.message : 'Try again' });
 		}
 	}
 
 	function stopTts() {
-		if (typeof window !== 'undefined' && window.speechSynthesis) {
-			window.speechSynthesis.cancel();
-		}
+		audioPlayer?.pause();
+		audioPlayer = null;
 		ttsPlaying = false;
+	}
+
+	async function startRecording() {
+		try {
+			mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+			const chunks: BlobPart[] = [];
+			mediaRecorder = new MediaRecorder(mediaStream);
+			mediaRecorder.ondataavailable = ({ data }) => data.size && chunks.push(data);
+			mediaRecorder.onstop = async () => {
+				mediaStream?.getTracks().forEach((track) => track.stop());
+				mediaStream = null;
+				recording = false;
+				transcribing = true;
+				try {
+					const body = new FormData();
+					body.set('audio', new File(chunks, 'visit-note.webm', { type: mediaRecorder?.mimeType || 'audio/webm' }));
+					const response = await fetch('/api/transcribe', { method: 'POST', body });
+					const data = await response.json();
+					if (!response.ok) throw new Error(data.error || 'Transcription failed');
+					formData.details = [formData.details.trim(), data.transcript.trim()].filter(Boolean).join('\n');
+				} catch (err) {
+					toast.error('Voice note failed', { description: err instanceof Error ? err.message : 'Try again' });
+				} finally {
+					transcribing = false;
+				}
+			};
+			mediaRecorder.start();
+			recording = true;
+		} catch {
+			toast.error('Microphone access denied');
+		}
+	}
+
+	function stopRecording() {
+		mediaRecorder?.stop();
 	}
 
 	async function runAiDiagnosis() {
@@ -245,7 +268,8 @@
 				throw new Error(data?.error || 'Failed to generate pre-diagnosis');
 			}
 			aiResult = data.result as AiDiagnosis;
-			aiSource = (data.source ?? 'ai') as 'ai' | 'rules';		speakResult(aiResult);			// Adopt the AI-assessed severity into the form (nurse can still change it)
+			aiSource = (data.source ?? 'ai') as 'ai' | 'rules';
+			// Adopt the AI-assessed severity into the form (nurse can still change it)
 			const sevMap: Record<string, string> = {
 				low: 'low',
 				moderate: 'medium',
@@ -316,6 +340,7 @@
 	// Reset form
 	function resetForm() {
 		stopTts();
+		if (recording) stopRecording();
 		formData = {
 			nurseId: '',
 			reason: '',
@@ -587,7 +612,25 @@
 
 			<!-- Details -->
 			<div class="space-y-2">
-				<Label for="details">Details</Label>
+				<div class="flex items-center justify-between gap-2">
+					<Label for="details">Details</Label>
+					<Button
+						type="button"
+						variant={recording ? 'destructive' : 'outline'}
+						size="sm"
+						class="h-7 gap-1.5 text-xs"
+						onclick={recording ? stopRecording : startRecording}
+						disabled={transcribing}
+					>
+						{#if transcribing}
+							<Loader2 class="size-3 animate-spin" /> Transcribing
+						{:else if recording}
+							<Square class="size-3" /> Stop recording
+						{:else}
+							<Mic class="size-3" /> Voice note
+						{/if}
+					</Button>
+				</div>
 				<Textarea
 					id="details"
 					name="details"
@@ -598,15 +641,18 @@
 				/>
 			</div>
 
-			<!-- AI Pre-Diagnosis -->
-			<div class="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 space-y-3">
+			<!-- Groq triage command panel -->
+			<div class="space-y-3 rounded-2xl border border-cyan-400/20 bg-gradient-to-br from-cyan-500/10 via-blue-500/5 to-violet-500/10 p-4 shadow-[0_0_35px_-20px] shadow-cyan-500">
 				<!-- Header row -->
 				<div class="flex items-center justify-between gap-3">
 					<div class="flex items-center gap-2">
-						<div class="flex size-7 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
+						<div class="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 via-blue-500 to-violet-600 shadow-lg shadow-cyan-500/30">
 							<Sparkles class="size-3.5 text-white" />
 						</div>
-						<span class="text-sm font-semibold text-foreground">AI Pre-Diagnosis</span>
+						<div>
+							<span class="block text-sm font-semibold text-foreground">Triage intelligence</span>
+							<span class="block text-[10px] font-medium uppercase tracking-[0.14em] text-cyan-700 dark:text-cyan-300">Groq · Llama 3.1</span>
+						</div>
 					</div>
 					<Button
 						type="button"
@@ -621,7 +667,7 @@
 							Analyzing...
 						{:else}
 							<Sparkles class="size-3" />
-							{aiResult ? 'Re-analyze' : 'Analyze'}
+							{aiResult ? 'Refresh triage' : 'Run triage'}
 						{/if}
 					</Button>
 				</div>
@@ -671,7 +717,7 @@
 				{/if}
 
 				{#if !aiResult && !aiLoading && !aiError}
-					<p class="text-xs text-muted-foreground">Fill in the reason above, then click Analyze to get AI-assisted triage.</p>
+					<p class="text-xs text-muted-foreground">Add chief complaint, then run triage. Voice notes use Groq Whisper; guidance uses nurse review.</p>
 				{/if}
 
 				{#if aiResult}
@@ -711,7 +757,7 @@
 									class="flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground hover:bg-muted/80 transition-colors"
 									title="Read aloud"
 								>
-									🔊 Read
+									<Volume2 class="size-3" /> Listen
 								</button>
 							{/if}
 						</div>
