@@ -269,13 +269,16 @@
 				throw new Error(data?.error || 'Failed to generate pre-diagnosis');
 			}
 			const result = data.result as AiDiagnosis;
-			await prepareSpeech(result);
 			aiResult = result;
 			aiSource = (data.source ?? 'ai') as 'ai' | 'rules';
 			try {
+				await prepareSpeech(result);
 				await audioPlayer?.play();
-			} catch {
-				// Browser may block autoplay; prepared audio remains available through Listen.
+			} catch (err) {
+				stopTts();
+				toast.warning('Triage ready without voice', {
+					description: err instanceof Error ? err.message : 'Speech service unavailable'
+				});
 			}
 			// Adopt the AI-assessed severity into the form (nurse can still change it)
 			const sevMap: Record<string, string> = {
