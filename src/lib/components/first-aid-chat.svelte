@@ -43,6 +43,10 @@
 			.slice(0, 200);
 	}
 
+	function plainText(text: string) {
+		return text.replace(/[*_`#]/g, '');
+	}
+
 	function stopSpeech() {
 		audio?.pause();
 		audio = null;
@@ -88,10 +92,11 @@
 			});
 			const data = await response.json();
 			if (!response.ok) throw new Error(data.error || 'Assistant unavailable');
-			messages.push({ role: 'assistant', content: data.reply });
+			const reply = plainText(data.reply);
+			messages.push({ role: 'assistant', content: reply });
 			await tick();
 			messageList?.scrollTo({ top: messageList.scrollHeight, behavior: 'smooth' });
-			await readReply(data.reply).catch(() => undefined);
+			await readReply(reply).catch(() => undefined);
 		} catch (error) {
 			messages.push({
 				role: 'assistant',
@@ -105,10 +110,10 @@
 
 <div class="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3 sm:bottom-7 sm:right-7">
 	{#if open}
-		<section class="relative flex h-[min(70vh,38rem)] w-[min(calc(100vw-2.5rem),25rem)] flex-col overflow-hidden rounded-3xl border border-cyan-300/20 bg-background/90 shadow-[inset_0_1px_rgba(255,255,255,0.14),0_28px_80px_rgba(8,47,73,0.28)] backdrop-blur-2xl">
-			<div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(6,182,212,0.18),transparent_36%),radial-gradient(circle_at_bottom_left,rgba(249,115,22,0.14),transparent_42%)]"></div>
+		<section class="relative flex h-[min(70vh,38rem)] w-[min(calc(100vw-2.5rem),25rem)] flex-col overflow-hidden rounded-3xl border border-cyan-400/20 bg-background/92 shadow-2xl shadow-cyan-950/25 backdrop-blur-2xl">
+			<div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(6,182,212,0.14),transparent_36%),radial-gradient(circle_at_bottom_left,rgba(124,58,237,0.12),transparent_42%)]"></div>
 			<header class="relative flex items-center gap-3 border-b border-cyan-500/15 p-4">
-				<div class="relative grid size-11 place-items-center rounded-2xl bg-gradient-to-br from-cyan-400 via-cyan-500 to-orange-500 shadow-lg shadow-cyan-500/25">
+				<div class="relative grid size-11 place-items-center rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-500 to-violet-600 shadow-lg shadow-cyan-500/25">
 					<Activity class="size-5 text-white" />
 					<span class="absolute -right-0.5 -top-0.5 size-2.5 rounded-full border-2 border-background bg-emerald-400"></span>
 				</div>
@@ -132,11 +137,11 @@
 				{#each messages as message}
 					<div class={cn('flex gap-2', message.role === 'user' && 'justify-end')}>
 						{#if message.role === 'assistant'}
-							<div class="mt-1 grid size-7 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-cyan-500/20 to-orange-500/20 text-cyan-600 dark:text-cyan-300">
+							<div class="mt-1 grid size-7 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 text-cyan-600 dark:text-cyan-300">
 								<Bot class="size-3.5" />
 							</div>
 						{/if}
-						<div class={cn('max-w-[82%] rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed shadow-sm', message.role === 'assistant' ? 'rounded-tl-sm border border-cyan-500/10 bg-card/80 text-foreground' : 'rounded-tr-sm bg-gradient-to-br from-cyan-600 to-orange-500 text-white')}>
+						<div class={cn('max-w-[82%] rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed shadow-sm', message.role === 'assistant' ? 'rounded-tl-sm border border-cyan-500/10 bg-card/80 text-foreground' : 'rounded-tr-sm bg-gradient-to-br from-blue-600 to-violet-600 text-white')}>
 							<p class="whitespace-pre-wrap">{message.content}</p>
 							{#if message.role === 'assistant' && messages.indexOf(message) > 0}
 								<button type="button" class="mt-2 flex items-center gap-1 text-[10px] font-semibold text-cyan-700 hover:text-cyan-600 dark:text-cyan-300" onclick={() => (speaking ? stopSpeech() : readReply(message.content))} disabled={speechLoading}>
@@ -150,7 +155,7 @@
 					<div class="flex items-center gap-2">
 						<div class="grid size-7 place-items-center rounded-xl bg-cyan-500/10"><Bot class="size-3.5 text-cyan-500" /></div>
 						<div class="flex gap-1 rounded-2xl rounded-tl-sm border border-cyan-500/10 bg-card/80 px-4 py-3">
-							<span class="size-1.5 animate-bounce rounded-full bg-cyan-500"></span><span class="size-1.5 animate-bounce rounded-full bg-orange-400 [animation-delay:150ms]"></span><span class="size-1.5 animate-bounce rounded-full bg-orange-500 [animation-delay:300ms]"></span>
+							<span class="size-1.5 animate-bounce rounded-full bg-cyan-500"></span><span class="size-1.5 animate-bounce rounded-full bg-blue-500 [animation-delay:150ms]"></span><span class="size-1.5 animate-bounce rounded-full bg-violet-500 [animation-delay:300ms]"></span>
 						</div>
 					</div>
 				{/if}
@@ -175,29 +180,8 @@
 		</section>
 	{/if}
 
-	<button type="button" onclick={() => (open = !open)} class="chat-launcher group relative grid size-16 place-items-center rounded-full bg-slate-950 text-white shadow-xl shadow-cyan-500/25 transition duration-300 hover:-translate-y-1 hover:scale-105" aria-label={open ? 'Close first aid assistant' : 'Open first aid assistant'} aria-expanded={open}>
-		<span class="absolute inset-1 rounded-full bg-gradient-to-br from-cyan-500/25 to-orange-500/25 backdrop-blur"></span>
+	<button type="button" onclick={() => (open = !open)} class="group relative grid size-14 place-items-center rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-500 to-violet-600 text-white shadow-xl shadow-blue-500/30 transition duration-300 hover:-translate-y-1 hover:scale-105" aria-label={open ? 'Close first aid assistant' : 'Open first aid assistant'} aria-expanded={open}>
+		<span class="absolute inset-0 animate-ping rounded-2xl bg-cyan-400/20 [animation-duration:2.5s]"></span>
 		{#if open}<ChevronDown class="relative size-6" />{:else}<MessageCircleHeart class="relative size-6" />{/if}
 	</button>
 </div>
-
-<style>
-	.chat-launcher::before {
-		content: '';
-		position: absolute;
-		inset: -3px;
-		z-index: -1;
-		border-radius: inherit;
-		background: conic-gradient(from 0deg, #06b6d4, #ffffff, #f97316, #0891b2, #06b6d4);
-		filter: drop-shadow(0 0 12px rgb(6 182 212 / 0.45));
-		animation: chat-ring 4s linear infinite;
-	}
-
-	@keyframes chat-ring {
-		to { transform: rotate(360deg); }
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.chat-launcher::before { animation: none; }
-	}
-</style>
