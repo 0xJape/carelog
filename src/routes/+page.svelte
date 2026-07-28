@@ -11,30 +11,19 @@
 		ArrowRight,
 		Brain,
 		Calendar,
-		CheckCircle2,
 		ClipboardList,
 		ChevronDown,
 		HeartPulse,
 		Lock,
-		Monitor,
 		QrCode,
-		Shield,
 		Users,
 		Bell,
 		Sparkles,
-		Zap,
 		Stethoscope,
-		Database,
-		Server,
 		ShieldCheck,
-		Cpu,
 		AlertTriangle,
 		Package,
-		Mail,
-		FileText,
-		UserPlus,
-		Search,
-		ChevronRight
+		FileText
 	} from '@lucide/svelte';
 
 	const features = [
@@ -84,15 +73,6 @@
 		{ step: '05', title: 'Notify Parents', desc: 'Parents and guardians are automatically alerted with the visit details and current status.', icon: Bell }
 	];
 
-	const techStack = [
-		{ name: 'SvelteKit', desc: 'Framework', icon: Cpu },
-		{ name: 'TypeScript', desc: 'Language', icon: ShieldCheck },
-		{ name: 'PostgreSQL', desc: 'Database', icon: Database },
-		{ name: 'Drizzle ORM', desc: 'Query Builder', icon: Server },
-		{ name: 'Tailwind CSS', desc: 'Styling', icon: Monitor },
-		{ name: 'Vercel', desc: 'Hosting', icon: Zap }
-	];
-
 	const faqs = [
 		{
 			q: 'What is CLINIQAI?',
@@ -123,24 +103,11 @@
 	let openFaq = $state<number | null>(null);
 	let splashDone = $state(false);
 
+	onDestroy(() => voiceGuide.stop());
+
 	function onSplashEnter() {
 		splashDone = true;
 	}
-
-	const stats = [
-		{ label: 'Core Modules', value: '6+' },
-		{ label: 'User Roles', value: '3' },
-		{ label: 'Seconds to Scan', value: '<5' },
-		{ label: 'Login Needed to View', value: 'None' }
-	];
-
-	const benefits = [
-		'Secure role-based access for admins, the school nurse, and parents',
-		'Instant QR scanning of student ID cards during emergencies',
-		'Automatic SMS & email alerts to parents on every clinic visit',
-		'Real-time dashboard of clinic visits, medicine stock, and referrals',
-		'Fully responsive — works on any phone, tablet, or clinic computer'
-	];
 
 	onMount(() => {
 		// Respect users who prefer reduced motion
@@ -148,10 +115,6 @@
 		if (prefersReduced) return;
 
 		let ctx: ReturnType<typeof import('gsap').gsap.context> | undefined;
-
-		onDestroy(() => {
-			voiceGuide.stop();
-		});
 
 		(async () => {
 			const { gsap } = await import('gsap');
@@ -180,45 +143,27 @@
 
 			// Dashboard mockup — rise + subtle 3D tilt as it enters
 			gsap.from('[data-anim="mockup"]', {
-				y: 60,
+				y: 32,
 				opacity: 0,
-				rotateX: 8,
+				rotateX: 3,
 				transformOrigin: 'center bottom',
-				duration: 1,
+				duration: 0.8,
 				ease: 'power3.out',
 				scrollTrigger: {
 					trigger: '[data-anim="mockup"]',
-					start: 'top 85%'
+					start: 'top 82%',
+					once: true
 				}
 			});
 
 			// Generic section headers fade up
 			gsap.utils.toArray<HTMLElement>('[data-anim="section-head"]').forEach((el) => {
 				gsap.from(el, {
-					y: 28,
+					y: 20,
 					opacity: 0,
-					duration: 0.7,
+					duration: 0.55,
 					ease: 'power2.out',
-					scrollTrigger: { trigger: el, start: 'top 88%' }
-				});
-			});
-
-			// Stats count-up
-			gsap.utils.toArray<HTMLElement>('[data-anim="stat-value"]').forEach((el) => {
-				const raw = el.dataset.value ?? el.textContent ?? '';
-				const num = parseFloat(raw.replace(/[^0-9.]/g, ''));
-				if (Number.isNaN(num)) return;
-				const suffix = raw.replace(/[0-9.]/g, '');
-				const obj = { val: 0 };
-				gsap.to(obj, {
-					val: num,
-					duration: 1.6,
-					ease: 'power2.out',
-					scrollTrigger: { trigger: el, start: 'top 90%' },
-					onUpdate: () => {
-						const isFloat = raw.includes('.');
-						el.textContent = (isFloat ? obj.val.toFixed(1) : Math.round(obj.val).toString()) + suffix;
-					}
+					scrollTrigger: { trigger: el, start: 'top 82%', once: true }
 				});
 			});
 
@@ -228,32 +173,32 @@
 				'[data-anim="inv-mockup"]',
 				'[data-anim="inv-item"]',
 				'[data-anim="workflow-step"]',
-				'[data-anim="benefit"]',
-				'[data-anim="role"]',
-				'[data-anim="ai-card"]',
-				'[data-anim="tech-card"]',
 				'[data-anim="faq-item"]'
 			];
 			groups.forEach((sel) => {
 				const items = gsap.utils.toArray<HTMLElement>(sel);
 				if (!items.length) return;
-				gsap.from(items, {
-					y: 36,
-					opacity: 0,
-					duration: 0.6,
+				gsap.fromTo(items, {
+					y: 24,
+					opacity: 0
+				}, {
+					y: 0,
+					opacity: 1,
+					duration: 0.55,
 					ease: 'power2.out',
 					stagger: 0.1,
-					scrollTrigger: { trigger: items[0], start: 'top 88%' }
+					immediateRender: false,
+					scrollTrigger: { trigger: items[0], start: 'top 82%', once: true }
 				});
 			});
 
 			// CTA pops in
 			gsap.from('[data-anim="cta"]', {
-				scale: 0.94,
+				scale: 0.97,
 				opacity: 0,
-				duration: 0.7,
-				ease: 'back.out(1.4)',
-				scrollTrigger: { trigger: '[data-anim="cta"]', start: 'top 85%' }
+				duration: 0.55,
+				ease: 'power2.out',
+				scrollTrigger: { trigger: '[data-anim="cta"]', start: 'top 82%', once: true }
 			});
 		});
 		})();
@@ -277,17 +222,16 @@
 	</div>
 
 	<!-- Nav -->
-	<nav class="fixed top-0 z-50 w-full border-b border-white/10 bg-slate-950/70 text-white shadow-[0_1px_30px_rgba(6,182,212,0.08)] backdrop-blur-xl">
+	<nav class="fixed top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg">
 		<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
 			<a href="/" class="flex items-center gap-3">
 				<img src="/logo.png" alt="CLINIQAI" class="h-8 w-8 rounded-lg" />
 				<span class="text-lg font-bold tracking-tight">CLINIQAI</span>
 			</a>
-			<div class="hidden items-center gap-8 text-sm text-white/65 md:flex">
-				<a href="#features" class="transition-colors hover:text-cyan-300">Features</a>
-				<a href="#how-it-works" class="transition-colors hover:text-cyan-300">How It Works</a>
-				<a href="#tech" class="transition-colors hover:text-orange-300">Tech Stack</a>
-				<a href="#faq" class="transition-colors hover:text-orange-300">FAQ</a>
+			<div class="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
+				<a href="#features" class="transition-colors hover:text-foreground">Features</a>
+				<a href="#how-it-works" class="transition-colors hover:text-foreground">How It Works</a>
+				<a href="#faq" class="transition-colors hover:text-foreground">FAQ</a>
 			</div>
 			<div class="flex items-center gap-3">
 				<VoiceGuideButton />
@@ -303,47 +247,47 @@
 	</nav>
 
 	<!-- Hero -->
-	<section class="hero-mesh relative isolate flex min-h-screen items-center overflow-hidden bg-slate-950">
-		<div class="mesh-layer mesh-layer-one absolute inset-0"></div>
-		<div class="mesh-layer mesh-layer-two absolute inset-0 opacity-70"></div>
-		<div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:52px_52px] [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"></div>
-		<div class="absolute inset-0 z-[1] bg-gradient-to-r from-slate-950/80 via-slate-950/35 to-slate-950/50"></div>
-		<div class="absolute inset-0 z-[1] bg-gradient-to-t from-slate-950 via-transparent to-slate-950/65"></div>
-		<div data-anim="hero-glow" class="absolute top-1/4 -left-20 z-[1] h-[500px] w-[600px] rounded-full bg-gradient-to-r from-cyan-400/25 via-orange-500/10 to-transparent blur-3xl"></div>
+	<section class="relative isolate flex min-h-screen items-center overflow-hidden bg-slate-950 text-white">
+		<!-- Background image -->
+		<img
+			src="/images/Tupi-Municipal-Hall-Gradient-ForHeroPage.jpg"
+			alt="Tupi Municipal Hall"
+			class="absolute inset-0 z-0 h-full w-full object-cover opacity-60"
+		/>
 
-		<div class="relative z-10 mx-auto w-full max-w-7xl px-6 py-28 md:py-32">
-			<div class="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+		<!-- Gradient overlays for readable text -->
+		<div class="absolute inset-0 z-[1] bg-gradient-to-r from-slate-950 via-slate-950/80 to-slate-950/35"></div>
+		<div class="absolute inset-0 z-[1] bg-gradient-to-t from-slate-950 via-transparent to-slate-950/80"></div>
+		<div data-anim="hero-glow" class="absolute top-1/4 -left-20 z-[1] h-[500px] w-[600px] rounded-full bg-cyan-400/10 blur-3xl"></div>
+
+		<div class="relative z-10 mx-auto w-full max-w-7xl px-6 pb-20 pt-32 md:pt-40">
+			<div class="grid items-start gap-12 lg:grid-cols-12 lg:gap-10">
 				<!-- Left: Text -->
-				<div class="text-center lg:text-left">
-					<div data-anim="hero" class="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-white/5 px-4 py-2 text-xs font-medium text-white shadow-[inset_0_1px_rgba(255,255,255,0.15),0_10px_40px_rgba(6,182,212,0.08)] backdrop-blur-xl">
+				<div class="flex flex-col justify-center text-center lg:col-span-7 lg:pt-8 lg:text-left">
+					<div data-anim="hero" class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium text-white shadow-sm backdrop-blur-md">
 						<Sparkles class="h-3.5 w-3.5 text-cyan-300" />
-						Powered by AI & Rule-Based Expert Systems
+						AI-powered school healthcare
 					</div>
 
-					<h1 data-anim="hero" class="mb-6 text-4xl font-bold tracking-tight text-white drop-shadow-lg sm:text-5xl md:text-6xl lg:text-7xl">
-						Smart Clinic
-						<span class="hero-gradient-text block bg-gradient-to-r from-white via-cyan-300 to-orange-300 bg-clip-text text-transparent">
-							Management
-						</span>
+					<h1 data-anim="hero" class="mb-7 text-5xl font-medium leading-[0.92] tracking-[-0.055em] text-white drop-shadow-lg sm:text-6xl lg:text-7xl xl:text-8xl">
+						Smarter care.<br />
+						<span class="bg-gradient-to-br from-white via-cyan-100 to-cyan-400 bg-clip-text text-transparent">Faster response.</span><br />
+						Better outcomes.
 					</h1>
 
-					<p data-anim="hero" class="mx-auto mb-4 max-w-2xl text-lg text-slate-200 drop-shadow md:text-xl lg:mx-0">
-						A comprehensive AI-integrated platform for medical logging, pre-diagnosis, first aid guidance, referrals, inventory, and notifications.
-					</p>
-
-					<p data-anim="hero" class="mx-auto mb-10 max-w-xl text-sm text-slate-300/90 lg:mx-0">
-						Built for the school clinic — helping the nurse care for students faster, keep parents informed, and handle emergencies when every second counts.
+					<p data-anim="hero" class="mx-auto mb-9 max-w-xl text-lg leading-relaxed text-slate-300 drop-shadow lg:mx-0">
+						One secure platform for instant student identification, AI-assisted triage, medical records, clinic inventory, and parent updates.
 					</p>
 
 					<div data-anim="hero" class="flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
 						<a href="/login">
-							<Button class="h-12 gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-orange-500 px-8 text-base font-medium shadow-lg shadow-cyan-500/20 transition-all duration-200 hover:scale-[1.03] hover:shadow-xl hover:shadow-orange-500/20">
+							<Button class="h-12 rounded-full bg-white px-8 text-sm font-semibold text-slate-950 shadow-xl transition-transform hover:scale-[1.02] hover:bg-slate-100 hover:text-slate-950">
 								Get Started
 								<ArrowRight class="h-4 w-4" />
 							</Button>
 						</a>
 						<a href="#features">
-							<Button variant="outline" class="h-12 gap-2 rounded-full border-white/25 bg-white/5 px-8 text-white backdrop-blur-xl hover:border-cyan-300/50 hover:bg-white/10 hover:text-cyan-100">
+							<Button variant="outline" class="h-12 rounded-full border-white/15 bg-white/5 px-8 text-sm font-semibold text-white backdrop-blur-md hover:bg-white/10 hover:text-white">
 								Explore Features
 								<ChevronDown class="h-4 w-4" />
 							</Button>
@@ -351,44 +295,45 @@
 					</div>
 				</div>
 
-				<!-- Right: QR integration showcase -->
-				<div data-anim="hero" class="relative mx-auto w-full max-w-sm lg:mx-0 lg:ml-auto">
-					<div class="relative overflow-hidden rounded-[2rem] border border-white/15 bg-white/[0.07] p-6 shadow-[inset_0_1px_rgba(255,255,255,0.16),0_30px_80px_rgba(0,0,0,0.35)] backdrop-blur-2xl">
-						<div class="pointer-events-none absolute -right-20 -top-20 size-48 rounded-full bg-orange-400/15 blur-3xl"></div>
-						<div class="pointer-events-none absolute -bottom-24 -left-16 size-52 rounded-full bg-cyan-400/20 blur-3xl"></div>
+				<!-- Right: glass trust cards -->
+				<div data-anim="hero" class="relative mx-auto w-full max-w-md space-y-5 lg:col-span-5 lg:mx-0 lg:ml-auto lg:mt-12">
+					<div class="relative overflow-hidden rounded-3xl border border-white/15 bg-white/10 p-7 shadow-2xl backdrop-blur-xl">
+						<div class="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-cyan-300/10 blur-3xl"></div>
 						<div class="mb-4 flex items-center gap-2 text-white">
-							<div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-orange-500 shadow-lg shadow-cyan-500/20">
+							<div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20">
 								<QrCode class="h-5 w-5 text-white" />
 							</div>
 							<div>
-								<p class="text-sm font-semibold">QR Code Integration</p>
-								<p class="text-xs text-slate-300">Scan to identify instantly</p>
+								<p class="text-2xl font-bold">Under 5 seconds</p>
+								<p class="text-xs text-slate-300">to access critical student data</p>
 							</div>
-							<div class="ml-auto flex h-6 items-center gap-1.5 rounded-full bg-emerald-500/20 px-2.5 text-xs font-medium text-emerald-300">
+							<div class="ml-auto flex h-6 items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 text-[10px] font-semibold text-emerald-300">
 								<span class="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400"></span>
-								Live
+								READY
 							</div>
 						</div>
 
-						<!-- QR sample -->
-						<div class="overflow-hidden rounded-xl border border-white/20 bg-white">
+						<div class="overflow-hidden rounded-2xl border border-white/15 bg-white">
 							<img
 								src="/images/Juan_Dela_Cruz_QR_Scan.png"
 								alt="Student QR code example"
-								class="h-full w-full object-contain"
+								class="aspect-[16/10] w-full object-contain"
 							/>
 						</div>
 
-						<p class="mt-4 text-center text-xs text-slate-300">
-							Each student ID carries a unique QR code — scanning loads their full medical profile in seconds, no login required.
-						</p>
+						<div class="mt-6 grid grid-cols-3 divide-x divide-white/10 text-center">
+							<div><p class="text-lg font-bold">6+</p><p class="text-[10px] uppercase tracking-wider text-slate-400">Modules</p></div>
+							<div><p class="text-lg font-bold">24/7</p><p class="text-[10px] uppercase tracking-wider text-slate-400">Access</p></div>
+							<div><p class="text-lg font-bold">100%</p><p class="text-[10px] uppercase tracking-wider text-slate-400">Secure</p></div>
+						</div>
 					</div>
 
-					<!-- Floating chips -->
-					<div class="absolute -bottom-4 -left-4 hidden rounded-xl border border-white/20 bg-white/10 px-3 py-2 shadow-lg backdrop-blur-xl sm:block">
-						<div class="flex items-center gap-2 text-white">
-							<HeartPulse class="h-4 w-4 text-rose-300" />
-							<span class="text-xs font-medium">Instant Medical Access</span>
+					<div class="overflow-hidden rounded-3xl border border-white/15 bg-white/10 px-7 py-5 shadow-xl backdrop-blur-xl">
+						<p class="mb-4 text-xs font-medium text-slate-400">Built for every care moment</p>
+						<div class="grid grid-cols-3 gap-3">
+							<div class="flex items-center gap-2 text-xs font-semibold"><HeartPulse class="h-4 w-4 text-rose-300" />Triage</div>
+							<div class="flex items-center gap-2 text-xs font-semibold"><Bell class="h-4 w-4 text-amber-300" />Notify</div>
+							<div class="flex items-center gap-2 text-xs font-semibold"><ShieldCheck class="h-4 w-4 text-cyan-300" />Protect</div>
 						</div>
 					</div>
 				</div>
@@ -419,25 +364,25 @@
 					<!-- Sidebar mockup -->
 					<div class="hidden border-r border-border/40 bg-muted/30 p-4 lg:col-span-1 lg:flex lg:flex-col lg:gap-3">
 						<div class="mb-2 flex items-center gap-2">
-							<div class="h-6 w-6 rounded bg-blue-600"></div>
-							<div class="h-3 w-16 rounded bg-muted-foreground/20"></div>
+							<div class="flex size-7 items-center justify-center rounded-md bg-blue-600 text-[10px] font-bold text-white">C</div>
+							<span class="text-xs font-bold text-foreground">CLINIQAI</span>
 						</div>
 						<div class="space-y-2">
 							<div class="flex items-center gap-2 rounded-md bg-blue-50 px-3 py-2 dark:bg-blue-950/40">
-								<div class="h-4 w-4 rounded bg-blue-500"></div>
-								<div class="h-2 w-12 rounded bg-muted-foreground/20"></div>
+								<span class="size-1.5 rounded-full bg-blue-500"></span>
+								<span class="text-[10px] font-semibold text-blue-700 dark:text-blue-300">Dashboard</span>
 							</div>
 							<div class="flex items-center gap-2 rounded-md px-3 py-2">
-								<div class="h-4 w-4 rounded bg-muted-foreground/15"></div>
-								<div class="h-2 w-12 rounded bg-muted-foreground/15"></div>
+								<span class="size-1.5 rounded-full bg-muted-foreground/40"></span>
+								<span class="text-[10px] text-muted-foreground">Students</span>
 							</div>
 							<div class="flex items-center gap-2 rounded-md px-3 py-2">
-								<div class="h-4 w-4 rounded bg-muted-foreground/15"></div>
-								<div class="h-2 w-12 rounded bg-muted-foreground/15"></div>
+								<span class="size-1.5 rounded-full bg-muted-foreground/40"></span>
+								<span class="text-[10px] text-muted-foreground">Visits</span>
 							</div>
 							<div class="flex items-center gap-2 rounded-md px-3 py-2">
-								<div class="h-4 w-4 rounded bg-muted-foreground/15"></div>
-								<div class="h-2 w-12 rounded bg-muted-foreground/15"></div>
+								<span class="size-1.5 rounded-full bg-muted-foreground/40"></span>
+								<span class="text-[10px] text-muted-foreground">Inventory</span>
 							</div>
 						</div>
 					</div>
@@ -445,10 +390,10 @@
 					<div class="col-span-4 p-6">
 						<div class="mb-6 flex items-center justify-between">
 							<div>
-								<div class="mb-2 h-5 w-32 rounded bg-foreground/15"></div>
-								<div class="h-3 w-48 rounded bg-muted-foreground/15"></div>
+								<p class="text-sm font-semibold text-foreground">Good morning, Nurse Maria</p>
+								<p class="text-xs text-muted-foreground">Tuesday, July 28 · Clinic overview</p>
 							</div>
-							<div class="h-9 w-28 rounded-md bg-blue-600"></div>
+							<div class="rounded-md bg-blue-600 px-3 py-2 text-xs font-semibold text-white">+ New Visit</div>
 						</div>
 						<!-- Stats cards -->
 						<div class="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -459,43 +404,28 @@
 								{ color: 'bg-red-500', label: 'Pending Referrals', value: '3' }
 							] as card}
 								<div class="rounded-lg border border-border/40 bg-card/50 p-3">
-									<div class="mb-2 h-2 w-16 rounded bg-muted-foreground/20"></div>
+									<div class="mb-2 text-[10px] font-medium text-muted-foreground">{card.label}</div>
 									<div class="flex items-center gap-2">
 										<div class="h-3 w-3 rounded-full {card.color}"></div>
 										<div class="text-lg font-bold">{card.value}</div>
 									</div>
-									<div class="mt-1 text-[10px] text-muted-foreground">{card.label}</div>
+									<div class="mt-1 text-[10px] text-muted-foreground">Updated now</div>
 								</div>
 							{/each}
 						</div>
 						<!-- Table mockup -->
-						<div class="space-y-2">
-							<div class="h-3 w-24 rounded bg-muted-foreground/20"></div>
-							{#each [1, 2, 3, 4] as _}
-								<div class="grid grid-cols-4 gap-3 rounded-md border border-border/20 px-3 py-2">
-									<div class="h-2 rounded bg-muted-foreground/10"></div>
-									<div class="h-2 rounded bg-muted-foreground/10"></div>
-									<div class="h-2 w-12 rounded bg-muted-foreground/10"></div>
-									<div class="h-2 w-16 rounded bg-muted-foreground/10"></div>
-								</div>
+						<div class="overflow-hidden rounded-lg border border-border/40">
+							<div class="grid grid-cols-4 gap-3 bg-muted/40 px-3 py-2 text-[10px] font-semibold text-muted-foreground"><span>Student</span><span>Concern</span><span>Time</span><span>Status</span></div>
+							{#each [
+								{ student: 'Juan Dela Cruz', concern: 'Headache', time: '10:42 AM', status: 'In care' },
+								{ student: 'Mia Santos', concern: 'Minor injury', time: '10:18 AM', status: 'Complete' },
+								{ student: 'John Reyes', concern: 'Fever check', time: '9:56 AM', status: 'Monitoring' }
+							] as visit}
+								<div class="grid grid-cols-4 gap-3 border-t border-border/30 px-3 py-2.5 text-[10px] text-foreground"><span class="font-medium">{visit.student}</span><span class="text-muted-foreground">{visit.concern}</span><span class="text-muted-foreground">{visit.time}</span><span class="text-emerald-600 dark:text-emerald-400">{visit.status}</span></div>
 							{/each}
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-	</section>
-
-	<!-- Stats bar -->
-	<section class="relative border-y border-border/40 bg-muted/30 px-6 py-8">
-		<div class="mx-auto max-w-4xl">
-			<div class="grid grid-cols-2 gap-6 md:grid-cols-4">
-				{#each stats as stat}
-					<div class="text-center">
-						<div class="text-3xl font-bold tracking-tight text-foreground md:text-4xl">{stat.value}</div>
-						<div class="mt-1 text-xs font-medium uppercase tracking-widest text-muted-foreground">{stat.label}</div>
-					</div>
-				{/each}
 			</div>
 		</div>
 	</section>
@@ -564,91 +494,6 @@
 		</div>
 	</section>
 
-	<!-- Benefits + Roles -->
-	<section class="px-6 py-24 md:py-32">
-		<div class="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:gap-16">
-			<!-- Benefits -->
-			<div>
-				<span class="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-emerald-500">Why CLINIQAI</span>
-				<h2 class="mt-4 mb-8 text-2xl font-bold tracking-tight text-foreground md:text-3xl">Built for the school clinic</h2>
-				<div class="space-y-3">
-					{#each benefits as benefit}
-						<div data-anim="benefit" class="flex items-start gap-3 rounded-xl border border-border/40 bg-card px-4 py-3 transition-colors hover:bg-accent/40">
-							<CheckCircle2 class="mt-0.5 size-4 shrink-0 text-emerald-500" />
-							<p class="text-sm text-foreground">{benefit}</p>
-						</div>
-					{/each}
-				</div>
-			</div>
-
-			<!-- User roles -->
-			<div>
-				<span class="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-violet-500">Designed For</span>
-				<h2 class="mt-4 mb-8 text-2xl font-bold tracking-tight text-foreground md:text-3xl">Three user roles</h2>
-				<div class="space-y-3">
-					{#each [
-						{ icon: Shield, label: 'Clinic Administrator', desc: 'Full system oversight & staff management', grad: 'from-blue-500 to-indigo-600' },
-						{ icon: Stethoscope, label: 'School Nurse / Clinic Staff', desc: 'Student care, vitals & daily clinic operations', grad: 'from-emerald-500 to-teal-600' },
-						{ icon: HeartPulse, label: 'Student / Parent', desc: 'View clinic visit history & receive updates', grad: 'from-amber-500 to-orange-500' }
-					] as role}
-						<div data-anim="role" class="flex items-center gap-4 rounded-xl border border-border/40 bg-card px-4 py-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
-							<div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br {role.grad} shadow-sm">
-								<role.icon class="size-5 text-white" />
-							</div>
-							<div>
-								<p class="text-sm font-semibold text-foreground">{role.label}</p>
-								<p class="text-xs text-muted-foreground">{role.desc}</p>
-							</div>
-						</div>
-					{/each}
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<!-- AI Engine -->
-	<section class="bg-muted/20 px-6 py-24 md:py-32">
-		<div class="mx-auto max-w-4xl text-center">
-			<span class="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-violet-500">AI Engine</span>
-			<h2 class="mt-4 mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">Intelligent automation</h2>
-			<p class="mb-12 text-muted-foreground">Powered by Google Gemini 2.5 Flash with an offline rule-based fallback</p>
-			<div class="grid gap-4 sm:grid-cols-3">
-				{#each [
-					{ icon: Brain, label: 'Rule-Based Expert System', desc: 'Symptom assessment & offline triage for 10+ conditions', color: 'text-blue-500', bg: 'bg-blue-500/10 border-blue-500/20' },
-					{ icon: Sparkles, label: 'Gemini 2.5 Flash', desc: 'AI-powered pre-diagnosis with structured JSON output', color: 'text-violet-500', bg: 'bg-violet-500/10 border-violet-500/20' },
-					{ icon: Activity, label: 'Recommendation Engine', desc: 'Automated first-aid steps, medications & red flags', color: 'text-emerald-500', bg: 'bg-emerald-500/10 border-emerald-500/20' }
-				] as card}
-					<div data-anim="ai-card" class="rounded-2xl border {card.bg} p-6 text-center backdrop-blur-sm">
-						<div class="mx-auto mb-4 flex size-12 items-center justify-center rounded-xl border {card.bg}">
-							<card.icon class="size-6 {card.color}" />
-						</div>
-						<h3 class="mb-2 text-sm font-semibold text-foreground">{card.label}</h3>
-						<p class="text-xs text-muted-foreground">{card.desc}</p>
-					</div>
-				{/each}
-			</div>
-		</div>
-	</section>
-
-	<!-- Tech Stack -->
-	<section id="tech" class="scroll-mt-20 px-6 py-24 md:py-32">
-		<div class="mx-auto max-w-4xl">
-			<div class="mx-auto mb-16 max-w-2xl text-center">
-				<span class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-blue-500">Technology</span>
-				<h2 class="mt-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">Built with modern tools</h2>
-			</div>
-			<div class="grid grid-cols-3 gap-3 md:grid-cols-6">
-				{#each techStack as tech}
-					<div data-anim="tech-card" class="group flex flex-col items-center gap-2 rounded-xl border border-border/50 bg-card p-4 text-center transition-all hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-md">
-						<tech.icon class="size-6 text-blue-500 transition-transform group-hover:scale-110" />
-						<p class="text-xs font-semibold text-foreground">{tech.name}</p>
-						<p class="text-[10px] text-muted-foreground">{tech.desc}</p>
-					</div>
-				{/each}
-			</div>
-		</div>
-	</section>
-
 	<!-- FAQ -->
 	<section id="faq" class="scroll-mt-20 bg-muted/20 px-6 py-24 md:py-32">
 		<div class="mx-auto max-w-3xl">
@@ -677,72 +522,8 @@
 		</div>
 	</section>
 
-	<!-- CTA -->
-	<section class="px-6 py-24 text-center md:py-32">
-		<div data-anim="cta" class="relative mx-auto max-w-2xl overflow-hidden rounded-3xl border border-blue-500/20 bg-gradient-to-br from-blue-950/60 via-indigo-950/40 to-slate-900/80 p-10 backdrop-blur-sm md:p-14">
-			<!-- grid overlay -->
-			<div class="pointer-events-none absolute inset-0 opacity-10" style="background-image: linear-gradient(rgba(99,102,241,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.4) 1px, transparent 1px); background-size: 32px 32px;"></div>
-			<div class="pointer-events-none absolute inset-0" style="background: radial-gradient(ellipse 80% 60% at 50% 100%, transparent 50%, rgba(2,6,23,0.8) 100%);"></div>
-			<div class="relative">
-				<span class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-blue-400">Get Started</span>
-				<h2 class="mt-4 mb-3 text-2xl font-bold tracking-tight text-white md:text-3xl">
-					Ready to modernize your school clinic?
-				</h2>
-				<p class="mx-auto mb-8 max-w-md text-sm text-slate-400">
-					Log student visits, get AI-assisted triage, track medicine, and keep parents informed — all in one platform.
-				</p>
-				<a href="/login">
-					<Button class="h-12 gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 px-10 text-sm font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40">
-						<Lock class="size-4" />
-						Sign In to CLINIQAI
-						<ArrowRight class="size-4" />
-					</Button>
-				</a>
-			</div>
-		</div>
-	</section>
-
-	<!-- Features -->
-	<section id="features" class="scroll-mt-20 px-6 py-20 md:py-28">
-		<div class="mx-auto max-w-6xl">
-			<div data-anim="section-head" class="mx-auto mb-14 max-w-2xl text-center">
-				<p class="mb-3 text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Core Modules</p>
-				<h2 class="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-					Everything the school clinic needs
-				</h2>
-				<p class="mt-3 text-muted-foreground">
-					Six essential modules built for fast, reliable student care
-				</p>
-			</div>
-
-			<div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-				{#each features as feature}
-					<div data-anim="feature-card" class="group relative rounded-xl border border-border/60 bg-card/50 p-6 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-border hover:shadow-md">
-						<div class="mb-4 inline-flex rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 p-2.5 dark:from-blue-950/50 dark:to-indigo-950/50">
-							<feature.icon class="h-5 w-5 text-blue-600 dark:text-blue-400" />
-						</div>
-						<h3 class="mb-1.5 text-base font-semibold text-foreground">
-							{feature.title}
-						</h3>
-						<p class="mb-4 text-sm leading-relaxed text-muted-foreground">
-							{feature.desc}
-						</p>
-						<ul class="space-y-1.5">
-							{#each feature.items as item}
-								<li class="flex items-center gap-2 text-xs text-muted-foreground">
-									<ChevronRight class="h-3 w-3 flex-shrink-0 text-blue-500" />
-									{item}
-								</li>
-							{/each}
-						</ul>
-					</div>
-				{/each}
-			</div>
-		</div>
-	</section>
-
 	<!-- Inventory Management Showcase -->
-	<section class="px-6 py-20 md:py-28">
+	<section class="bg-muted/20 px-6 py-24 md:py-32">
 		<div class="mx-auto max-w-6xl">
 			<div class="grid gap-12 items-center lg:grid-cols-2 lg:gap-16">
 				<!-- Left: Mockup -->
@@ -858,200 +639,19 @@
 		</div>
 	</section>
 
-	<!-- How It Works -->
-	<section id="how-it-works" class="scroll-mt-20 px-6 py-20 md:py-28">
-		<div class="mx-auto max-w-4xl">
-			<div class="mx-auto mb-14 max-w-2xl text-center">
-				<p class="mb-3 text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Workflow</p>
-				<h2 class="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-					How it works
-				</h2>
-				<p class="mt-3 text-muted-foreground">
-					From QR scan to parent notification in five simple steps
-				</p>
-			</div>
-
-			<div class="space-y-6">
-				{#each workflowSteps as step, i}
-					<div data-anim="workflow-step" class="flex items-start gap-6">
-						<div class="flex flex-col items-center">
-							<div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/20">
-								<step.icon class="h-5 w-5 text-white" />
-							</div>
-							{#if i < workflowSteps.length - 1}
-								<div class="mt-2 h-12 w-px bg-gradient-to-b from-border to-transparent"></div>
-							{/if}
-						</div>
-						<div class="pt-1">
-							<div class="mb-1 text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-								Step {step.step}
-							</div>
-							<h3 class="mb-1 text-lg font-semibold text-foreground">{step.title}</h3>
-							<p class="text-sm text-muted-foreground">{step.desc}</p>
-						</div>
-					</div>
-				{/each}
-			</div>
-		</div>
-	</section>
-
-	<!-- Benefits + Users -->
-	<section class="px-6 py-20 md:py-28">
-		<div class="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:gap-20">
-			<!-- Benefits -->
-			<div>
-				<p class="mb-3 text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Why CLINIQAI</p>
-				<h2 class="mb-6 text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-					Built for efficiency
-				</h2>
-
-				<div class="space-y-4">
-					{#each benefits as benefit}
-						<div data-anim="benefit" class="flex items-start gap-3">
-							<CheckCircle2 class="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-600 dark:text-emerald-400" />
-							<p class="text-sm text-muted-foreground">{benefit}</p>
-						</div>
-					{/each}
-				</div>
-			</div>
-
-			<!-- User roles -->
-			<div class="rounded-xl border border-border/60 bg-card/50 p-6 backdrop-blur-sm">
-				<h3 class="mb-6 text-lg font-semibold text-foreground">
-					Designed for
-				</h3>
-
-				<div class="space-y-4">
-					<div data-anim="role" class="flex items-center gap-4 rounded-lg border border-border/40 p-4 transition-colors hover:bg-accent/50">
-						<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 shadow-sm">
-							<Shield class="h-5 w-5 text-white" />
-						</div>
-						<div>
-							<p class="text-sm font-semibold text-foreground">Clinic Administrator</p>
-							<p class="text-xs text-muted-foreground">Full system oversight & staff management</p>
-						</div>
-					</div>
-
-					<div data-anim="role" class="flex items-center gap-4 rounded-lg border border-border/40 p-4 transition-colors hover:bg-accent/50">
-						<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 shadow-sm">
-							<Stethoscope class="h-5 w-5 text-white" />
-						</div>
-						<div>
-							<p class="text-sm font-semibold text-foreground">School Nurse / Clinic Staff</p>
-							<p class="text-xs text-muted-foreground">Student care, vitals & daily clinic operations</p>
-						</div>
-					</div>
-
-					<div data-anim="role" class="flex items-center gap-4 rounded-lg border border-border/40 p-4 transition-colors hover:bg-accent/50">
-						<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 shadow-sm">
-							<HeartPulse class="h-5 w-5 text-white" />
-						</div>
-						<div>
-							<p class="text-sm font-semibold text-foreground">Student / Parent</p>
-							<p class="text-xs text-muted-foreground">View clinic visit history & receive updates</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<!-- AI Engine -->
-	<section class="px-6 py-20 md:py-28">
-		<div class="mx-auto max-w-4xl">
-			<div class="rounded-2xl border border-border/60 bg-gradient-to-br from-blue-50/80 via-indigo-50/60 to-cyan-50/80 p-8 backdrop-blur-sm dark:from-blue-950/30 dark:via-indigo-950/20 dark:to-cyan-950/30 md:p-12">
-				<div class="text-center">
-					<p class="mb-3 text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">AI Engine</p>
-					<h2 class="mb-8 text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-						Intelligent automation
-					</h2>
-
-					<div class="grid gap-4 sm:grid-cols-3">
-						<div data-anim="ai-card" class="rounded-xl bg-white/70 p-5 shadow-sm dark:bg-slate-800/60">
-							<Brain class="mx-auto mb-3 h-6 w-6 text-blue-600 dark:text-blue-400" />
-							<h3 class="mb-1 text-sm font-semibold text-foreground">Rule-Based Expert System</h3>
-							<p class="text-xs text-muted-foreground">Symptom assessment & analysis</p>
-						</div>
-						<div data-anim="ai-card" class="rounded-xl bg-white/70 p-5 shadow-sm dark:bg-slate-800/60">
-							<Zap class="mx-auto mb-3 h-6 w-6 text-amber-600 dark:text-amber-400" />
-							<h3 class="mb-1 text-sm font-semibold text-foreground">Machine Learning</h3>
-							<p class="text-xs text-muted-foreground">Pre-diagnosis pattern recognition</p>
-						</div>
-						<div data-anim="ai-card" class="rounded-xl bg-white/70 p-5 shadow-sm dark:bg-slate-800/60">
-							<Activity class="mx-auto mb-3 h-6 w-6 text-emerald-600 dark:text-emerald-400" />
-							<h3 class="mb-1 text-sm font-semibold text-foreground">Recommendation Engine</h3>
-							<p class="text-xs text-muted-foreground">Automated first-aid suggestions</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<!-- Tech Stack -->
-	<section id="tech" class="scroll-mt-20 px-6 py-20 md:py-28">
-		<div class="mx-auto max-w-4xl">
-			<div class="mx-auto mb-14 max-w-2xl text-center">
-				<p class="mb-3 text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Technology</p>
-				<h2 class="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-					Built with modern tools
-				</h2>
-			</div>
-
-			<div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-				{#each techStack as tech}
-					<div data-anim="tech-card" class="rounded-xl border border-border/60 bg-card/50 p-4 text-center backdrop-blur-sm transition-colors hover:bg-accent/50">
-						<tech.icon class="mx-auto mb-2 h-6 w-6 text-blue-600 dark:text-blue-400" />
-						<p class="text-sm font-semibold text-foreground">{tech.name}</p>
-						<p class="text-xs text-muted-foreground">{tech.desc}</p>
-					</div>
-				{/each}
-			</div>
-		</div>
-	</section>
-
-	<!-- FAQ -->
-	<section id="faq" class="scroll-mt-20 px-6 py-20 md:py-28">
-		<div class="mx-auto max-w-3xl">
-			<div class="mx-auto mb-14 max-w-2xl text-center">
-				<p class="mb-3 text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">FAQ</p>
-				<h2 class="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-					Common questions
-				</h2>
-			</div>
-
-			<div class="space-y-3">
-				{#each faqs as faq, i}
-					<div data-anim="faq-item" class="rounded-xl border border-border/60 bg-card/50 backdrop-blur-sm">
-						<button
-							class="flex w-full items-center justify-between gap-4 p-5 text-left transition-colors hover:bg-accent/50"
-							onclick={() => openFaq = openFaq === i ? null : i}
-						>
-							<span class="text-sm font-semibold text-foreground">{faq.q}</span>
-							<ChevronDown class="h-4 w-4 flex-shrink-0 text-muted-foreground transition-transform duration-200 {openFaq === i ? 'rotate-180' : ''}" />
-						</button>
-						{#if openFaq === i}
-							<div class="border-t border-border/40 px-5 pb-5">
-								<p class="pt-4 text-sm text-muted-foreground">{faq.a}</p>
-							</div>
-						{/if}
-					</div>
-				{/each}
-			</div>
-		</div>
-	</section>
-
 	<!-- CTA -->
 	<section class="px-6 pb-20 text-center md:pb-32">
-		<div data-anim="cta" class="mx-auto max-w-2xl rounded-2xl border border-border/60 bg-gradient-to-br from-blue-50/80 via-indigo-50/60 to-cyan-50/80 p-8 backdrop-blur-sm dark:from-blue-950/30 dark:via-indigo-950/20 dark:to-cyan-950/30 md:p-12">
-			<h2 class="mb-3 text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+		<div data-anim="cta" class="relative mx-auto max-w-2xl overflow-hidden rounded-2xl border border-white/15 bg-slate-950/95 p-8 text-white shadow-2xl shadow-blue-950/30 backdrop-blur-xl md:p-12">
+			<div class="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-cyan-400/8 blur-3xl"></div>
+			<div class="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl"></div>
+			<h2 class="relative mb-3 text-2xl font-bold tracking-tight text-white md:text-3xl">
 				Ready to modernize your school clinic?
 			</h2>
-			<p class="mx-auto mb-8 max-w-md text-sm text-muted-foreground">
+			<p class="relative mx-auto mb-8 max-w-md text-sm text-slate-300">
 				Log student visits, get AI-assisted triage, track medicine, and keep parents informed — all in one platform.
 			</p>
-			<a href="/login">
-				<Button class="h-11 gap-2 px-8">
+			<a href="/login" class="relative inline-block">
+				<Button class="h-11 gap-2 bg-white px-8 text-slate-950 hover:bg-slate-100">
 					<Lock class="h-4 w-4" />
 					Sign In
 					<ArrowRight class="h-4 w-4" />
@@ -1081,7 +681,6 @@
 					<ul class="space-y-2 text-xs text-muted-foreground">
 						<li><a href="#features" class="transition-colors hover:text-foreground">Features</a></li>
 						<li><a href="#how-it-works" class="transition-colors hover:text-foreground">How It Works</a></li>
-						<li><a href="#tech" class="transition-colors hover:text-foreground">Tech Stack</a></li>
 						<li><a href="#faq" class="transition-colors hover:text-foreground">FAQ</a></li>
 					</ul>
 				</div>
@@ -1113,7 +712,7 @@
 
 			<div class="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border/40 pt-6 sm:flex-row">
 				<p class="text-xs text-muted-foreground">
-					&copy; 2025 CLINIQAI. All rights reserved.
+					&copy; 2026 CLINIQAI. All rights reserved.
 				</p>
 				<div class="flex items-center gap-4 text-xs text-muted-foreground">
 					<span class="flex items-center gap-1.5">
@@ -1131,48 +730,3 @@
 </div>
 
 <FirstAidChat />
-
-<style>
-	.mesh-layer {
-		will-change: transform;
-		background-repeat: no-repeat;
-	}
-
-	.mesh-layer-one {
-		background:
-			radial-gradient(circle at 18% 35%, rgb(6 182 212 / 0.65), transparent 28%),
-			radial-gradient(circle at 78% 26%, rgb(249 115 22 / 0.45), transparent 25%),
-			radial-gradient(circle at 55% 75%, rgb(8 145 178 / 0.45), transparent 32%);
-		animation: mesh-drift 14s ease-in-out infinite alternate;
-	}
-
-	.mesh-layer-two {
-		background:
-			radial-gradient(circle at 65% 45%, rgb(255 255 255 / 0.15), transparent 18%),
-			radial-gradient(circle at 35% 70%, rgb(249 115 22 / 0.3), transparent 22%);
-		filter: blur(28px);
-		animation: mesh-drift-reverse 18s ease-in-out infinite alternate;
-	}
-
-	.hero-gradient-text {
-		background-size: 200% 200%;
-		animation: gradient-shift 7s linear infinite;
-	}
-
-	@keyframes mesh-drift {
-		to { transform: scale(1.14) translate3d(4%, -3%, 0) rotate(2deg); }
-	}
-
-	@keyframes mesh-drift-reverse {
-		to { transform: scale(1.12) translate3d(-4%, 4%, 0) rotate(-3deg); }
-	}
-
-	@keyframes gradient-shift {
-		50% { background-position: 100% 50%; }
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.mesh-layer,
-		.hero-gradient-text { animation: none; }
-	}
-</style>
