@@ -277,17 +277,17 @@
 	</div>
 
 	<!-- Nav -->
-	<nav class="fixed top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg">
+	<nav class="fixed top-0 z-50 w-full border-b border-white/10 bg-slate-950/70 text-white shadow-[0_1px_30px_rgba(6,182,212,0.08)] backdrop-blur-xl">
 		<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
 			<a href="/" class="flex items-center gap-3">
 				<img src="/logo.png" alt="CLINIQAI" class="h-8 w-8 rounded-lg" />
 				<span class="text-lg font-bold tracking-tight">CLINIQAI</span>
 			</a>
-			<div class="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
-				<a href="#features" class="transition-colors hover:text-foreground">Features</a>
-				<a href="#how-it-works" class="transition-colors hover:text-foreground">How It Works</a>
-				<a href="#tech" class="transition-colors hover:text-foreground">Tech Stack</a>
-				<a href="#faq" class="transition-colors hover:text-foreground">FAQ</a>
+			<div class="hidden items-center gap-8 text-sm text-white/65 md:flex">
+				<a href="#features" class="transition-colors hover:text-cyan-300">Features</a>
+				<a href="#how-it-works" class="transition-colors hover:text-cyan-300">How It Works</a>
+				<a href="#tech" class="transition-colors hover:text-orange-300">Tech Stack</a>
+				<a href="#faq" class="transition-colors hover:text-orange-300">FAQ</a>
 			</div>
 			<div class="flex items-center gap-3">
 				<VoiceGuideButton />
@@ -303,31 +303,26 @@
 	</nav>
 
 	<!-- Hero -->
-	<section class="relative isolate flex min-h-screen items-center overflow-hidden">
-		<!-- Background image -->
-		<img
-			src="/images/Tupi-Municipal-Hall-Gradient-ForHeroPage.jpg"
-			alt="Tupi Municipal Hall"
-			class="absolute inset-0 z-0 h-full w-full object-cover"
-		/>
-
-		<!-- Gradient overlays for readable text -->
-		<div class="absolute inset-0 z-[1] bg-gradient-to-r from-slate-950/90 via-slate-950/70 to-slate-950/30"></div>
-		<div class="absolute inset-0 z-[1] bg-gradient-to-t from-slate-950/95 via-transparent to-slate-950/60"></div>
-		<div data-anim="hero-glow" class="absolute top-1/4 -left-20 z-[1] h-[500px] w-[600px] rounded-full bg-gradient-to-r from-blue-500/25 via-indigo-500/15 to-transparent blur-3xl"></div>
+	<section class="hero-mesh relative isolate flex min-h-screen items-center overflow-hidden bg-slate-950">
+		<div class="mesh-layer mesh-layer-one absolute inset-0"></div>
+		<div class="mesh-layer mesh-layer-two absolute inset-0 opacity-70"></div>
+		<div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:52px_52px] [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"></div>
+		<div class="absolute inset-0 z-[1] bg-gradient-to-r from-slate-950/80 via-slate-950/35 to-slate-950/50"></div>
+		<div class="absolute inset-0 z-[1] bg-gradient-to-t from-slate-950 via-transparent to-slate-950/65"></div>
+		<div data-anim="hero-glow" class="absolute top-1/4 -left-20 z-[1] h-[500px] w-[600px] rounded-full bg-gradient-to-r from-cyan-400/25 via-orange-500/10 to-transparent blur-3xl"></div>
 
 		<div class="relative z-10 mx-auto w-full max-w-7xl px-6 py-28 md:py-32">
 			<div class="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
 				<!-- Left: Text -->
 				<div class="text-center lg:text-left">
-					<div data-anim="hero" class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium text-white shadow-sm backdrop-blur-md">
+					<div data-anim="hero" class="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-white/5 px-4 py-2 text-xs font-medium text-white shadow-[inset_0_1px_rgba(255,255,255,0.15),0_10px_40px_rgba(6,182,212,0.08)] backdrop-blur-xl">
 						<Sparkles class="h-3.5 w-3.5 text-cyan-300" />
 						Powered by AI & Rule-Based Expert Systems
 					</div>
 
 					<h1 data-anim="hero" class="mb-6 text-4xl font-bold tracking-tight text-white drop-shadow-lg sm:text-5xl md:text-6xl lg:text-7xl">
 						Smart Clinic
-						<span class="block bg-gradient-to-r from-cyan-300 via-blue-300 to-indigo-300 bg-clip-text text-transparent">
+						<span class="hero-gradient-text block bg-gradient-to-r from-white via-cyan-300 to-orange-300 bg-clip-text text-transparent">
 							Management
 						</span>
 					</h1>
@@ -342,13 +337,13 @@
 
 					<div data-anim="hero" class="flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
 						<a href="/login">
-							<Button class="h-12 gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 px-8 text-base font-medium shadow-lg shadow-blue-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/40">
+							<Button class="h-12 gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-orange-500 px-8 text-base font-medium shadow-lg shadow-cyan-500/20 transition-all duration-200 hover:scale-[1.03] hover:shadow-xl hover:shadow-orange-500/20">
 								Get Started
 								<ArrowRight class="h-4 w-4" />
 							</Button>
 						</a>
 						<a href="#features">
-							<Button variant="outline" class="h-12 gap-2 border-white/30 bg-white/10 px-8 text-white backdrop-blur-md hover:bg-white/20 hover:text-white">
+							<Button variant="outline" class="h-12 gap-2 rounded-full border-white/25 bg-white/5 px-8 text-white backdrop-blur-xl hover:border-cyan-300/50 hover:bg-white/10 hover:text-cyan-100">
 								Explore Features
 								<ChevronDown class="h-4 w-4" />
 							</Button>
@@ -358,9 +353,11 @@
 
 				<!-- Right: QR integration showcase -->
 				<div data-anim="hero" class="relative mx-auto w-full max-w-sm lg:mx-0 lg:ml-auto">
-					<div class="relative overflow-hidden rounded-2xl border border-white/20 bg-white/10 p-6 shadow-2xl backdrop-blur-xl">
+					<div class="relative overflow-hidden rounded-[2rem] border border-white/15 bg-white/[0.07] p-6 shadow-[inset_0_1px_rgba(255,255,255,0.16),0_30px_80px_rgba(0,0,0,0.35)] backdrop-blur-2xl">
+						<div class="pointer-events-none absolute -right-20 -top-20 size-48 rounded-full bg-orange-400/15 blur-3xl"></div>
+						<div class="pointer-events-none absolute -bottom-24 -left-16 size-52 rounded-full bg-cyan-400/20 blur-3xl"></div>
 						<div class="mb-4 flex items-center gap-2 text-white">
-							<div class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
+							<div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-orange-500 shadow-lg shadow-cyan-500/20">
 								<QrCode class="h-5 w-5 text-white" />
 							</div>
 							<div>
@@ -1134,3 +1131,48 @@
 </div>
 
 <FirstAidChat />
+
+<style>
+	.mesh-layer {
+		will-change: transform;
+		background-repeat: no-repeat;
+	}
+
+	.mesh-layer-one {
+		background:
+			radial-gradient(circle at 18% 35%, rgb(6 182 212 / 0.65), transparent 28%),
+			radial-gradient(circle at 78% 26%, rgb(249 115 22 / 0.45), transparent 25%),
+			radial-gradient(circle at 55% 75%, rgb(8 145 178 / 0.45), transparent 32%);
+		animation: mesh-drift 14s ease-in-out infinite alternate;
+	}
+
+	.mesh-layer-two {
+		background:
+			radial-gradient(circle at 65% 45%, rgb(255 255 255 / 0.15), transparent 18%),
+			radial-gradient(circle at 35% 70%, rgb(249 115 22 / 0.3), transparent 22%);
+		filter: blur(28px);
+		animation: mesh-drift-reverse 18s ease-in-out infinite alternate;
+	}
+
+	.hero-gradient-text {
+		background-size: 200% 200%;
+		animation: gradient-shift 7s linear infinite;
+	}
+
+	@keyframes mesh-drift {
+		to { transform: scale(1.14) translate3d(4%, -3%, 0) rotate(2deg); }
+	}
+
+	@keyframes mesh-drift-reverse {
+		to { transform: scale(1.12) translate3d(-4%, 4%, 0) rotate(-3deg); }
+	}
+
+	@keyframes gradient-shift {
+		50% { background-position: 100% 50%; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.mesh-layer,
+		.hero-gradient-text { animation: none; }
+	}
+</style>
