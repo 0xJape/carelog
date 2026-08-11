@@ -1,25 +1,40 @@
 # CLINIQAI
 
-School clinic management system for fast, accurate emergency care. Staff scan student QR codes, review medical context, record visits, and notify guardians.
+## School clinic management made faster and safer
 
-## Features
+CLINIQAI is a digital school clinic system designed for nurses, clinic staff, and school administrators. It keeps important student health information in one secure place so staff can find the right information quickly during a clinic visit or emergency.
 
-- Student profiles with health history, chronic conditions, allergies, medications, photos, and emergency contacts
-- QR code generation, display, camera scanning, and direct student profile lookup
-- Clinic visits with symptoms, vital signs, treatment, medications, severity, status, and visit history
-- AI pre-diagnosis using Groq Llama 3.1 8B Instant
-- Offline rule-based AI fallback for common fever, injury, asthma, allergy, fainting, and wound cases
-- AI-generated possible conditions, severity assessment, first-aid steps, medication cautions, red flags, and referral guidance
-- Medical referral form generation and referral history
-- Medicine inventory with batches, stock levels, low-stock alerts, expiration tracking, and transaction history
-- Dashboard with visit statistics, severity breakdown, student count, inventory status, and recent visits
-- Staff directory with Admin, Nurse, Doctor, and Staff roles
-- Parent or guardian SMS and email notifications through Make.com, UniSMS, and Gmail
-- Argon2 password hashing and secure HTTP-only session cookies
-- Responsive mobile, tablet, and desktop UI
-- Dark/light theme, toast feedback, voice guides, and GSAP landing-page animations
+Instead of searching through paper files, staff can scan a student's QR code, confirm the student's identity, review relevant medical information, document care, and contact a parent or guardian from one system. CLINIQAI helps the clinic save time while keeping visit records organized and easy to review later.
 
-## Tech stack
+### What happens during a clinic visit?
+
+1. Staff scans the QR code on the student's ID card.
+2. CLINIQAI shows the student's profile, photo, medical conditions, allergies, medications, and emergency contacts.
+3. Clinic staff records the reason for the visit, vital signs, treatment, and severity.
+4. The built-in AI provides decision-support guidance, possible conditions, first-aid suggestions, warning signs, and referral recommendations. A local offline guide remains available if the AI service cannot be reached.
+5. The visit is saved to the student's history.
+6. The parent or guardian can receive an SMS and email notification.
+
+This system supports clinic staff. It does not replace a licensed healthcare professional or emergency medical services.
+
+## Main features
+
+- **Student health profiles** — Store personal details, photos, conditions, allergies, medications, emergency contacts, and previous clinic visits.
+- **QR code identification** — Create and scan student QR codes to open the correct profile quickly.
+- **Clinic visit records** — Record symptoms, temperature, blood pressure, pulse, treatment, medication, severity, status, and follow-up notes.
+- **AI clinical decision support** — Groq AI reviews the information entered by staff and provides possible conditions, first-aid guidance, medication cautions, red flags, and referral suggestions.
+- **Offline safety guidance** — Built-in rules cover common cases such as fever, injuries, asthma, allergic reactions, fainting, and wounds when the AI service is unavailable.
+- **Referral management** — Create referral documents, include receiving facility information, and keep referral history with the student's records.
+- **Medicine inventory** — Track medicine batches, quantities, low-stock warnings, expiration dates, and stock transactions.
+- **Clinic dashboard** — View visit totals, severity summaries, active student counts, medicine status, and recent visits.
+- **Staff management** — Maintain staff records and assign Admin, Nurse, Doctor, or Staff roles.
+- **Parent notifications** — Send visit updates by SMS and email through the configured notification service.
+- **Security and privacy controls** — Protect staff access with password hashing, authenticated sessions, and secure HTTP-only cookies.
+- **Accessible responsive design** — Use the system on phones, tablets, and desktop computers with light/dark themes and voice guides.
+
+## Technology overview
+
+Technical details for developers and IT reviewers:
 
 | Area | Technology |
 |---|---|
