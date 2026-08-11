@@ -34,22 +34,22 @@ This system supports clinic staff. It does not replace a licensed healthcare pro
 
 ## Technology overview
 
-Technical details for developers and IT reviewers:
+Technical details for developers and IT reviewers. Each technology has a specific role in making CLINIQAI reliable, secure, and easy to use:
 
-| Area | Technology |
-|---|---|
-| Framework | SvelteKit 2, Svelte 5, Vite 7 |
-| Language | TypeScript |
-| Styling | Tailwind CSS 4, shadcn-svelte, Bits UI |
-| Database | PostgreSQL, Supabase; SQLite support for local/read-only use |
-| ORM | Drizzle ORM |
-| Authentication | Oslo sessions, secure cookies, `@node-rs/argon2` |
-| AI | Groq Llama 3.1 8B Instant with local rule-based fallback |
-| Speech | Groq Whisper Large V3 Turbo for transcription and `canopylabs/orpheus-v1-english` for voice output |
-| QR | `qrcode`, `qr-scanner` |
-| Notifications | Nodemailer, SMTP2GO, Make.com webhooks, UniSMS, Gmail |
-| UI and animation | Lucide Svelte, GSAP, svelte-sonner |
-| Validation | Zod, SvelteKit Superforms |
+| Area | Technology | What it does |
+|---|---|---|
+| Framework | SvelteKit 2, Svelte 5, Vite 7 | Builds the web application, pages, server routes, and fast development workflow. |
+| Language | TypeScript | Helps prevent coding mistakes and keeps data structures consistent across the system. |
+| Styling | Tailwind CSS 4, shadcn-svelte, Bits UI | Provides the responsive layouts, forms, buttons, dialogs, tables, and visual design. |
+| Database | PostgreSQL, Supabase; SQLite support for local/read-only use | Stores student profiles, clinic visits, staff records, medicines, referrals, and notifications. |
+| ORM | Drizzle ORM | Connects the application to the database using typed queries and migration tools. |
+| Authentication | Oslo sessions, secure cookies, `@node-rs/argon2` | Protects staff accounts, securely hashes passwords, and manages logged-in sessions. |
+| AI | Groq Llama 3.1 8B Instant with local rule-based fallback | Reviews symptoms and medical context to provide decision-support guidance and escalation warnings. |
+| Speech | Groq Whisper Large V3 Turbo and `canopylabs/orpheus-v1-english` | Converts voice notes to text and provides spoken guidance. |
+| QR | `qrcode`, `qr-scanner` | Creates student QR codes and reads them using a device camera. |
+| Notifications | Nodemailer, SMTP2GO, Make.com webhooks, UniSMS, Gmail | Sends visit updates and other messages to parents or guardians. |
+| UI and animation | Lucide Svelte, GSAP, svelte-sonner | Adds icons, smooth landing-page motion, and clear success or error messages. |
+| Validation | Zod, SvelteKit Superforms | Checks submitted information before it is saved, reducing invalid or incomplete records. |
 
 ## Local development
 
