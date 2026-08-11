@@ -39,7 +39,7 @@ This document maps every project requirement against what is currently implement
 | Requirement | Status | Notes |
 |---|---|---|
 | Symptom input (reason + details fields) | ✅ | Nurse enters reason + free-text details in visit modal |
-| AI symptom analysis | ✅ | Gemini 2.5 Flash via `/api/ai-diagnosis` POST endpoint |
+| AI symptom analysis | ✅ | Groq Llama 3.1 8B Instant via `/api/ai-diagnosis` POST endpoint |
 | Possible illness suggestions | ✅ | 2–4 ranked conditions with high/moderate/low likelihood |
 | Severity auto-suggestion | ✅ | AI assesses severity independently; auto-fills severity field in form |
 | First aid guidance (AI-generated) | ✅ | Step-by-step first aid steps returned by AI in First Aid tab |
@@ -47,9 +47,9 @@ This document maps every project requirement against what is currently implement
 | Red flags / escalation warnings | ✅ | Dedicated Red Flags tab in AI result card |
 | Referral recommendation | ✅ | AI sets referral flag + reason; shown as banner in result |
 | Tabbed result UI | ✅ | Causes / Treatment / First Aid / Red Flags tabs |
-| Animated loading state | ✅ | Pulsing icon + 4-step progress animation while Gemini processes |
+| Animated loading state | ✅ | Pulsing icon + 4-step progress animation while Groq processes |
 | Student medical context passed to AI | ✅ | Age, gender, conditions, medications, health history sent server-side |
-| Rule-based expert system (offline) | ✅ | `ai-rules.ts` — 10 rules, keyword-matched, auto-fallback when Gemini unavailable |
+| Rule-based expert system (offline) | ✅ | `ai-rules.ts` — 10 rules, keyword-matched, auto-fallback when Groq unavailable |
 | Dedicated symptom checklist UI | ❌ | Free-text only; no checkbox symptom selector |
 
 ---

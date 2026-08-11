@@ -1,149 +1,92 @@
-# CLINIQAI - School Clinic Management System
+# CLINIQAI
 
-A simple and efficient School Clinic Management System that uses QR code technology to provide quick healthcare access at educational institutions. CLINIQAI is designed specifically for emergency situations where time, accuracy, and immediate access to student information are crucial.
+School clinic management system for fast, accurate emergency care. Staff scan student QR codes, review medical context, record visits, and notify guardians.
 
-<!-- Updated: 2026-05-01 - Using Supabase Transaction Pooler for Vercel deployment -->
+## Features
 
-## 🚀 Features
+- Student profiles with health history, chronic conditions, allergies, medications, photos, and emergency contacts
+- QR code generation, display, camera scanning, and direct student profile lookup
+- Clinic visits with symptoms, vital signs, treatment, medications, severity, status, and visit history
+- AI pre-diagnosis using Groq Llama 3.1 8B Instant
+- Offline rule-based AI fallback for common fever, injury, asthma, allergy, fainting, and wound cases
+- AI-generated possible conditions, severity assessment, first-aid steps, medication cautions, red flags, and referral guidance
+- Medical referral form generation and referral history
+- Medicine inventory with batches, stock levels, low-stock alerts, expiration tracking, and transaction history
+- Dashboard with visit statistics, severity breakdown, student count, inventory status, and recent visits
+- Staff directory with Admin, Nurse, Doctor, and Staff roles
+- Parent or guardian SMS and email notifications through Make.com, UniSMS, and Gmail
+- Argon2 password hashing and secure HTTP-only session cookies
+- Responsive mobile, tablet, and desktop UI
+- Dark/light theme, toast feedback, voice guides, and GSAP landing-page animations
 
-- **QR Code Student Identification** - Instant access to student medical records
-- **Emergency Contact Management** - Quick access to parent/guardian information
-- **Clinic Visit Tracking** - Complete visit history and documentation
-- **Staff Management** - Role-based access control (Admin, Doctor, Nurse, Staff)
-- **Email Notifications** - Automated parent notifications via SMTP
-- **Real-time Dashboard** - Visit statistics and severity tracking
+## Tech stack
 
-## 🛠️ Tech Stack
+| Area | Technology |
+|---|---|
+| Framework | SvelteKit 2, Svelte 5, Vite 7 |
+| Language | TypeScript |
+| Styling | Tailwind CSS 4, shadcn-svelte, Bits UI |
+| Database | PostgreSQL, Supabase; SQLite support for local/read-only use |
+| ORM | Drizzle ORM |
+| Authentication | Oslo sessions, secure cookies, `@node-rs/argon2` |
+| AI | Groq Llama 3.1 8B Instant with local rule-based fallback |
+| Speech | Groq Whisper Large V3 Turbo for transcription and `canopylabs/orpheus-v1-english` for voice output |
+| QR | `qrcode`, `qr-scanner` |
+| Notifications | Nodemailer, SMTP2GO, Make.com webhooks, UniSMS, Gmail |
+| UI and animation | Lucide Svelte, GSAP, svelte-sonner |
+| Validation | Zod, SvelteKit Superforms |
 
-- **Frontend**: SvelteKit 2.x with Svelte 5
-- **Database**: PostgreSQL (Supabase)
-- **ORM**: Drizzle ORM
-- **Authentication**: Session-based with secure cookies
-- **Email**: Nodemailer with SMTP
-- **Styling**: Tailwind CSS
-- **UI Components**: shadcn-svelte
+## Local development
 
-## 📦 Deployment on Vercel
-
-### Prerequisites
-
-1. A Vercel account
-2. A PostgreSQL database (Supabase recommended)
-3. SMTP credentials for email notifications
-
-### Step 1: Import from GitHub
-
-1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
-2. Click "Add New Project"
-3. Import your GitHub repository: `https://github.com/0xJape/CLINIQAI.git`
-
-### Step 2: Configure Environment Variables
-
-Add the following environment variables in Vercel:
-
-```env
-DATABASE_URL=postgresql://postgres:<password>@db.<project-ref>.supabase.co:5432/postgres
-SMTP_HOST=mail.smtp2go.com
-SMTP_PORT=2525
-SMTP_USER=your-smtp-username
-SMTP_PASS=your-smtp-password
-SMTP_FROM=noreply@yourschool.edu
-PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
-PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
-```
-
-### Step 3: Deploy
-
-1. Click "Deploy"
-2. Wait for the build to complete
-3. Your app will be live at `https://your-project.vercel.app`
-
-### Step 4: Initialize Database
-
-After deployment, visit `/init` to create your first admin user.
-
-## 🔧 Local Development
-
-### Installation
+Requirements: Node.js, pnpm, PostgreSQL or configured local database.
 
 ```bash
-# Install dependencies
 pnpm install
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your credentials
-
-# Run database migrations
 pnpm db:push
-
-# Start development server
 pnpm dev
 ```
 
-### Database Setup
+Open `http://localhost:5173`.
 
-The project uses Drizzle ORM with PostgreSQL. To set up the database:
+Useful commands:
 
 ```bash
-# Push schema to database
-pnpm db:push
-
-# Generate migrations (optional)
-pnpm db:generate
-
-# Open Drizzle Studio to view/edit data
-pnpm db:studio
+pnpm check       # TypeScript and Svelte diagnostics
+pnpm lint        # Formatting and ESLint checks
+pnpm build       # Production build
+pnpm db:generate # Generate Drizzle migrations
+pnpm db:studio   # Open Drizzle Studio
 ```
 
-## 👥 Default Credentials
+## Environment variables
 
-After deployment, create your first admin user through the initialization page at `/init`.
+Create `.env` and configure values required by your deployment:
 
-New staff members are created with the default password: `Welcome123!`
+| Variable | Purpose |
+|---|---|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `GROQ_API_KEY` | Groq diagnosis, transcription, and speech features |
+| `MAKE_WEBHOOK_URL` | Parent SMS/email notification workflow |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | SMTP email delivery |
+| `PUBLIC_SUPABASE_URL` | Supabase project URL, when used |
+| `PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase public key, when used |
 
-**⚠️ Important**: Users should change their password on first login.
+Never commit secrets. Check deployment configuration before production launch.
 
-## 📝 Environment Variables
+## Emergency visit flow
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `DATABASE_URL` | PostgreSQL connection string | ✅ |
-| `SMTP_HOST` | SMTP server hostname | ✅ |
-| `SMTP_PORT` | SMTP server port | ✅ |
-| `SMTP_USER` | SMTP username | ✅ |
-| `SMTP_PASS` | SMTP password | ✅ |
-| `SMTP_FROM` | Email sender address | ✅ |
-| `PUBLIC_SUPABASE_URL` | Supabase project URL | ❌ |
-| `PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key | ❌ |
+1. Scan student QR code.
+2. Verify photo and student details.
+3. Review conditions, allergies, medications, and contacts.
+4. Record symptoms, vital signs, treatment, and severity.
+5. Review AI or offline first-aid guidance and referral warnings.
+6. Save visit and notify guardian.
+7. Record outcome and follow-up instructions.
 
-## 🔒 Security Features
+## Current limitation
 
-- Session-based authentication with secure cookies
-- Password hashing with Argon2
-- Role-based access control
-- SQL injection prevention via Drizzle ORM
-- CSRF protection
+Medical history timeline on student profile remains planned work. See `FEATURES.md` for status details and `FEATURE_TABLE.md` for module-level behavior.
 
-## 📱 Emergency Visit Workflow
+## License
 
-1. **Student Arrival** - Scan QR code on student ID
-2. **Critical Information Display** - View medical history, allergies, medications
-3. **Quick Assessment** - Record symptoms and vital signs
-4. **Treatment Documentation** - Log care provided
-5. **Parent Notification** - Automated SMS/email alerts
-6. **Visit Resolution** - Document outcome and follow-up
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
----
-
-**CLINIQAI** - Simple, fast, and reliable school clinic management for emergency care.
-
-_Designed for simplicity and speed when every second counts._
+MIT
