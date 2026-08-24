@@ -1,7 +1,7 @@
 /**
  * ai-diagnosis.ts — AI pre-diagnosis assistant for CLINIQAI
  *
- * Uses Groq (llama-3.1-8b-instant) to give the school nurse an
+ * Uses Groq (openai/gpt-oss-120b) to give the school nurse an
  * evidence-flavored pre-diagnosis: possible causes, severity, suggested
  * remedies / OTC medications, first-aid steps, red flags, and referral advice.
  *
@@ -11,7 +11,7 @@
 
 import { env } from '$env/dynamic/private';
 
-const GROQ_MODEL = 'llama-3.1-8b-instant';
+const GROQ_MODEL = 'openai/gpt-oss-120b';
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 export interface StudentMedicalContext {
