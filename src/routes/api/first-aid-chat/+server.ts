@@ -55,7 +55,7 @@ export const POST: RequestHandler = async ({ request, fetch, getClientAddress })
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
-			model: 'llama-3.1-8b-instant',
+			model: 'openai/gpt-oss-120b',
 			temperature: 0.2,
 			max_tokens: 500,
 			messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...safeMessages]
