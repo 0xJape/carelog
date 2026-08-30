@@ -26,6 +26,22 @@
 	let lowStockAlerts = $derived(data.lowStockAlerts);
 	let expiringAlerts = $derived(data.expiringAlerts);
 	let stats = $derived(data.stats);
+	let query = $state('');
+	let editing = $state<any>(null);
+	let editError = $state('');
+	let filteredMedicines = $derived(medicines.filter((med) => `${med.name} ${med.genericName ?? ''}`.toLowerCase().includes(query.toLowerCase())));
+
+	async function saveMedicine() {
+		const response = await fetch('/api/inventory/medicines', { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify(editing) });
+		if (!response.ok) { editError = (await response.json()).error ?? 'Update failed'; return; }
+		location.reload();
+	}
+
+	async function removeMedicine(id: string, name: string) {
+		if (!confirm(`Remove ${name}?`)) return;
+		const response = await fetch(`/api/inventory/medicines?id=${id}`, { method: 'DELETE' });
+		if (response.ok) location.reload();
+	}
 
 	function getStockStatus(current: number, min: number, max: number) {
 		if (current <= min) return { label: 'Low', color: 'text-red-600 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-950/20' };
@@ -55,6 +71,7 @@
 				Add Medicine
 			</Button>
 		</div>
+		<input bind:value={query} aria-label="Search medicines" placeholder="Search medicines..." class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm md:max-w-sm" />
 
 		<!-- Stats Cards -->
 		<div class="grid gap-4 md:grid-cols-3">
@@ -196,7 +213,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							{#each medicines as med}
+							{#each filteredMedicines as med}
 								{@const status = getStockStatus(med.currentStock, med.minStockLevel, med.maxStockLevel)}
 								<tr class="border-b border-border/20 hover:bg-muted/50 transition-colors">
 									<td class="px-4 py-3">
@@ -220,6 +237,10 @@
 										</span>
 									</td>
 									<td class="px-4 py-3 text-muted-foreground">{med.location || 'N/A'}</td>
+									<td class="px-4 py-3 text-right whitespace-nowrap">
+										<Button variant="outline" size="sm" onclick={() => editing = { ...med }}>Edit</Button>
+										<Button variant="ghost" size="sm" class="text-destructive" onclick={() => removeMedicine(med.id, med.name)}>Remove</Button>
+									</td>
 								</tr>
 							{/each}
 						</tbody>
@@ -240,3 +261,16 @@
 		</Card>
 	</div>
 </main>
+
+{#if editing}
+	<div class="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4" role="presentation" onclick={(event) => event.target === event.currentTarget && (editing = null)}>
+		<form class="w-full max-w-md space-y-4 rounded-lg bg-background p-6 shadow-xl" onsubmit={(event) => { event.preventDefault(); saveMedicine(); }}>
+			<h2 class="text-lg font-semibold">Edit Medicine</h2>
+			{#each [['name', 'Name'], ['genericName', 'Generic name'], ['dosage', 'Dosage'], ['form', 'Form'], ['location', 'Location']] as field}
+				<input bind:value={editing[field[0]]} aria-label={field[1]} placeholder={field[1]} required={field[0] === 'name' || field[0] === 'dosage'} class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+			{/each}
+			{#if editError}<p class="text-sm text-destructive">{editError}</p>{/if}
+			<div class="flex justify-end gap-2"><Button type="button" variant="ghost" onclick={() => editing = null}>Cancel</Button><Button type="submit">Save changes</Button></div>
+		</form>
+	</div>
+{/if}

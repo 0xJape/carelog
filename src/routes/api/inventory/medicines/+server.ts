@@ -57,3 +57,30 @@ export const POST: RequestHandler = async ({ request }) => {
 		);
 	}
 };
+
+export const PATCH: RequestHandler = async ({ request }) => {
+	try {
+		const data = await request.json();
+		if (!data.id || !data.name || !data.dosage) return json({ error: 'ID, name and dosage are required' }, { status: 400 });
+		const [medicine] = await db.update(medicines).set({
+			name: data.name, genericName: data.genericName || null, dosage: data.dosage,
+			form: data.form || null, location: data.location || null, updatedAt: new Date()
+		}).where(eq(medicines.id, data.id)).returning({ id: medicines.id });
+		return medicine ? json({ success: true }) : json({ error: 'Medicine not found' }, { status: 404 });
+	} catch (error) {
+		console.error('Error updating medicine:', error);
+		return json({ error: 'Failed to update medicine' }, { status: 500 });
+	}
+};
+
+export const DELETE: RequestHandler = async ({ url }) => {
+	try {
+		const id = url.searchParams.get('id');
+		if (!id) return json({ error: 'Medicine ID is required' }, { status: 400 });
+		const [medicine] = await db.update(medicines).set({ isActive: false, updatedAt: new Date() }).where(eq(medicines.id, id)).returning({ id: medicines.id });
+		return medicine ? json({ success: true }) : json({ error: 'Medicine not found' }, { status: 404 });
+	} catch (error) {
+		console.error('Error removing medicine:', error);
+		return json({ error: 'Failed to remove medicine' }, { status: 500 });
+	}
+};
