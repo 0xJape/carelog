@@ -92,7 +92,7 @@
 		<div class="space-y-4 text-center">
 			<div class="flex justify-center">
 				<div class="flex items-center gap-3">
-					<img src="/logo.png" alt="CLINIQAI logo" class="size-16 rounded-xl text-white shadow-lg" />
+					<img src="/cliniqlogo.png" alt="CLINIQAI logo" class="size-16 rounded-xl text-white shadow-lg" />
 				</div>
 			</div>
 			<div class="space-y-2">

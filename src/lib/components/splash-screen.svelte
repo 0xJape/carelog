@@ -31,7 +31,7 @@
 		<!-- Logo -->
 		<div class="flex flex-col items-center gap-4">
 			<div class="flex size-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm">
-				<img src="/logo.png" alt="CLINIQAI" class="size-9 rounded-xl" />
+				<img src="/cliniqlogo.png" alt="CLINIQAI" class="size-9 rounded-xl" />
 			</div>
 			<div class="text-center">
 				<h1 class="text-3xl font-bold tracking-tight text-white">

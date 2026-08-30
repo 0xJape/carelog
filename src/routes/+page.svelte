@@ -225,7 +225,7 @@
 	<nav class="fixed top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg">
 		<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
 			<a href="/" class="flex items-center gap-3">
-				<img src="/logo.png" alt="CLINIQAI" class="h-8 w-8 rounded-lg" />
+				<img src="/cliniqlogo.png" alt="CLINIQAI" class="h-8 w-8 rounded-lg" />
 				<span class="text-lg font-bold tracking-tight">CLINIQAI</span>
 			</a>
 			<div class="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
@@ -667,7 +667,7 @@
 				<!-- Brand -->
 				<div class="md:col-span-1">
 					<div class="mb-3 flex items-center gap-2">
-						<img src="/logo.png" alt="CLINIQAI" class="h-7 w-7 rounded" />
+						<img src="/cliniqlogo.png" alt="CLINIQAI" class="h-7 w-7 rounded" />
 						<span class="text-base font-bold">CLINIQAI</span>
 					</div>
 					<p class="text-xs text-muted-foreground">
