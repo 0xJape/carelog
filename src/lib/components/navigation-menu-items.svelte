@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import {
 		Calendar,
+		ChartNoAxesCombined,
 		LayoutDashboard,
 		Package,
 		Settings,
@@ -26,7 +27,8 @@
 			items: [
 				{ title: 'Students', href: '/students', icon: Users },
 				{ title: 'Visits', href: '/visits', icon: Calendar },
-				{ title: 'Inventory', href: '/inventory', icon: Package }
+				{ title: 'Inventory', href: '/inventory', icon: Package },
+				{ title: 'Reports', href: '/reports', icon: ChartNoAxesCombined }
 			]
 		},
 		{
