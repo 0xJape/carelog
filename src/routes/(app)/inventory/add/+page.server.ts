@@ -39,37 +39,38 @@ export const actions: Actions = {
 				return fail(400, { error: 'Batch information is required' });
 			}
 
-			// Check if medicine already exists
+			// Reuse existing medicine and add this stock as a new batch.
 			const existing = await db
-				.select({ id: medicines.id })
+				.select({ id: medicines.id, isActive: medicines.isActive })
 				.from(medicines)
 				.where(eq(medicines.name, name))
 				.limit(1);
 
-			if (existing.length > 0) {
-				return fail(409, { error: 'Medicine already exists' });
+			let medicineId = existing[0]?.id;
+			if (!medicineId) {
+				const [newMedicine] = await db
+					.insert(medicines)
+					.values({
+						name,
+						genericName: genericName || null,
+						dosage,
+						form: form || null,
+						manufacturer: manufacturer || null,
+						minStockLevel: minStock,
+						maxStockLevel: maxStock,
+						location: location || null
+					})
+					.returning({ id: medicines.id });
+				medicineId = newMedicine.id;
+			} else if (!existing[0].isActive) {
+				await db.update(medicines).set({ isActive: true, updatedAt: new Date() }).where(eq(medicines.id, medicineId));
 			}
-
-			// Create medicine
-			const [newMedicine] = await db
-				.insert(medicines)
-				.values({
-					name,
-					genericName: genericName || null,
-					dosage,
-					form: form || null,
-					manufacturer: manufacturer || null,
-					minStockLevel: minStock,
-					maxStockLevel: maxStock,
-					location: location || null
-				})
-				.returning({ id: medicines.id });
 
 			// Create batch
 			const [newBatch] = await db
 				.insert(medicineBatches)
 				.values({
-					medicineId: newMedicine.id,
+					medicineId,
 					batchNumber,
 					quantity: batchQuantity,
 					expirationDate: new Date(expirationDate)
@@ -79,7 +80,7 @@ export const actions: Actions = {
 			// Log transaction (only if user is authenticated)
 			if (locals.user?.id) {
 				await db.insert(inventoryTransactions).values({
-					medicineId: newMedicine.id,
+					medicineId,
 					batchId: newBatch.id,
 					transactionType: 'stock_in',
 					quantity: batchQuantity,
@@ -91,6 +92,7 @@ export const actions: Actions = {
 			// Redirect to inventory page
 			return redirect(302, '/inventory');
 		} catch (error) {
+			if (error && typeof error === 'object' && 'status' in error && error.status === 302) throw error;
 			console.error('Error adding medicine:', error);
 			return fail(500, { error: 'Failed to add medicine. Please try again.' });
 		}

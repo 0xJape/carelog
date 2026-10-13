@@ -10,7 +10,7 @@
 		entering = true;
 		voiceGuide.init();
 		voiceGuide.playWelcome();
-		setTimeout(() => onEnter(), 600);
+		setTimeout(() => onEnter(), 200);
 	}
 </script>
 

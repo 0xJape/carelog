@@ -27,9 +27,29 @@
 	let expiringAlerts = $derived(data.expiringAlerts);
 	let stats = $derived(data.stats);
 	let query = $state('');
+	let manufacturerFilter = $state('');
+	let expiryFilter = $state('all');
 	let editing = $state<any>(null);
 	let editError = $state('');
-	let filteredMedicines = $derived(medicines.filter((med) => `${med.name} ${med.genericName ?? ''}`.toLowerCase().includes(query.toLowerCase())));
+	let manufacturers = $derived([...new Set(data.batches.map((batch) => batch.manufacturer).filter(Boolean))].sort());
+	let filteredMedicines = $derived(medicines.filter((med) => {
+		const matchesSearch = `${med.name} ${med.genericName ?? ''}`.toLowerCase().includes(query.toLowerCase());
+		const medicineBatches = data.batches.filter((batch) => batch.medicineId === med.id);
+		const matchesBatchFilter = medicineBatches.some((batch) => {
+			const expiry = new Date(batch.expirationDate);
+			const matchesManufacturer = !manufacturerFilter || batch.manufacturer === manufacturerFilter;
+			const matchesExpiry = expiryFilter === 'all' || (expiryFilter === 'expired' ? expiry < new Date() : expiry >= new Date() && expiry <= new Date(Date.now() + 1000 * 60 * 60 * 24 * 90));
+			return matchesManufacturer && matchesExpiry;
+		});
+		return matchesSearch && matchesBatchFilter;
+	}));
+	let filteredBatches = $derived(data.batches.filter((batch) => {
+		const expiry = new Date(batch.expirationDate);
+		const matchesSearch = `${batch.name} ${batch.batchNumber}`.toLowerCase().includes(query.toLowerCase());
+		const matchesManufacturer = !manufacturerFilter || batch.manufacturer === manufacturerFilter;
+		const matchesExpiry = expiryFilter === 'all' || (expiryFilter === 'expired' ? expiry < new Date() : expiry >= new Date() && expiry <= new Date(Date.now() + 1000 * 60 * 60 * 24 * 90));
+		return matchesSearch && matchesManufacturer && matchesExpiry;
+	}));
 
 	async function saveMedicine() {
 		const response = await fetch('/api/inventory/medicines', { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify(editing) });
@@ -71,7 +91,18 @@
 				Add Medicine
 			</Button>
 		</div>
-		<input bind:value={query} aria-label="Search medicines" placeholder="Search medicines..." class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm md:max-w-sm" />
+		<div class="flex flex-col gap-2 md:flex-row md:items-center">
+			<input bind:value={query} aria-label="Search medicines and batches" placeholder="Search medicine or batch..." class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm md:max-w-sm" />
+			<select bind:value={manufacturerFilter} aria-label="Filter by manufacturer" class="rounded-md border border-border bg-background px-3 py-2 text-sm">
+				<option value="">All manufacturers</option>
+				{#each manufacturers as manufacturer}<option value={manufacturer}>{manufacturer}</option>{/each}
+			</select>
+			<select bind:value={expiryFilter} aria-label="Filter by expiry" class="rounded-md border border-border bg-background px-3 py-2 text-sm">
+				<option value="all">All expiry dates</option>
+				<option value="soon">Expiring within 90 days</option>
+				<option value="expired">Expired</option>
+			</select>
+		</div>
 
 		<!-- Stats Cards -->
 		<div class="grid gap-4 md:grid-cols-3">
@@ -257,6 +288,26 @@
 						</Button>
 					</div>
 				{/if}
+			</CardContent>
+		</Card>
+
+		<Card>
+			<CardHeader>
+			<CardTitle class="flex items-center gap-2"><Package class="h-5 w-5" />Medicine Batches</CardTitle>
+			<CardDescription>Separate stock batches grouped by expiry date and manufacturer</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<div class="overflow-x-auto">
+					<table class="w-full text-sm">
+						<thead><tr class="border-b border-border/40"><th class="px-4 py-2 text-left">Medicine</th><th class="px-4 py-2 text-left">Batch</th><th class="px-4 py-2 text-left">Manufacturer</th><th class="px-4 py-2 text-right">Quantity</th><th class="px-4 py-2 text-right">Expiry</th></tr></thead>
+						<tbody>
+							{#each filteredBatches as batch}
+								{@const expired = new Date(batch.expirationDate) < new Date()}
+								<tr class="border-b border-border/20"><td class="px-4 py-3 font-medium">{batch.name} <span class="text-xs text-muted-foreground">{batch.dosage} {batch.form}</span></td><td class="px-4 py-3 text-muted-foreground">{batch.batchNumber}</td><td class="px-4 py-3 text-muted-foreground">{batch.manufacturer || 'N/A'}</td><td class="px-4 py-3 text-right font-semibold">{batch.quantity}</td><td class="px-4 py-3 text-right {expired ? 'text-red-600' : 'text-muted-foreground'}">{new Date(batch.expirationDate).toLocaleDateString()}</td></tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
 			</CardContent>
 		</Card>
 	</div>

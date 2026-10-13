@@ -66,6 +66,7 @@
 	bind:open={modalOpen}
 	student={data.student}
 	availableNurses={data.availableNurses}
+		availableMedicines={data.availableMedicines}
 />
 
 <style>

@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db/index.js';
-import { clinicVisits, emergencyContacts, students, users } from '$lib/server/db/schema.js';
+import { clinicVisits, emergencyContacts, students, users, medicines } from '$lib/server/db/schema.js';
 import { error, fail, isHttpError } from '@sveltejs/kit';
 import { desc, eq } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
@@ -48,16 +48,10 @@ export const load: PageServerLoad = async ({ params }) => {
 			});
 		}
 
-		// Fetch all emergency contacts for this student
-		const emergencyContactsList = await db
-			.select()
-			.from(emergencyContacts)
-			.where(eq(emergencyContacts.studentId, student.id))
-			.orderBy(emergencyContacts.priority);
-
-		// Fetch recent clinic visits (last 10 visits)
-		const recentVisits = await db
-			.select({
+		// Independent profile queries run together to reduce page wait time.
+		const [emergencyContactsList, recentVisits, availableNurses, availableMedicines] = await Promise.all([
+			db.select().from(emergencyContacts).where(eq(emergencyContacts.studentId, student.id)).orderBy(emergencyContacts.priority),
+			db.select({
 				id: clinicVisits.id,
 				visitNumber: clinicVisits.visitNumber,
 				visitType: clinicVisits.visitType,
@@ -74,12 +68,10 @@ export const load: PageServerLoad = async ({ params }) => {
 				attendedByFirstName: users.firstName,
 				attendedByLastName: users.lastName,
 				attendedByRole: users.role
-			})
-			.from(clinicVisits)
-			.leftJoin(users, eq(clinicVisits.attendedById, users.id))
-			.where(eq(clinicVisits.studentId, student.id))
-			.orderBy(desc(clinicVisits.checkInTime))
-			.limit(10);
+			}).from(clinicVisits).leftJoin(users, eq(clinicVisits.attendedById, users.id)).where(eq(clinicVisits.studentId, student.id)).orderBy(desc(clinicVisits.checkInTime)).limit(10),
+			db.select({ id: users.id, name: users.firstName, lastName: users.lastName, role: users.role }).from(users).where(eq(users.role, 'nurse')).orderBy(users.firstName, users.lastName),
+			db.select({ id: medicines.id, name: medicines.name, dosage: medicines.dosage, form: medicines.form, manufacturer: medicines.manufacturer }).from(medicines).where(eq(medicines.isActive, true)).orderBy(medicines.name)
+		]);
 
 		// Calculate visit statistics
 		const visitStats = {
@@ -95,24 +87,11 @@ export const load: PageServerLoad = async ({ params }) => {
 			lastVisit: recentVisits[0]?.checkInTime || null
 		};
 
-		// Fetch available nurses for the form
-		const availableNurses = await db
-			.select({
-				id: users.id,
-				name: users.firstName,
-				lastName: users.lastName,
-				role: users.role
-			})
-			.from(users)
-			.where(eq(users.role, 'nurse'))
-			.orderBy(users.firstName, users.lastName);
-
 		// Format nurse names for display
 		const formattedNurses = availableNurses.map((nurse) => ({
 			id: nurse.id,
 			name: `${nurse.name} ${nurse.lastName}`
 		}));
-
 		return {
 			student: {
 				...student,
@@ -132,7 +111,8 @@ export const load: PageServerLoad = async ({ params }) => {
 				checkOutTime: visit.checkOutTime?.toISOString() || null
 			})),
 			visitStats,
-			availableNurses: formattedNurses
+			availableNurses: formattedNurses,
+			availableMedicines
 		};
 	} catch (err) {
 		console.error('Error loading student:', err);

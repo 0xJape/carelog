@@ -50,12 +50,12 @@ export const actions: Actions = {
 
 			console.log('Password valid');
 
-			// Update last login time
-			await db.update(users).set({ lastLogin: new Date() }).where(eq(users.id, user.id));
-
-			// Create session using Lucia auth
+			// Run independent post-auth writes together.
 			const sessionToken = generateSessionToken();
-			const session = await createSession(sessionToken, user.id);
+			const [, session] = await Promise.all([
+				db.update(users).set({ lastLogin: new Date() }).where(eq(users.id, user.id)),
+				createSession(sessionToken, user.id)
+			]);
 			console.log('Session created:', session.id);
 
 			setSessionTokenCookie(event, sessionToken, session.expiresAt);

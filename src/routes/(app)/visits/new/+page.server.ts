@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db/index.js';
-import { clinicVisits, students, users } from '$lib/server/db/schema.js';
+import { clinicVisits, students, users, medicines, medicineBatches, inventoryTransactions } from '$lib/server/db/schema.js';
 import { fail, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
@@ -47,9 +47,11 @@ export const load: PageServerLoad = async ({ url }) => {
 			name: `${nurse.firstName} ${nurse.lastName}`.trim()
 		}));
 
+		const availableMedicines = await db.select({ id: medicines.id, name: medicines.name, dosage: medicines.dosage, form: medicines.form, manufacturer: medicines.manufacturer }).from(medicines).where(eq(medicines.isActive, true)).orderBy(medicines.name);
 		return {
 			student,
-			availableNurses: formattedNurses
+			availableNurses: formattedNurses,
+			availableMedicines
 		};
 	} catch (error) {
 		console.error('Error loading student for new visit:', error);
@@ -58,7 +60,7 @@ export const load: PageServerLoad = async ({ url }) => {
 };
 
 export const actions: Actions = {
-	createVisit: async ({ request }) => {
+	createVisit: async ({ request, locals }) => {
 		try {
 			const formData = await request.formData();
 
@@ -73,6 +75,8 @@ export const actions: Actions = {
 				details: formData.get('details') as string,
 				medicationsGiven: formData.get('medicationsGiven') as string
 			};
+			const medicationId = formData.get('medicationId')?.toString();
+			const medicationQuantity = Number(formData.get('medicationQuantity') || 0);
 
 			// Validate required fields
 			if (!visitData.studentId || !visitData.reason.trim()) {
@@ -122,6 +126,12 @@ export const actions: Actions = {
 				return fail(400, {
 					error: 'Student not found'
 				});
+			}
+			if (medicationId && medicationQuantity > 0) {
+				const [batch] = await db.select().from(medicineBatches).where(eq(medicineBatches.medicineId, medicationId)).orderBy(medicineBatches.expirationDate).limit(1);
+				if (!batch || batch.quantity < medicationQuantity) return fail(400, { error: 'Insufficient medicine stock' });
+				await db.update(medicineBatches).set({ quantity: batch.quantity - medicationQuantity, updatedAt: new Date() }).where(eq(medicineBatches.id, batch.id));
+				if (locals.user?.id) await db.insert(inventoryTransactions).values({ medicineId: medicationId, batchId: batch.id, transactionType: 'stock_out', quantity: medicationQuantity, reason: `Given to student ${visitData.studentId}`, performedBy: locals.user.id });
 			}
 
 			// Verify nurse exists

@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db/index.js';
-import { medicines, medicineBatches, inventoryAlerts, inventoryTransactions, users } from '$lib/server/db/schema.js';
-import { sql, eq, desc, and, sum } from 'drizzle-orm';
+import { medicines, medicineBatches, inventoryAlerts } from '$lib/server/db/schema.js';
+import { eq, desc, and, sum } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
@@ -22,27 +22,23 @@ export const load: PageServerLoad = async () => {
 			.where(eq(medicines.isActive, true))
 			.orderBy(medicines.name);
 
-		// Fetch current stock levels for each medicine
-		const stockLevels = await Promise.all(
-			allMedicines.map(async (med) => {
-				const result = await db
-					.select({ total: sum(medicineBatches.quantity) })
-					.from(medicineBatches)
-					.where(
-						and(
-							eq(medicineBatches.medicineId, med.id),
-							eq(medicineBatches.isActive, true)
-						)
-					);
-
-				const totalStock = Number(result[0]?.total ?? 0);
-				return {
-					...med,
-					currentStock: totalStock,
-					status: totalStock < med.minStockLevel ? 'low' : 'normal'
-				};
-			})
-		);
+		// Fetch all stock totals in one query instead of one query per medicine.
+		const stockRows = await db
+			.select({ medicineId: medicineBatches.medicineId, total: sum(medicineBatches.quantity) })
+			.from(medicineBatches)
+			.where(eq(medicineBatches.isActive, true))
+			.groupBy(medicineBatches.medicineId);
+		const stockByMedicine = new Map(stockRows.map((row) => [row.medicineId, Number(row.total ?? 0)]));
+		const stockLevels = allMedicines.map((med) => {
+			const totalStock = stockByMedicine.get(med.id) ?? 0;
+			return { ...med, currentStock: totalStock, status: totalStock < med.minStockLevel ? 'low' : 'normal' };
+		});
+		const batches = await db
+			.select({ id: medicineBatches.id, medicineId: medicineBatches.medicineId, name: medicines.name, dosage: medicines.dosage, form: medicines.form, manufacturer: medicines.manufacturer, batchNumber: medicineBatches.batchNumber, quantity: medicineBatches.quantity, expirationDate: medicineBatches.expirationDate })
+			.from(medicineBatches)
+			.innerJoin(medicines, eq(medicineBatches.medicineId, medicines.id))
+			.where(and(eq(medicineBatches.isActive, true), eq(medicines.isActive, true)))
+			.orderBy(medicines.name, medicineBatches.expirationDate);
 
 		// Fetch low stock alerts
 		const lowStockAlerts = await db
@@ -97,6 +93,7 @@ export const load: PageServerLoad = async () => {
 
 		return {
 			medicines: stockLevels,
+			batches,
 			lowStockAlerts,
 			expiringAlerts,
 			stats: {

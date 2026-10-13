@@ -420,7 +420,7 @@
 </main>
 
 <!-- New Visit Modal -->
-<NewVisitModal bind:open={newVisitModalOpen} {student} availableNurses={data.availableNurses} />
+			<NewVisitModal bind:open={newVisitModalOpen} {student} availableNurses={data.availableNurses} availableMedicines={data.availableMedicines} />
 
 <!-- Email Modal -->
 <EmailModal bind:open={emailModalOpen} {student} {emergencyContacts} {predeterminedContact} />

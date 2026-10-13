@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db';
 import { clinicVisits, inventoryAlerts, medicineBatches, medicines, students } from '$lib/server/db/schema';
-import { and, count, desc, eq, gte, lt, lte, ne, sum } from 'drizzle-orm';
+import { and, count, desc, eq, gte, lt, lte, ne } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
@@ -14,39 +14,30 @@ export const load: PageServerLoad = async () => {
 	// Base query for non-cancelled visits
 	const baseCondition = ne(clinicVisits.status, 'cancelled');
 
-	// Get total visits count
-	const [{ count: totalVisits }] = await db
-		.select({ count: count() })
-		.from(clinicVisits)
-		.where(baseCondition);
-
-	// Get visits this month count
-	const [{ count: visitsThisMonth }] = await db
-		.select({ count: count() })
-		.from(clinicVisits)
-		.where(
-			and(
-				baseCondition,
-				gte(clinicVisits.checkInTime, startOfMonth),
-				lt(clinicVisits.checkInTime, startOfNextMonth)
-			)
-		);
-
 	// Get visits today count
 	const startOfToday = new Date();
 	startOfToday.setHours(0, 0, 0, 0);
 
 	const startOfTomorrow = new Date(startOfToday);
 	startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+	const thirtyDaysFromNow = new Date();
+	thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
 
-	const [{ count: visitsThisDay }] = await db
-		.select({ count: count() })
-		.from(clinicVisits)
-		.where(and(baseCondition, gte(clinicVisits.checkInTime, startOfToday), lt(clinicVisits.checkInTime, startOfTomorrow)));
-
-	// Get severity counts for this month
-	const severityCounts = await db
-		.select({
+	const [
+		[{ count: totalVisits }],
+		[{ count: visitsThisMonth }],
+		[{ count: visitsThisDay }],
+		severityCounts,
+		recentVisits,
+		[{ count: totalStudents }],
+		[{ count: totalMedicines }],
+		[{ count: lowStockCount }],
+		[{ count: expiringSoonCount }]
+	] = await Promise.all([
+		db.select({ count: count() }).from(clinicVisits).where(baseCondition),
+		db.select({ count: count() }).from(clinicVisits).where(and(baseCondition, gte(clinicVisits.checkInTime, startOfMonth), lt(clinicVisits.checkInTime, startOfNextMonth))),
+		db.select({ count: count() }).from(clinicVisits).where(and(baseCondition, gte(clinicVisits.checkInTime, startOfToday), lt(clinicVisits.checkInTime, startOfTomorrow))),
+		db.select({
 			severity: clinicVisits.severity,
 			count: count()
 		})
@@ -57,12 +48,10 @@ export const load: PageServerLoad = async () => {
 				gte(clinicVisits.checkInTime, startOfMonth),
 				lt(clinicVisits.checkInTime, startOfNextMonth)
 			)
-		)
-		.groupBy(clinicVisits.severity);
+			).groupBy(clinicVisits.severity),
 
 	// Get recent visits with student information
-	const recentVisits = await db
-		.select({
+		db.select({
 			id: clinicVisits.id,
 			visitNumber: clinicVisits.visitNumber,
 			checkInTime: clinicVisits.checkInTime,
@@ -85,37 +74,15 @@ export const load: PageServerLoad = async () => {
 		.innerJoin(students, eq(clinicVisits.studentId, students.id))
 		.where(baseCondition)
 		.orderBy(desc(clinicVisits.checkInTime))
-		.limit(10);
+		.limit(10),
 
-	// Total active students
-	const [{ count: totalStudents }] = await db
-		.select({ count: count() })
-		.from(students)
-		.where(eq(students.isActive, true));
+		db.select({ count: count() }).from(students).where(eq(students.isActive, true)),
+		db.select({ count: count() }).from(medicines).where(eq(medicines.isActive, true)),
+		db.select({ count: count() }).from(inventoryAlerts).where(and(eq(inventoryAlerts.alertType, 'low_stock'), eq(inventoryAlerts.isResolved, false))),
+		db.select({ count: count() }).from(medicineBatches).where(and(eq(medicineBatches.isActive, true), lte(medicineBatches.expirationDate, thirtyDaysFromNow), gte(medicineBatches.expirationDate, new Date())))
+	]);
 
 	// Inventory stats
-	const thirtyDaysFromNow = new Date();
-	thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-
-	const [{ count: totalMedicines }] = await db
-		.select({ count: count() })
-		.from(medicines)
-		.where(eq(medicines.isActive, true));
-
-	const [{ count: lowStockCount }] = await db
-		.select({ count: count() })
-		.from(inventoryAlerts)
-		.where(and(eq(inventoryAlerts.alertType, 'low_stock'), eq(inventoryAlerts.isResolved, false)));
-
-	const [{ count: expiringSoonCount }] = await db
-		.select({ count: count() })
-		.from(medicineBatches)
-		.where(and(
-			eq(medicineBatches.isActive, true),
-			lte(medicineBatches.expirationDate, thirtyDaysFromNow),
-			gte(medicineBatches.expirationDate, new Date())
-		));
-
 	const inventoryStats = {
 		totalMedicines,
 		lowStockCount,

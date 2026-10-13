@@ -60,10 +60,12 @@
 		open = $bindable(false),
 		student,
 		availableNurses = []
+		, availableMedicines = []
 	}: {
 		open: boolean;
 		student: Student;
 		availableNurses: NurseComboboxOption[];
+		availableMedicines?: { id: string; name: string; dosage: string | null; form: string | null; manufacturer: string | null }[];
 	} = $props();
 
 	// Form state
@@ -85,6 +87,8 @@
 		bloodPressureDiastolic: '',
 		pulse: ''
 	});
+	let medicationId = $state('');
+	let medicationQuantity = $state(1);
 
 	// Nurse combobox state
 	let nurseComboboxOpen = $state(false);
@@ -915,6 +919,11 @@
 			<!-- Medications Given -->
 			<div class="space-y-2">
 				<Label for="medicationsGiven">Medications Given</Label>
+				<select name="medicationId" bind:value={medicationId} class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+					<option value="">No inventory medicine</option>
+					{#each availableMedicines as medicine}<option value={medicine.id}>{medicine.name} — {medicine.dosage} {medicine.form} {medicine.manufacturer ? `(${medicine.manufacturer})` : ''}</option>{/each}
+				</select>
+				{#if medicationId}<Input name="medicationQuantity" type="number" min="1" bind:value={medicationQuantity} aria-label="Quantity given" />{/if}
 				<Textarea
 					id="medicationsGiven"
 					name="medicationsGiven"
